@@ -1,0 +1,7 @@
+bin/
+build/
+third_party/
+*.o
+*.a
+compile_commands.json
+.cache/

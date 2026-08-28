@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: Apache-2.0
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # The gate: pure-logic tests plus the two backends that need nothing but the
+  # kernel. This is what every PR must keep green.
+  base:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+      - run: make config
+      - run: make test CXX=${{ matrix.compiler }}
+      - run: make lib CXX=${{ matrix.compiler }}
+      # A loopback round trip over kernel UDP: proves the interface, the
+      # batching and the example still work end to end.
+      - name: echo smoke over loopback
+        run: |
+          make example CXX=${{ matrix.compiler }}
+          ./bin/echo --role server --io udp --port 5099 &
+          sleep 1
+          ./bin/echo --role client --io udp --port 5099 --dst 127.0.0.1 -n 200 | tee out.txt
+          grep -q "reflected 200" out.txt
+
+  # The optional backends: no NIC on a runner, so this only proves they still
+  # compile and link against current libxdp/DPDK/lwIP headers.
+  optional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libxdp-dev libbpf-dev dpdk-dev clang
+      - run: scripts/get_lwip.sh
+      - run: make config
+      - run: make

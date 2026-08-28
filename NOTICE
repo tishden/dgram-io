@@ -1,0 +1,14 @@
+dgram-io -- one datagram interface, six datapaths
+Copyright 2026 Denis Tishkov
+
+Written with Claude (Anthropic).
+
+This product includes software originally developed for a low-latency
+market-data transport. The backend interface, the six backends, the
+Ethernet/IPv4/UDP frame builder, the AF_XDP socket wrapper, the DPDK port
+setup, the stream framing and the lwIP glue are original work licensed under
+the Apache License, Version 2.0.
+
+Third-party components are NOT vendored in this repository; they are fetched
+or linked at build time and remain under their own licences. See
+THIRD-PARTY.md.
