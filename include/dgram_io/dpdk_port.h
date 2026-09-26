@@ -104,7 +104,7 @@ inline bool setup(const Config& cfg, const Options& opt, Port* p,
   if (rte_eth_dev_count_avail() == 0) {
     *err = "no DPDK port (is " +
            (cfg.dpdk_pci.empty() ? cfg.dpdk_vdev : cfg.dpdk_pci) +
-           " bound to vfio-pci? bench/setup_dpdk.sh bind)";
+           " bound to vfio-pci? dpdk-devbind.py -b vfio-pci)";
     return false;
   }
   p->id = 0;

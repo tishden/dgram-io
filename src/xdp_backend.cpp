@@ -201,7 +201,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
       }
     } else if (!arp_lookup(cfg.dst_ip, b->tmpl_.dst_mac)) {
       *err = "no ARP entry for " + cfg.dst_ip +
-             " -- ping it first (bench/setup_xdp.sh) or pass --xdp-dst-mac";
+             " -- ping it first or pass --dst-mac";
       return nullptr;
     }
     b->have_dst_ = true;

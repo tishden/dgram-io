@@ -116,7 +116,6 @@ class LwipTcp {
   std::vector<Peer> peers_;
   std::vector<uint8_t> scratch_;    // record framing + chained-pbuf flatten
   bool connect_done_ = false;
-  bool connect_failed_ = false;
   uint64_t frames_tx_ = 0, frames_rx_ = 0, tx_frame_drops_ = 0;
   uint64_t write_mem_ = 0, closed_ = 0, desyncs_ = 0;
 };

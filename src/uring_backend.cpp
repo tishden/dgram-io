@@ -353,12 +353,34 @@ std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
       p.sq_thread_cpu = static_cast<unsigned>(cfg.uring_sqpoll_cpu);
     }
   }
+  const io_uring_params asked = p;  // the kernel writes back into p
   int r = io_uring_queue_init_params(kSqEntries, &b->ring_, &p);
+  if (r == -EINVAL && (asked.flags & IORING_SETUP_SQ_AFF)) {
+    // RHEL 9's 5.14 answered EINVAL here for a caller pinned to CPU 2 asking
+    // for its SQ thread on CPU 6 (7.0-aws accepted the same call). Retry with
+    // our own mask widened by that CPU for the setup call alone: SQ_AFF pins
+    // the thread either way, and we go straight back to our own CPUs.
+    cpu_set_t mine, wide;
+    if (sched_getaffinity(0, sizeof(mine), &mine) == 0) {
+      wide = mine;
+      CPU_SET(cfg.uring_sqpoll_cpu, &wide);
+      if (sched_setaffinity(0, sizeof(wide), &wide) == 0) {
+        p = asked;
+        r = io_uring_queue_init_params(kSqEntries, &b->ring_, &p);
+        sched_setaffinity(0, sizeof(mine), &mine);
+      }
+    }
+  }
   if (r < 0) {
     *err = std::string("io_uring_queue_init: ") + strerror(-r);
     if (r == -EPERM)
       *err += " (io_uring is switched off: check sysctl "
               "kernel.io_uring_disabled, RHEL 9 defaults it to 2)";
+    else if (r == -EINVAL && (asked.flags & IORING_SETUP_SQ_AFF))
+      *err += " (this kernel refused to pin the SQPOLL thread to CPU " +
+              std::to_string(cfg.uring_sqpoll_cpu) +
+              "; try another uring_sqpoll_cpu, or -1 with the caller on "
+              "several CPUs)";
     return nullptr;
   }
   b->ring_up_ = true;

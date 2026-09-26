@@ -256,7 +256,7 @@ std::unique_ptr<Backend> make_tcp_dpdk_backend(const Config&, std::string* err) 
   *err = "built without DPDK support (install dpdk-devel and rebuild)";
 #else
   *err =
-      "built without the lwIP TCP stack: run bench/setup_lwip.sh to fetch it, "
+      "built without the lwIP TCP stack: run scripts/get_lwip.sh to fetch it, "
       "then rebuild (the Makefile detects third_party/lwip)";
 #endif
   return nullptr;

@@ -51,9 +51,12 @@ RUN_AS=${SUDO_USER:-root}
 for f in bin/echo bin/loadgen bin/xdp_filter.bpf.o bin/xdp_tcp_filter.bpf.o; do
   [ -e "$ROOT/$f" ] || { echo "$f missing: build first (scripts/get_lwip.sh && make all example)" >&2; exit 1; }
 done
-cfg=$(make -s -C "$ROOT" config)
+# What the objects were actually built with (the Makefile's detection stamp),
+# not what `make config` would detect now: a dependency fetched after the last
+# build is detected but not yet compiled in.
+cfg=$(cat "$ROOT/bin/.detected" 2>/dev/null || true)
 for b in uring xdp dpdk lwip; do
-  grep -q "^$b: *yes" <<<"$cfg" || { echo "built without $b:"; echo "$cfg"; exit 1; } >&2
+  grep -q "$b=1" <<<"$cfg" || { echo "bin/ was built without $b ($cfg): make all example" >&2; exit 1; }
 done
 [ -e "/run/dgram-io-wire-peer.$NS" ] && { echo "netns $NS is up already: sudo scripts/wire_peer.sh down" >&2; exit 1; }
 
@@ -116,6 +119,9 @@ restore() {
   [ -e /sys/module/vfio/parameters/enable_unsafe_noiommu_mode ] &&
     echo "${OLD[noiommu]}" > /sys/module/vfio/parameters/enable_unsafe_noiommu_mode 2>/dev/null
   chown -R "$RUN_AS": "$OUT"
+  for d in "$ROOT/bench" "$ROOT/bench/results"; do
+    [ "$(stat -c %U "$d" 2>/dev/null)" = root ] && chown "$RUN_AS": "$d"
+  done
   log "restored: $DRV_IF ${DRV_ADDRS}, $PEER_IF back in the default namespace, CPUs/IRQs/sysctls as before"
 }
 trap restore EXIT INT TERM
@@ -159,7 +165,7 @@ passport() {
     lspci -s "$DRV_PCI"
     echo "channels: $(chan_of "$DRV_IF"), rx-usecs: $(usecs_of "$DRV_IF")"
     sysctl net.core.busy_poll net.core.busy_read net.core.rmem_max kernel.io_uring_disabled
-    grep -E "^(uring|xdp|dpdk|lwip):" <<<"$cfg"
+    echo "built with: $cfg"
     pkg-config --modversion liburing libxdp libdpdk | paste -sd' ' | sed 's/^/liburing libxdp dpdk: /'
   } > "$OUT/passport.txt" 2>&1
 }

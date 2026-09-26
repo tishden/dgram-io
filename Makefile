@@ -51,12 +51,18 @@ LWIP_CFLAGS := -std=gnu99 -O2 -w $(LWIP_CPPFLAGS)
 endif
 
 HDRS := $(wildcard include/dgram_io/*.h)
+# What was detected, as a file whose timestamp moves only when the detection
+# does. Every object depends on it: without this, fetching lwIP (or installing
+# liburing) after a first build leaves the old objects in place, `make config`
+# says yes, and the backend still answers "built without".
+FLAGS := $(BIN)/.detected
+DEPS  := $(HDRS) $(FLAGS)
 OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/uring_backend.o \
         $(BIN)/xdp_backend.o \
         $(BIN)/dpdk_backend.o $(BIN)/tcp_backend.o $(BIN)/tcp_dpdk_backend.o \
         $(BIN)/tcp_xdp_backend.o $(LWIP_OBJS)
 
-.PHONY: all lib test example clean config
+.PHONY: all lib test example clean config FORCE
 
 all: lib $(if $(HAVE_XDP),$(BIN)/xdp_filter.bpf.o $(BIN)/xdp_tcp_filter.bpf.o)
 
@@ -74,30 +80,35 @@ $(BIN)/libdgram_io.a: $(OBJS)
 $(BIN):
 	mkdir -p $(BIN)
 
-$(BIN)/factory.o: src/factory.cpp $(HDRS) | $(BIN)
+$(FLAGS): FORCE | $(BIN)
+	@echo 'uring=$(HAVE_URING) xdp=$(HAVE_XDP) dpdk=$(HAVE_DPDK) lwip=$(HAVE_LWIP)' | \
+	  cmp -s - $@ 2>/dev/null || \
+	  echo 'uring=$(HAVE_URING) xdp=$(HAVE_XDP) dpdk=$(HAVE_DPDK) lwip=$(HAVE_LWIP)' > $@
+
+$(BIN)/factory.o: src/factory.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-$(BIN)/udp_backend.o: src/udp_backend.cpp src/udp_socket.h $(HDRS) | $(BIN)
+$(BIN)/udp_backend.o: src/udp_backend.cpp src/udp_socket.h $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-$(BIN)/uring_backend.o: src/uring_backend.cpp src/udp_socket.h $(HDRS) | $(BIN)
+$(BIN)/uring_backend.o: src/uring_backend.cpp src/udp_socket.h $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(URING_CXXFLAGS) -c $< -o $@
-$(BIN)/tcp_backend.o: src/tcp_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/tcp_backend.o: src/tcp_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-$(BIN)/xdp_backend.o: src/xdp_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/xdp_backend.o: src/xdp_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) -c $< -o $@
-$(BIN)/dpdk_backend.o: src/dpdk_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/dpdk_backend.o: src/dpdk_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(DPDK_CXXFLAGS) -c $< -o $@
-$(BIN)/tcp_xdp_backend.o: src/tcp_xdp_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/tcp_xdp_backend.o: src/tcp_xdp_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(LWIP_CPPFLAGS) -c $< -o $@
-$(BIN)/tcp_dpdk_backend.o: src/tcp_dpdk_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/tcp_dpdk_backend.o: src/tcp_dpdk_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) -c $< -o $@
 
 # Vendored lwIP, compiled once into bin/lwip/ mirroring the source layout.
-$(BIN)/lwip/%.o: $(LWIP_DIR)/src/%.c src/lwip/lwipopts.h | $(BIN)
+$(BIN)/lwip/%.o: $(LWIP_DIR)/src/%.c src/lwip/lwipopts.h $(FLAGS) | $(BIN)
 	@mkdir -p $(dir $@)
 	$(CC) $(LWIP_CFLAGS) -c $< -o $@
-$(BIN)/lwip_port.o: src/lwip/lwip_port.c src/lwip/lwipopts.h | $(BIN)
+$(BIN)/lwip_port.o: src/lwip/lwip_port.c src/lwip/lwipopts.h $(FLAGS) | $(BIN)
 	$(CC) $(LWIP_CFLAGS) -c $< -o $@
-$(BIN)/lwip_tcp.o: src/lwip_tcp.cpp $(HDRS) | $(BIN)
+$(BIN)/lwip_tcp.o: src/lwip_tcp.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(LWIP_CPPFLAGS) -c $< -o $@
 
 # XDP filter programs, loaded at runtime from next to the binary.
