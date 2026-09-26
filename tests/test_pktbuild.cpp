@@ -2,7 +2,7 @@
 // Copyright 2026 Denis Tishkov
 
 // Unit tests for dgram_io/pkt.h: Ethernet/IPv4/UDP frame construction and parsing
-// used by the L2 backends (AF_XDP now, DPDK later). No root, no sockets.
+// used by the L2 backends (xdp, dpdk). No root, no sockets.
 #include "dgram_io/pkt.h"
 
 using namespace dgram_io;  // NOLINT: test-local convenience
@@ -24,8 +24,8 @@ namespace {
 
 pkt::Template make_template() {
   pkt::Template t{};
-  const uint8_t src[6] = {0x90, 0xe2, 0xba, 0xed, 0x3d, 0x34};
-  const uint8_t dst[6] = {0x90, 0xe2, 0xba, 0xed, 0x3d, 0x35};
+  const uint8_t src[6] = {0x02, 0x00, 0x00, 0x00, 0x00, 0x01};  // locally
+  const uint8_t dst[6] = {0x02, 0x00, 0x00, 0x00, 0x00, 0x02};  // administered
   std::memcpy(t.src_mac, src, 6);
   std::memcpy(t.dst_mac, dst, 6);
   inet_pton(AF_INET, "192.168.77.1", &t.src_ip_be);
@@ -145,13 +145,13 @@ int main() {
 
   // parse_mac: strict -- exactly six 2-hex-digit octets, nothing after.
   uint8_t m[6];
-  CHECK(pkt::parse_mac("90:e2:ba:ed:3d:34", m));
-  CHECK(m[0] == 0x90 && m[5] == 0x34);
+  CHECK(pkt::parse_mac("02:00:5e:10:20:34", m));
+  CHECK(m[0] == 0x02 && m[4] == 0x20 && m[5] == 0x34);
   CHECK(pkt::parse_mac("0:1:2:3:4:5", m));  // single digits are fine
-  CHECK(!pkt::parse_mac("90:e2:ba:ed:3d", m));       // five octets
-  CHECK(!pkt::parse_mac("90:e2:ba:ed:3d:34:56", m)); // trailing octet
-  CHECK(!pkt::parse_mac("90:e2:ba:ed:3d:1ff", m));   // octet > 0xff
-  CHECK(!pkt::parse_mac("90:e2:ba:ed:3d:34x", m));   // trailing garbage
+  CHECK(!pkt::parse_mac("02:00:5e:10:20", m));       // five octets
+  CHECK(!pkt::parse_mac("02:00:5e:10:20:34:56", m)); // trailing octet
+  CHECK(!pkt::parse_mac("02:00:5e:10:20:1ff", m));   // octet > 0xff
+  CHECK(!pkt::parse_mac("02:00:5e:10:20:34x", m));   // trailing garbage
   CHECK(!pkt::parse_mac("", m));
   CHECK(!pkt::parse_mac("hello", m));
 

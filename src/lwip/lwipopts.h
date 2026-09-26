@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// lwIP configuration for the --io tcp-dpdk backend.
+// lwIP configuration for the tcp-dpdk and tcp-xdp backends.
 //
 // Everything here is chosen for one workload: a single long-lived TCP
 // connection carrying a continuous one-way stream of small records over a
@@ -21,7 +21,8 @@
 //     a 10 us-RTT link far below line rate, and it is the first thing to hit
 //     when a "TCP is slow" measurement is really "the window was 64 KB".
 //  3. TX single pbuf. Each segment leaves as one contiguous buffer, which is
-//     exactly what an mbuf wants -- no chain walking in linkoutput.
+//     exactly what an mbuf or a UMEM frame wants -- no chain walking in
+//     linkoutput.
 //  4. Statistics on. They cost a few increments per packet and are the only
 //     honest way to say what the stack did (retransmits, out-of-order,
 //     memory-pool failures) instead of guessing from latency curves.
@@ -59,7 +60,7 @@
 // ---- memory --------------------------------------------------------------
 // The heap backs PBUF_RAM, which is where tcp_write(..., COPY) puts payload.
 // It has to cover everything unacknowledged plus what we hand it in one
-// batch; 16 MB is ~100x the bandwidth-delay product of this link, so the
+// batch; 16 MB is ~100x the bandwidth-delay product of such a link, so the
 // first-fit allocator never has to work hard.
 #define MEM_LIBC_MALLOC            0
 #define MEM_ALIGNMENT              8
@@ -80,7 +81,7 @@
 #define TCP_MSS                    1460
 #define LWIP_WND_SCALE             1
 #define TCP_RCV_SCALE              5           // 65535 << 5 = 2 MB ceiling
-// 1 MB each way. The bandwidth-delay product of this link is ~25 KB (10 Gb/s
+// 1 MB each way. The bandwidth-delay product of such a link is ~25 KB (10 Gb/s
 // x 20 us), so this is 40x the window the transfer can actually fill -- the
 // point is only that the window never becomes the limit while we measure the
 // stack. lwIP caps the receive window at 0xFFFF << TCP_RCV_SCALE.
@@ -105,9 +106,9 @@
 // visible next to the socket options the kernel backend sets.
 
 // ---- checksums -----------------------------------------------------------
-// Software checksums on both generate and check. The ixgbe can do IPv4/TCP
-// offload, and turning these off is measured separately in the report -- but
-// the default has to be the one that is correct on any PMD.
+// Software checksums on both generate and check. Most 10G NICs can offload
+// IPv4/TCP checksums, but the frame transports here do not ask for it, and
+// the default has to be the one that is correct on any PMD or XSK.
 #define CHECKSUM_GEN_IP            1
 #define CHECKSUM_GEN_TCP           1
 #define CHECKSUM_GEN_ICMP          1
@@ -125,9 +126,9 @@
 #define LWIP_STATS                 1
 #define LWIP_STATS_DISPLAY         1
 // 32-bit counters. The default STAT_COUNTER is u16_t, which wraps every 65536
-// packets -- at 200k msg/s that is every third of a second, and the first
-// wire run duly reported a sender that had "transmitted" 1822 segments while
-// its NIC counted 198433 frames. Diagnostics that wrap are worse than no
+// packets -- at 200k msg/s that is every third of a second, and an early run
+// duly reported a sender that had "transmitted" 1822 segments while its NIC
+// counted 198433 frames. Diagnostics that wrap are worse than no
 // diagnostics: they look like a finding.
 #define LWIP_STATS_LARGE           1
 #define TCP_STATS                  1

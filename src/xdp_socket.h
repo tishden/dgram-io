@@ -3,7 +3,7 @@
 
 // Shared AF_XDP plumbing for the two XSK backends: the raw-datagram one
 // (xdp_backend.cpp) and the TCP one (tcp_xdp_backend.cpp). Same reason as
-// dgram_io/dpdk_port.h: if the two set up their UMEM, rings, filter or link
+// dpdk_port.h: if the two set up their UMEM, rings, filter or link
 // wait even slightly differently, an A/B between the stacks quietly turns
 // into an A/B between two socket configurations.
 //
@@ -42,10 +42,11 @@
 namespace dgram_io {
 namespace xsk {
 
-// RX depth is the whole loss-absorption budget: unlike kernel UDP with its
-// 64 MB SO_RCVBUF (~240 ms of stream), an XSK drops on the NIC once the fill
-// ring drains. 8192 frames ~ 30 ms at 265k pkt/s -- enough to ride out the
-// scheduler stalls this host shows on non-isolated cores.
+// RX depth is the whole loss-absorption budget: unlike a kernel UDP socket,
+// whose receive buffer (16 MB here, see udp_socket.h) holds tens of
+// milliseconds of traffic, an XSK drops on the NIC once the fill ring drains.
+// 8192 frames is ~30 ms at 265k pkt/s -- enough to ride out the scheduler
+// stalls of a process that is not on an isolated core.
 //
 // Frame size: 4096, not the 2048 most AF_XDP code uses. In zero-copy mode the
 // NIC receives straight into a UMEM chunk minus the kernel's 256-byte
@@ -70,16 +71,15 @@ inline constexpr uint32_t kNumFrames = kRxFrames + kTxFrames;  // 40 MB UMEM
 inline constexpr int kRxBatch = 256;  // drain hard: RX-ring-full inside the ZC
                                       // driver is a silent drop (no counter)
 // Minimum Ethernet frame without FCS. The kernel pads runts on transmit; the
-// XSK TX path does not, and the peer NIC silently drops them -- measured on
-// the step-7 wire as ~1% heartbeat loss (58-byte frames). TCP's pure ACKs
-// (54 bytes) and ARP (42) live entirely below this line.
+// XSK TX path does not, and the peer NIC may silently drop them. TCP's pure
+// ACKs (54 bytes) and ARP (42) live entirely below this line.
 inline constexpr uint32_t kMinFrame = 60;
 
 struct Options {
   std::string ifname;
   int queue = 0;
   bool force_copy = false;
-  std::string bpf_obj;      // empty = default_obj next to the binary
+  std::string bpf_obj;      // empty = default_obj, searched (see open())
   const char* default_obj = "xdp_filter.bpf.o";  // per-backend filter
   uint16_t port = 0;        // written into the filter's port_map
   const char* tag = "io_xdp";
@@ -88,6 +88,9 @@ struct Options {
 // One XSK on one queue of one NIC, plus the filter that feeds it.
 class Port {
  public:
+  Port() = default;
+  Port(const Port&) = delete;  // owns the UMEM mapping and the attach
+  Port& operator=(const Port&) = delete;
   ~Port() {
     if (sock_) xsk_socket__delete(sock_);
     if (prog_) {
@@ -111,8 +114,7 @@ class Port {
   // --- TX ------------------------------------------------------------------
   // Grabs a free UMEM frame to build into, or nullptr after a bounded spin.
   // Bounded rather than blocking: a wedged NIC (link flap) must not freeze
-  // the caller -- the step-7 wire run measured blocking here as a 1.4 s stall
-  // and 278k lost messages.
+  // the caller for as long as the link takes to come back.
   uint8_t* tx_alloc(uint64_t* addr) {
     if (tx_free_n_ == 0) {
       for (int spin = 0; tx_free_n_ == 0; ++spin) {
@@ -131,7 +133,7 @@ class Port {
   void tx_release(uint64_t addr) { tx_free_[tx_free_n_++] = addr; }
 
   // Submits a built frame. Pads runts (see kMinFrame) -- the caller must have
-  // left room, which every frame does inside a 2048-byte UMEM slot.
+  // left room, which every frame does inside a kFrameSize UMEM chunk.
   bool tx_submit(uint64_t addr, uint32_t len) {
     if (len < kMinFrame) {
       std::memset(base_ + addr + len, 0, kMinFrame - len);
@@ -243,27 +245,29 @@ class Port {
 
  private:
   // Detaches an XDP program left on this interface by an earlier instance of
-  // ourselves. Returns true if something was removed.
+  // ourselves, recognised by program name. Only that program goes: under a
+  // libxdp dispatcher every other program stays attached, and a legacy
+  // single-program attach is removed only when that one program is ours.
+  // Returns true if something was removed.
   bool detach_stale(const char* tag) {
     xdp_multiprog* mp = xdp_multiprog__get_from_ifindex(ifindex_);
     if (!mp || libxdp_get_error(mp)) return false;
     const char* ours = xdp_program__name(prog_);
-    bool mine = false;
-    for (xdp_program* p = xdp_multiprog__next_prog(nullptr, mp); p;
-         p = xdp_multiprog__next_prog(p, mp)) {
-      const char* n = xdp_program__name(p);
-      if (n && ours && std::strcmp(n, ours) == 0) mine = true;
+    auto is_ours = [&](xdp_program* p) {
+      const char* n = p ? xdp_program__name(p) : nullptr;
+      return n && ours && std::strcmp(n, ours) == 0;
+    };
+    int r = -1;
+    if (xdp_multiprog__is_legacy(mp)) {
+      if (is_ours(xdp_multiprog__main_prog(mp))) r = xdp_multiprog__detach(mp);
+    } else {
+      for (xdp_program* p = xdp_multiprog__next_prog(nullptr, mp); p;
+           p = xdp_multiprog__next_prog(p, mp)) {
+        if (!is_ours(p)) continue;
+        r = xdp_program__detach(p, ifindex_, xdp_multiprog__attach_mode(mp), 0);
+        break;
+      }
     }
-    if (!mine) {  // single-prog attach: the main program is the whole story
-      xdp_program* main = xdp_multiprog__main_prog(mp);
-      const char* n = main ? xdp_program__name(main) : nullptr;
-      if (n && ours && std::strcmp(n, ours) == 0) mine = true;
-    }
-    if (!mine) {
-      xdp_multiprog__close(mp);
-      return false;
-    }
-    const int r = xdp_multiprog__detach(mp);
     xdp_multiprog__close(mp);
     if (r == 0)
       fprintf(stderr, "%s: detached a stale '%s' left on %s by an earlier run\n",
@@ -326,6 +330,10 @@ inline bool Port::open(const Options& opt, std::string* err) {
   // Our own L2/L3 identity comes from the interface itself.
   {
     const int s = socket(AF_INET, SOCK_DGRAM, 0);
+    if (s < 0) {
+      *err = std::string("socket: ") + strerror(errno);
+      return false;
+    }
     ifreq ifr{};
     std::strncpy(ifr.ifr_name, opt.ifname.c_str(), IFNAMSIZ - 1);
     if (ioctl(s, SIOCGIFHWADDR, &ifr) != 0) {
@@ -372,33 +380,39 @@ inline bool Port::open(const Options& opt, std::string* err) {
   // Load and attach the filter before the socket exists: its redirect falls
   // back to XDP_PASS until the socket lands in the map, so there is no window
   // where traffic is dropped.
+  // Default: next to the running binary (a build tree), else where `make
+  // install` put it (DGRAM_IO_BPFDIR, set by the Makefile).
   std::string obj = opt.bpf_obj;
-  if (obj.empty()) {  // default: next to the running binary
+  if (obj.empty()) {
     char exe[4096];
     const ssize_t n = readlink("/proc/self/exe", exe, sizeof(exe) - 1);
     if (n > 0) {
       exe[n] = 0;
-      obj = std::string(exe);
-        obj = obj.substr(0, obj.find_last_of('/') + 1) + opt.default_obj;
+      const std::string dir(exe, exe + n);
+      obj = dir.substr(0, dir.find_last_of('/') + 1) + opt.default_obj;
     }
+#ifdef DGRAM_IO_BPFDIR
+    if (obj.empty() || access(obj.c_str(), R_OK) != 0)
+      obj = std::string(DGRAM_IO_BPFDIR) + "/" + opt.default_obj;
+#endif
   }
   prog_ = xdp_program__open_file(obj.c_str(), nullptr, nullptr);
   if (libxdp_get_error(prog_)) {
     *err = "xdp_program__open_file " + obj +
-           " failed (make builds it next to the binary; Config::bpf_obj overrides)";
+           " failed (set Config::bpf_obj to the path of " + opt.default_obj +
+           ")";
     prog_ = nullptr;
     return false;
   }
   mode_ = XDP_MODE_NATIVE;
   ret = xdp_program__attach(prog_, ifindex_, mode_, 0);
   if (ret == -EBUSY) {
-    // A program is already attached. Almost always it is *ours*, orphaned by
-    // a process that died without running its destructor (SIGKILL, or a
-    // sweep interrupted at the wrong moment): the attach then fails with
-    // "Device or resource busy" on every later start and the host looks
-    // permanently broken until someone detaches it by hand. Clean up after
-    // ourselves -- but only if the attached program really is ours, by name.
-    // Anyone else's XDP program is none of our business.
+    // A program is already attached. Often it is *ours*, orphaned by a
+    // process that died without running its destructor (SIGKILL): the attach
+    // then fails with "Device or resource busy" on every later start and the
+    // host looks permanently broken until someone detaches it by hand. Clean
+    // up after ourselves -- but only our own program, by name. Anyone else's
+    // XDP program is none of our business.
     if (detach_stale(opt.tag)) ret = xdp_program__attach(prog_, ifindex_, mode_, 0);
   }
   if (ret) {  // veth without driver XDP etc.: generic (skb) mode
@@ -474,10 +488,10 @@ inline bool Port::open(const Options& opt, std::string* err) {
   for (uint32_t i = kRxFrames; i < kNumFrames; ++i)
     tx_free_[tx_free_n_++] = static_cast<uint64_t>(i) * kFrameSize;
 
-  // Binding an XSK makes ixgbe reset the device ("Multiqueue Disabled" in
-  // dmesg) and the link retrains on BOTH ends of the wire for a second or
-  // two; anything transmitted before carrier returns just evaporates. Wait it
-  // out (instant on veth / settled links).
+  // Binding an XSK can make the driver reset the device (ixgbe logs
+  // "Multiqueue Disabled"), and the link retrains on BOTH ends of the wire
+  // for a second or two; anything transmitted before carrier returns just
+  // evaporates. Wait it out (instant on veth and on settled links).
   {
     const std::string carrier = "/sys/class/net/" + opt.ifname + "/carrier";
     bool up = false;

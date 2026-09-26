@@ -1,19 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// DPDK backend: the NIC is taken over by the ixgbe PMD (vfio-pci) and polled
-// from userspace -- no syscalls, no kernel code and no XDP machinery on the
-// datapath. EAL is initialised inside create() on the core
-// the process is already pinned to; one port, one RX + one TX queue.
+// DPDK backend: the NIC is taken over by its poll-mode driver (behind
+// vfio-pci) and polled from userspace -- no syscalls, no kernel code and no
+// XDP machinery on the datapath. EAL is initialised inside create() on the
+// core the process is already pinned to; one port, one RX + one TX queue.
+//
+// EAL is process-wide: one DPDK backend (dpdk or tcp-dpdk) per process, and
+// once it is destroyed EAL is cleaned up and cannot be initialised again.
 //
 // The mbuf lifecycle implements the Backend RX contract directly: packets
 // returned by rx() are views into mbufs which are freed at the start of the
 // *next* rx() call. TX copies the payload into a fresh mbuf (same policy as
 // the other backends) and bursts on flush().
 //
-// Unlike ixgbe zero-copy AF_XDP , PMD drop accounting is
-// complete: anything the app did not receive shows up in rte_eth_stats
-// (imissed/ierrors/rx_nombuf), printed in log_stats().
+// Unlike AF_XDP in zero-copy mode, where a frame the driver cannot place is
+// dropped without a trace, PMD drop accounting is complete: anything the
+// caller did not receive shows up in rte_eth_stats (imissed/ierrors/
+// rx_nombuf), printed in log_stats().
 #include "dgram_io/backend.h"
 
 #ifdef HAVE_DPDK
@@ -31,7 +35,7 @@
 #include <string>
 #include <vector>
 
-#include "dgram_io/dpdk_port.h"
+#include "dpdk_port.h"
 #include "dgram_io/pkt.h"
 #include "dgram_io/limits.h"
 
@@ -68,8 +72,10 @@ class DpdkBackend final : public Backend {
       const uint16_t sent = rte_eth_tx_burst(
           port_.id, 0, txq_ + off, static_cast<uint16_t>(q_ - off));
       off += sent;
-      if (sent == 0) {  // TX ring full: brief poll, then drop (fail fast --
-        if (++spins_ < 100000) continue;  // see the XDP stall rationale
+      // TX ring full: keep offering for a bounded spin, then drop. A wedged
+      // NIC (link flap) must not freeze the caller inside flush().
+      if (sent == 0) {
+        if (++spins_ < 100000) continue;
         spins_ = 0;
         for (; off < q_; ++off) {
           rte_pktmbuf_free(txq_[off]);
@@ -123,12 +129,13 @@ class DpdkBackend final : public Backend {
     rte_eth_stats st{};
     rte_eth_stats_get(port_.id, &st);
     fprintf(f,
-            "io_dpdk: port=%u tx_pkts=%llu tx_drop=%llu rx_pkts=%llu "
+            "io_dpdk: port=%u tx_pkts=%llu tx_drop=%llu tx_refused=%llu "
+            "rx_pkts=%llu "
             "rx_filtered=%llu hw_ipackets=%llu hw_opackets=%llu "
             "hw_imissed=%llu hw_ierrors=%llu hw_oerrors=%llu "
             "arp_replies=%llu hw_rx_nombuf=%llu\n",
             port_.id, (unsigned long long)tx_pkts_, (unsigned long long)tx_drop_,
-            (unsigned long long)rx_pkts_, (unsigned long long)rx_filtered_,
+            (unsigned long long)tx_refused_, (unsigned long long)rx_pkts_, (unsigned long long)rx_filtered_,
             (unsigned long long)st.ipackets, (unsigned long long)st.opackets,
             (unsigned long long)st.imissed, (unsigned long long)st.ierrors,
             (unsigned long long)st.oerrors, (unsigned long long)arp_replies_,
@@ -143,7 +150,7 @@ class DpdkBackend final : public Backend {
       flush();
       m = rte_pktmbuf_alloc(port_.pool);
       if (!m) {
-        ++tx_drop_;
+        ++tx_refused_;  // back-pressure: the caller offers it again
         return false;
       }
     }
@@ -199,7 +206,8 @@ class DpdkBackend final : public Backend {
   int spins_ = 0;
   rte_mbuf* held_[kRxBatch];
   uint32_t held_n_ = 0;
-  uint64_t tx_pkts_ = 0, tx_drop_ = 0, rx_pkts_ = 0, rx_filtered_ = 0;
+  uint64_t tx_pkts_ = 0, tx_drop_ = 0, tx_refused_ = 0, rx_pkts_ = 0,
+           rx_filtered_ = 0;
 };
 
 std::unique_ptr<Backend> DpdkBackend::create(const Config& cfg,
@@ -220,8 +228,8 @@ std::unique_ptr<Backend> DpdkBackend::create(const Config& cfg,
     *err = "dpdk needs dpdk_ip, our IPv4 for the headers we build";
     return nullptr;
   }
-  b->tmpl_.src_port_be = pkt::htons_u16(cfg.port);
-  b->tmpl_.dst_port_be = pkt::htons_u16(cfg.port);
+  b->tmpl_.src_port_be = htons(cfg.port);
+  b->tmpl_.dst_port_be = htons(cfg.port);
 
   if (!cfg.listener) {
     if (inet_pton(AF_INET, cfg.dst_ip.c_str(), &b->tmpl_.dst_ip_be) != 1) {
@@ -258,8 +266,8 @@ std::unique_ptr<Backend> make_dpdk_backend(const Config& cfg,
 namespace dgram_io {
 std::unique_ptr<Backend> make_dpdk_backend(const Config&, std::string* err) {
   *err =
-      "built without DPDK support (install dpdk-devel and rebuild: the "
-      "Makefile detects it via pkg-config libdpdk)";
+      "built without DPDK support (install DPDK's development package and "
+      "rebuild: the Makefile detects it via pkg-config libdpdk)";
   return nullptr;
 }
 }  // namespace dgram_io

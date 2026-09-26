@@ -9,12 +9,11 @@
 namespace dgram_io {
 
 // How much payload one datagram carries. A default, not a constant: the
-// ceiling a transport like this actually hits in a cloud is counted in
-// PACKETS, not bytes -- on AWS the NIC handed out around 1.3M packets/s while
-// the frames were 19% full -- so how much rides in one datagram acts directly
-// on the binding constraint. 1400 leaves room for IP/UDP headers inside the
-// 1500-byte MTU every path carries; raise Config::max_datagram where the path
-// is known to pass jumbo frames.
+// ceiling a packet path usually hits, in a cloud especially, is counted in
+// packets per second, not bytes, so how much rides in one datagram acts
+// directly on the binding constraint. 1400 leaves room for IP/UDP headers
+// inside the 1500-byte MTU every path carries; raise Config::max_datagram
+// where the path is known to pass jumbo frames.
 inline constexpr uint32_t kDefaultDatagram = 1400;
 
 // Compile-time ceiling for that runtime value. Buffers that must hold a whole

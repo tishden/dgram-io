@@ -46,7 +46,7 @@ void usage() {
           "  -n N             client: datagrams to send (default 10000)\n"
           "  --size N         payload bytes (default 64)\n"
           "  --ifname NAME    xdp: NIC to bind the socket to\n"
-          "  --queue N        xdp: NIC queue index\n"
+          "  --queue N        xdp: NIC queue index (Config::xdp_queue)\n"
           "  --dst-mac MAC    xdp/dpdk: peer MAC\n"
           "  --xdp-copy       xdp: skip the zero-copy attempt\n"
           "  --dpdk-pci ADDR  dpdk: PCI address to take over\n"
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     else if (a == "-n") count = strtoull(next().c_str(), nullptr, 10);
     else if (a == "--size") size = static_cast<uint32_t>(atoi(next().c_str()));
     else if (a == "--ifname") cfg.ifname = next();
-    else if (a == "--queue") cfg.queue = atoi(next().c_str());
+    else if (a == "--queue") cfg.xdp_queue = atoi(next().c_str());
     else if (a == "--dst-mac") cfg.dst_mac = next();
     else if (a == "--xdp-copy") cfg.force_copy = true;
     else if (a == "--dpdk-pci") cfg.dpdk_pci = next();
@@ -105,11 +105,15 @@ int main(int argc, char** argv) {
     std::signal(SIGTERM, on_stop);
     while (!g_stop) {
       const int n = net->rx(rx.data(), static_cast<int>(rx.size()));
+      if (n < 0) {
+        fprintf(stderr, "server: datapath failed\n");
+        break;
+      }
       for (int i = 0; i < n; ++i) {
         net->queue_to(rx[i].data, rx[i].len, rx[i].from);
         ++seen;
       }
-      if (n <= 0) continue;
+      if (n == 0) continue;
       net->flush();
       // Only on crossing a multiple: an idle loop parked on one must not
       // print (and, line-buffered, write()) on every empty poll.
@@ -131,7 +135,10 @@ int main(int argc, char** argv) {
   for (uint64_t i = 0; i < count; ++i) {
     std::memcpy(payload.data(), &i, sizeof(i) <= size ? sizeof(i) : size);
     const uint64_t t0 = now_ns();
-    if (!net->queue(payload.data(), size)) { fprintf(stderr, "queue failed\n"); return 1; }
+    if (!net->queue(payload.data(), size)) {
+      fprintf(stderr, "queue refused datagram %" PRIu64 "\n", i);
+      return 1;
+    }
     net->flush();
 
     // Wait for the reflection, with a bound so a lost datagram does not wedge
@@ -140,6 +147,10 @@ int main(int argc, char** argv) {
     const uint64_t deadline = t0 + 100000000ull;  // 100 ms
     for (;;) {
       const int n = net->rx(rx.data(), static_cast<int>(rx.size()));
+      if (n < 0) {
+        fprintf(stderr, "client: datapath failed\n");
+        return 1;
+      }
       if (n > 0) {
         const uint64_t dt = now_ns() - t0;
         est.add_sample(dt);

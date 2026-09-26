@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// lwIP endpoint driven from our poll loop. See lwip_tcp.h for the shape and
-// the README for why a userspace TCP stack is wired up this way at
-// all.
-#include "dgram_io/lwip_tcp.h"
+// lwIP endpoint driven from our poll loop. See lwip_tcp.h for the shape.
+#include "lwip_tcp.h"
 
 #ifdef HAVE_LWIP
 
@@ -26,7 +24,7 @@
 #include "lwip/timeouts.h"
 #include "netif/ethernet.h"
 
-extern "C" void transport_lwip_seed(unsigned seed);
+extern "C" void dgram_io_lwip_seed(unsigned seed);
 
 namespace dgram_io {
 
@@ -208,13 +206,13 @@ bool LwipTcp::init(const LwipParams& p, LwipFrameIo* io, std::string* err) {
   scratch_.resize(2048);
   peers_.reserve(p.server ? (p.peers < 1 ? 1 : p.peers) : 1);
 
-  transport_lwip_seed(p.seed ? p.seed : static_cast<unsigned>(now_ms()));
+  dgram_io_lwip_seed(p.seed ? p.seed : static_cast<unsigned>(now_ms()));
   lwip_init();
   g_only = this;
 
   ip4_addr_t ip{}, mask{}, gw{};
   if (!ip4addr_aton(params_.ip.c_str(), &ip)) {
-    *err = "bad dpdk_ip " + params_.ip;
+    *err = "bad local IPv4 address '" + params_.ip + "'";
     return false;
   }
   if (!ip4addr_aton(params_.netmask.c_str(), &mask)) {
@@ -315,34 +313,56 @@ bool LwipTcp::wait_ready(std::string* err) {
   }
 }
 
+bool LwipTcp::write_record(Peer& p, const void* payload, size_t len) {
+  const size_t total = kRecPrefix + len;
+  if (scratch_.size() < total) scratch_.resize(total);
+  scratch_[0] = static_cast<uint8_t>(len & 0xff);
+  scratch_[1] = static_cast<uint8_t>(len >> 8);
+  if (len) std::memcpy(scratch_.data() + kRecPrefix, payload, len);
+  // tcp_write either queues all of it or none of it, so a failure here never
+  // leaves half a record in the stream.
+  if (tcp_write(p.pcb, scratch_.data(), static_cast<u16_t>(total),
+                TCP_WRITE_FLAG_COPY) != ERR_OK) {
+    ++p.tx_refused;
+    ++write_mem_;
+    return false;
+  }
+  ++p.tx_records;
+  return true;
+}
+
 bool LwipTcp::send_record(const void* payload, size_t len) {
-  bool ok = true;
+  // Fan-out is all-or-nothing, like the kernel tcp backend: false means the
+  // caller offers the same record again, so no peer may have taken it. Room
+  // is checked on every peer before anything is written.
+  const size_t total = kRecPrefix + len;
+  int live = 0;
   for (Peer& p : peers_) {
     if (!p.up) continue;
-    const size_t total = kRecPrefix + len;
-    // All-or-nothing: a record split across a failed write would desync the
-    // peer's deframer permanently, so the room is checked before anything is
-    // handed to the stack.
+    ++live;
     if (tcp_sndbuf(p.pcb) < total) {
       ++p.tx_refused;
-      ok = false;
-      continue;
+      return false;
     }
-    if (scratch_.size() < total) scratch_.resize(total);
-    scratch_[0] = static_cast<uint8_t>(len & 0xff);
-    scratch_[1] = static_cast<uint8_t>(len >> 8);
-    std::memcpy(scratch_.data() + kRecPrefix, payload, len);
-    const err_t e = tcp_write(p.pcb, scratch_.data(),
-                              static_cast<u16_t>(total), TCP_WRITE_FLAG_COPY);
-    if (e != ERR_OK) {
-      ++p.tx_refused;
-      ++write_mem_;
-      ok = false;
-      continue;
-    }
-    ++p.tx_records;
   }
-  return ok;
+  if (live == 0) return false;
+  bool written = false;
+  for (Peer& p : peers_) {
+    if (!p.up) continue;
+    if (write_record(p, payload, len)) {
+      written = true;
+      continue;
+    }
+    // Refused despite the room check (the segment pool ran dry). Before any
+    // peer took the record, refusing it is still clean. After, this peer's
+    // stream would silently miss one record, and a reliable stream that loses
+    // data is worse than a closed one: drop the peer.
+    if (!written) return false;
+    fprintf(stderr, "io_lwip: peer %s:%u dropped: out of stack memory mid fan-out\n",
+            ip4addr_ntoa(ip_2_ip4(&p.pcb->remote_ip)), p.pcb->remote_port);
+    drop_peer(p);
+  }
+  return true;
 }
 
 bool LwipTcp::send_record_to(const void* payload, size_t len,
@@ -352,25 +372,21 @@ bool LwipTcp::send_record_to(const void* payload, size_t len,
     if (peers_.size() > 1 &&
         (p.ep.ip_be != to.ip_be || p.ep.port_be != to.port_be))
       continue;
-    const size_t total = kRecPrefix + len;
-    if (tcp_sndbuf(p.pcb) < total) {
+    if (tcp_sndbuf(p.pcb) < kRecPrefix + len) {
       ++p.tx_refused;
       return false;
     }
-    if (scratch_.size() < total) scratch_.resize(total);
-    scratch_[0] = static_cast<uint8_t>(len & 0xff);
-    scratch_[1] = static_cast<uint8_t>(len >> 8);
-    std::memcpy(scratch_.data() + kRecPrefix, payload, len);
-    if (tcp_write(p.pcb, scratch_.data(), static_cast<u16_t>(total),
-                  TCP_WRITE_FLAG_COPY) != ERR_OK) {
-      ++p.tx_refused;
-      ++write_mem_;
-      return false;
-    }
-    ++p.tx_records;
-    return true;
+    return write_record(p, payload, len);
   }
   return false;
+}
+
+void LwipTcp::drop_peer(Peer& p) {
+  p.up = false;  // before the abort, so on_err does not report it again
+  if (p.pcb) {
+    tcp_abort(p.pcb);  // runs on_err, which clears p.pcb
+    p.pcb = nullptr;
+  }
 }
 
 void LwipTcp::flush() {
@@ -412,9 +428,13 @@ int LwipTcp::take(RxPacket* out, int max) {
     }
     if (bad) {
       ++desyncs_;
-      p.up = false;
+      fprintf(stderr, "io_lwip: framing error from a peer, connection dropped\n");
+      drop_peer(p);
     }
   }
+  // No live peer and nothing left to hand out: the datapath is dead, which
+  // the caller must be able to tell from "nothing yet".
+  if (emitted == 0 && live_peers() == 0) return -1;
   return emitted;
 }
 

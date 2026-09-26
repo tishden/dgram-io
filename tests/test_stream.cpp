@@ -91,18 +91,26 @@ void oversize_is_reported() {
   check(bad, "oversize must set the desync flag");
 }
 
-void zero_length_is_reported() {
+// An empty datagram is legal on every backend; on a stream it is a bare
+// prefix, and must come back as a record of length 0, not as damage.
+void zero_length_roundtrip() {
+  dgram_io::Framer f;
+  f.init(1024);
+  const uint8_t three[3] = {7, 8, 9};
+  check(f.append(three, 0), "append empty");
+  check(f.append(three, sizeof(three)), "append after empty");
   dgram_io::Deframer d;
   d.init(100, 8192);
   d.compact();
-  uint8_t buf[4] = {0, 0, 7, 7};
-  std::memcpy(d.write_ptr(), buf, sizeof(buf));
-  d.committed(sizeof(buf));
+  std::memcpy(d.write_ptr(), f.data(), f.size());
+  d.committed(f.size());
   const uint8_t* p;
   uint32_t len;
   bool bad = false;
-  check(!d.next(&p, &len, &bad), "zero length must not yield a record");
-  check(bad, "zero length must set the desync flag");
+  check(d.next(&p, &len, &bad) && len == 0, "empty record comes back empty");
+  check(d.next(&p, &len, &bad) && len == 3 && p[2] == 9,
+        "the record after it is intact");
+  check(!bad, "empty record is not a desync");
 }
 
 void framer_refuses_when_full() {
@@ -114,7 +122,9 @@ void framer_refuses_when_full() {
   check(!f.append(rec.data(), rec.size()), "third must be refused whole");
   check(f.size() == 2 * (500 + dgram_io::kRecPrefix), "size after refusal");
   // Partial drain then top-up: the refused record fits once space is freed.
+  check(!f.fits(rec.size()), "fits() agrees with the refusal");
   f.consume(600);
+  check(f.fits(rec.size()), "fits() after consume");
   check(f.append(rec.data(), rec.size()), "fits after consume");
 }
 
@@ -125,7 +135,7 @@ int main() {
                        size_t{1400}, size_t{4096}, size_t{60000}})
     roundtrip(chunk);
   oversize_is_reported();
-  zero_length_is_reported();
+  zero_length_roundtrip();
   framer_refuses_when_full();
   if (g_failed) {
     fprintf(stderr, "test_stream: %d checks failed\n", g_failed);

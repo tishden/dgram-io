@@ -26,6 +26,14 @@ std::unique_ptr<Backend> make_tcp_xdp_backend(const Config& cfg,
                                               std::string* err);
 
 std::unique_ptr<Backend> make_backend(const Config& cfg, std::string* err) {
+  // Checked once for every backend, before any of them sizes a buffer from
+  // it. Each backend may refuse a smaller size on top of this (AF_XDP: one RX
+  // buffer), but none of them has to guard against 0 or a runaway value.
+  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
+    *err = "max_datagram " + std::to_string(cfg.max_datagram) +
+           " out of range (1.." + std::to_string(kDatagramCap) + ")";
+    return nullptr;
+  }
   if (cfg.kind == "udp") return make_udp_backend(cfg, err);
   if (cfg.kind == "uring") return make_uring_backend(cfg, err);
   if (cfg.kind == "xdp") return make_xdp_backend(cfg, err);

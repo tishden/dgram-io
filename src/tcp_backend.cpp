@@ -48,7 +48,7 @@ namespace dgram_io {
 namespace {
 
 // Staging budget per connection. Deep enough to ride out a receiver stall of
-// ~4 ms at the 1.4 GB/s this link can do, shallow enough that a stuck peer is
+// several milliseconds at 10G line rate, shallow enough that a stuck peer is
 // noticed rather than absorbed forever.
 constexpr size_t kTxStage = 8u << 20;
 // One read() per rx() lands here; sized so a full 10G burst between two polls
@@ -94,12 +94,34 @@ void tune(int fd, const Config& cfg, bool sending) {
   set_nonblock(fd);
 }
 
+// connect() bounded by the setup deadline: a blocking connect to a host that
+// drops SYNs would otherwise sit in the kernel's own retry schedule for minutes.
+bool connect_until(int fd, const sockaddr_in& sa, uint64_t deadline_ms) {
+  set_nonblock(fd);
+  if (connect(fd, reinterpret_cast<const sockaddr*>(&sa), sizeof(sa)) == 0)
+    return true;
+  if (errno != EINPROGRESS) return false;
+  const uint64_t now = now_ms();
+  const int wait = now >= deadline_ms ? 0 : static_cast<int>(deadline_ms - now);
+  pollfd pf{fd, POLLOUT, 0};
+  if (poll(&pf, 1, wait) != 1) {
+    errno = ETIMEDOUT;
+    return false;
+  }
+  int so_err = 0;
+  socklen_t len = sizeof(so_err);
+  getsockopt(fd, SOL_SOCKET, SO_ERROR, &so_err, &len);
+  errno = so_err;
+  return so_err == 0;
+}
+
 struct Conn {
   int fd = -1;
   Endpoint peer;
   Framer tx;
   Deframer rx;
   bool up = false;
+  bool eof = false;  // FIN seen; closed once the buffered records are out
 };
 
 class TcpBackend final : public Backend {
@@ -111,26 +133,28 @@ class TcpBackend final : public Backend {
     if (listen_fd_ >= 0) close(listen_fd_);
   }
 
+  // Fan-out is all-or-nothing: either every live peer gets the record or none
+  // does. false tells the caller to offer the same record again, so a peer
+  // that had already taken it would receive it twice.
   bool queue(const void* payload, size_t len) override {
-    if (len > dgram_) return false;
-    bool ok = true;
+    if (len > dgram_ || live() == 0) return false;
+    if (!all_fit(len)) {
+      // Some peer's staging is full: push what we have and look once more.
+      // Only if a peer is still not draining do we refuse -- and a refusal is
+      // a whole record, counted, never a partial one.
+      flush();
+      if (live() == 0 || !all_fit(len)) {
+        ++tx_refused_;
+        return false;
+      }
+    }
     for (Conn& c : conns_) {
       if (!c.up) continue;
-      if (!c.tx.append(payload, len)) {
-        // Staging is full: push what we have and try once more. Only if the
-        // peer is still not draining do we refuse -- and a refusal is a whole
-        // record, counted, never a partial one.
-        flush();
-        if (!c.tx.append(payload, len)) {
-          ++tx_refused_;
-          ok = false;
-          continue;
-        }
-      }
+      c.tx.append(payload, len);  // cannot fail: all_fit() said so
       ++tx_records_;
     }
     if (staged() >= kFlushAt) flush();
-    return ok;
+    return true;
   }
 
   // The reverse-direction path (replies). Over TCP the answer goes
@@ -186,9 +210,9 @@ class TcpBackend final : public Backend {
       if (!c.up) continue;
       c.rx.compact();
       // One read per connection per call: the deframer buffer is deep enough
-      // that a second syscall would almost always come back EAGAIN, and an
-      // empty-socket syscall is measurable on this CPU (~3 us on this machine).
-      if (c.rx.write_space() > 0) {
+      // that a second syscall would almost always come back EAGAIN, and a
+      // syscall on an empty socket costs microseconds.
+      if (!c.eof && c.rx.write_space() > 0) {
         const ssize_t n = recv(c.fd, c.rx.write_ptr(), c.rx.write_space(),
                                MSG_DONTWAIT);
         if (n > 0) {
@@ -196,8 +220,9 @@ class TcpBackend final : public Backend {
           rx_bytes_ += static_cast<uint64_t>(n);
           ++syscalls_;
         } else if (n == 0) {
-          drop_conn(c, "eof");
-          continue;
+          // The peer is done sending, but what it sent before the FIN is
+          // still in the deframer: deliver that first, close after.
+          c.eof = true;
         } else if (errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
           ++recv_errs_;
           drop_conn(c, "recv");
@@ -218,8 +243,13 @@ class TcpBackend final : public Backend {
       if (bad) {  // impossible unless the peer is a different build
         ++desyncs_;
         drop_conn(c, "framing");
+      } else if (c.eof && !c.rx.has_record()) {
+        drop_conn(c, "eof");
       }
     }
+    // Every connection gone and nothing left to hand out: the datapath is
+    // dead, which the caller must be able to tell from "nothing yet".
+    if (emitted == 0 && live() == 0) return -1;
     return emitted;
   }
 
@@ -241,11 +271,17 @@ class TcpBackend final : public Backend {
   }
 
  private:
-  // Flush threshold: the sender already flushes whenever its ring drains, so
-  // this only bounds how much a *saturated* sender stages before it hands the
-  // batch to the kernel. One MTU-ish worth of records keeps the syscall
-  // amortised without adding a wait.
+  // Flush threshold: a caller normally flushes as soon as it has nothing more
+  // to send, so this only bounds how much a *saturated* sender stages before
+  // it hands the batch to the kernel. 64 KB keeps the send() amortised
+  // without holding records long enough to add latency.
   static constexpr size_t kFlushAt = 64 << 10;
+
+  bool all_fit(size_t len) const {
+    for (const Conn& c : conns_)
+      if (c.up && !c.tx.fits(len)) return false;
+    return true;
+  }
 
   size_t staged() const {
     size_t n = 0;
@@ -261,8 +297,11 @@ class TcpBackend final : public Backend {
     if (!c.up) return;
     c.up = false;
     ++closed_;
-    fprintf(stderr, "io_tcp: connection closed (%s: %s)\n", why,
-            strerror(errno));
+    if (c.eof)
+      fprintf(stderr, "io_tcp: connection closed by the peer\n");
+    else
+      fprintf(stderr, "io_tcp: connection closed (%s: %s)\n", why,
+              strerror(errno));
     close(c.fd);
     c.fd = -1;
   }
@@ -278,11 +317,6 @@ class TcpBackend final : public Backend {
 
 std::unique_ptr<Backend> TcpBackend::create(const Config& cfg,
                                             std::string* err) {
-  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
-    *err = "max_datagram out of range (1.." +
-           std::to_string(kDatagramCap) + ")";
-    return nullptr;
-  }
   auto b = std::unique_ptr<TcpBackend>(new TcpBackend());
   b->dgram_ = cfg.max_datagram;
   // cfg.listener is the *receiver* role. Over TCP the receiver is the client,
@@ -312,9 +346,8 @@ std::unique_ptr<Backend> TcpBackend::create(const Config& cfg,
       *err = std::string("listen: ") + strerror(errno);
       return nullptr;
     }
-    // Block here until the receivers attach. The bench driver starts the
-    // receiver first, so this normally returns in milliseconds; the deadline
-    // exists so a misconfigured run fails instead of hanging a sweep.
+    // Block here until the receivers attach. The deadline (tcp_setup_ms)
+    // exists so a misconfigured run fails instead of hanging forever.
     fprintf(stderr, "io_tcp: listening on :%u for %d peer(s)\n", cfg.port,
             npeers);
     while (static_cast<int>(b->conns_.size()) < npeers) {
@@ -361,8 +394,8 @@ std::unique_ptr<Backend> TcpBackend::create(const Config& cfg,
   }
 
   // Client role (receiver). Retry until the server's listen() is up: the
-  // bench driver starts us first on purpose, so the first few connects are
-  // expected to be refused.
+  // receiver may well start first, so the first few connects are expected
+  // to be refused.
   sockaddr_in sa{};
   sa.sin_family = AF_INET;
   sa.sin_port = htons(cfg.port);
@@ -376,7 +409,7 @@ std::unique_ptr<Backend> TcpBackend::create(const Config& cfg,
       *err = std::string("socket: ") + strerror(errno);
       return nullptr;
     }
-    if (connect(fd, reinterpret_cast<sockaddr*>(&sa), sizeof(sa)) == 0) {
+    if (connect_until(fd, sa, deadline)) {
       tune(fd, cfg, false);
       b->conns_.emplace_back();
       Conn& c = b->conns_.back();

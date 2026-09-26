@@ -9,7 +9,7 @@
 //   uring - the same kernel UDP socket, driven through io_uring: one submit
 //          per flushed batch, and an idle rx() poll costs no syscall at all
 //   xdp  - AF_XDP socket on a NIC queue, kernel stack bypassed (needs root)
-//   dpdk - ixgbe/ena PMD behind vfio-pci, the NIC entirely in user space
+//   dpdk - a DPDK poll-mode driver behind vfio-pci, the NIC in user space
 //   tcp  - kernel TCP sockets, sender = server / receiver = client
 //   tcp-dpdk - the same TCP role split, but the stack is lwIP in our process
 //          and the NIC is the same vfio-pci PMD
@@ -19,12 +19,14 @@
 //  * queue()/queue_to() copy the payload; the caller may reuse its buffer
 //    immediately. Datagrams accumulate (up to an internal batch) and leave on
 //    flush() or when the batch fills. Deciding *when* to flush -- the
-//    "source drained, send now" policy -- stays with the caller, not here:
-//    only the caller knows whether more work is coming.
+//    "nothing more to send right now" policy -- stays with the caller, not
+//    here: only the caller knows whether more work is coming.
 //  * rx() is non-blocking and returns at most `max` datagrams; the returned
 //    views (data pointers and endpoints) stay valid until the next rx() call.
-//  * Endpoint carries a MAC because L2 backends address whole frames; the UDP
-//    backend leaves it zeroed and ignores it on TX.
+//  * Endpoint carries a MAC because L2 backends address whole frames; the
+//    socket backends leave it zeroed and ignore it on TX.
+//  * One DPDK backend (dpdk or tcp-dpdk) and one lwIP backend (tcp-dpdk or
+//    tcp-xdp) per process: EAL and lwIP are process-wide singletons.
 #pragma once
 
 #include <cstdint>
@@ -59,29 +61,35 @@ struct Config {
   uint32_t max_datagram = kDefaultDatagram;
   bool listener = false;     // receiver role: bind/join instead of connect
   std::string dst_ip;        // sender role: where data goes (may be multicast)
+  uint16_t port = 0;         // UDP/TCP port, host order (src and dst on L2)
+  // udp + uring only; the L2 backends reach a multicast dst_ip by its group
+  // MAC and have no join, the stream backends have no multicast at all.
   bool multi_peer = false;   // sender fans out to several unicast peers: stay
                              // unconnected so replies from every peer get in
-  uint16_t port = 0;         // UDP port, host order (both src and dst for xdp)
   std::string mcast_if;      // multicast: egress interface / join interface IP
   std::string group;         // listener: multicast group to join
   // xdp + dpdk
-  std::string dst_mac;       // aa:bb:cc:dd:ee:ff; empty = derive/ARP (xdp only)
-  // xdp only
+  std::string dst_mac;       // aa:bb:cc:dd:ee:ff; empty = ARP (xdp only)
+  // xdp + tcp-xdp
   std::string ifname;        // NIC to bind the XSK to
-  int queue = 0;             // NIC queue index
+  int xdp_queue = 0;         // NIC queue index
   bool force_copy = false;   // skip the XDP_ZEROCOPY attempt
-  std::string bpf_obj;       // xdp_filter.bpf.o path; empty = next to binary
+  // Path of the XDP program object: xdp_filter.bpf.o for xdp,
+  // xdp_tcp_filter.bpf.o for tcp-xdp. Empty = that file next to the running
+  // binary, else in the directory `make install` put it in.
+  std::string bpf_obj;
   // tcp, tcp-dpdk, tcp-xdp: the sender (listener = false) is the TCP
   // server, the receiver the client. A stream has no datagram boundary, so
   // records carry a 2-byte length prefix (dgram_io/stream.h).
   int tcp_peers = 1;             // sender: connections to wait for at startup
   // accept/connect deadline. Generous on purpose: on the PMD/XSK datapaths
-  // each end's bind resets the NIC and retrains the DAC, so the pair can
+  // each end's bind can reset the NIC and retrain the link, so the pair can
   // spend tens of seconds settling before a SYN can even cross.
   unsigned tcp_setup_ms = 90000;
   unsigned tcp_busy_poll_us = 0; // kernel tcp: SO_BUSY_POLL (0 = off)
   bool tcp_nodelay = true;       // kernel tcp + lwIP: Nagle off by default
-  // dpdk only (the port has no kernel netdev: its identity comes from here)
+  // dpdk + tcp-dpdk (the port has no kernel netdev: its identity comes from
+  // here)
   std::string dpdk_pci;      // PCI address to take over (-a allow-list)
   std::string dpdk_vdev;     // virtual device, for a test without a NIC
                              // (net_af_packet,iface=..)
@@ -97,24 +105,27 @@ class Backend {
   virtual ~Backend() = default;
   // Copy one datagram into the backend's batch, addressed to the configured
   // destination (queue) or to `to` (queue_to; a reply to RxPacket::from).
-  // false = not accepted: larger than max_datagram, or -- on the backends
-  // with a bounded TX ring -- the ring is full right now. The latter is
-  // back-pressure: flush(), service rx(), and offer the datagram again.
+  // false = not accepted: larger than max_datagram, no destination (a
+  // listener that has not been given one), no live peer left on a stream, or
+  // the TX side is full right now. The last is back-pressure: flush(),
+  // service rx(), and offer the datagram again. A refused datagram was not
+  // sent anywhere, so offering it again never duplicates it.
   virtual bool queue(const void* payload, size_t len) = 0;
   virtual bool queue_to(const void* payload, size_t len,
                         const Endpoint& to) = 0;
   // Hand everything queued to the datapath.
   virtual void flush() = 0;
   // Up to `max` received datagrams into `out`, without blocking. Returns the
-  // count (0 = nothing yet) or -1 on a failed datapath; the views stay valid
-  // until the next rx().
+  // count (0 = nothing yet) or -1 on a failed datapath (a socket error; on a
+  // stream, every connection gone); the views stay valid until the next rx().
   virtual int rx(RxPacket* out, int max) = 0;
   virtual const char* name() const = 0;
   // One "<name>: k=v ..." line of counters into f.
   virtual void log_stats(FILE* f) const = 0;
 };
 
-// Returns nullptr and fills *err on failure (unknown kind, socket/XSK setup).
+// Returns nullptr and fills *err on failure (unknown kind, max_datagram out of
+// range, socket/XSK/port setup).
 std::unique_ptr<Backend> make_backend(const Config& cfg, std::string* err);
 
 // True for the reliable-stream backends (tcp, tcp-dpdk, tcp-xdp). A layer

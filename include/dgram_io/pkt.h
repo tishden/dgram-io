@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Ethernet/IPv4/UDP frame construction and parsing for L2 backends (AF_XDP
-// now, DPDK later -- an rte_mbuf holds the same bytes). Pure functions over
-// caller-owned buffers: no sockets, no libxdp, unit-testable without root
-// (test/test_pktbuild.cpp).
+// Ethernet/IPv4/UDP frame construction and parsing for the L2 backends (xdp
+// builds into a UMEM frame, dpdk into an rte_mbuf -- the same bytes). Pure
+// functions over caller-owned buffers: no sockets, no libxdp, unit-testable
+// without root (tests/test_pktbuild.cpp).
 //
-// Scope is deliberately narrow -- our own point-to-point wire:
+// Scope is deliberately narrow -- a point-to-point or single-subnet wire:
 //  * IPv4 only, no IP options on TX, options rejected on RX (ihl must be 5);
 //  * no fragmentation (frames fit the MTU by construction, DF is set);
 //  * UDP checksum 0 (legal for IPv4) -- neither XDP nor the NIC verifies it,
 //    and the kernel-UDP interop path accepts zero checksums;
-//  * IP header checksum is computed properly so a kernel-UDP peer (debug
-//    interop) does not drop our frames.
+//  * IP header checksum is computed properly so a kernel-UDP peer does not
+//    drop our frames.
 #pragma once
 
 #include <cstddef>
@@ -33,11 +33,13 @@ inline constexpr size_t kHdrLen = kEthLen + kIpLen + kUdpLen;  // 42
 inline constexpr uint16_t kEthIpv4 = 0x0800;  // host order
 inline constexpr uint8_t kProtoUdp = 17;
 // Minimum Ethernet frame (without FCS). The kernel pads runts on transmit;
-// the zero-copy XDP TX path does not, and the peer NIC silently drops them --
-// measured on the step-7 wire as ~1% heartbeat loss (58-byte frames).
+// the XDP TX path and a DPDK PMD do not, and the peer NIC may silently drop
+// what arrives short -- a datagram of under 18 bytes would simply vanish.
 inline constexpr size_t kMinFrame = 60;
 
-inline uint16_t htons_u16(uint16_t v) {
+// Unconditional 16-bit byte swap: host (little-endian) to network order,
+// without <arpa/inet.h>. x86-64 only, like the L2 backends that use it.
+inline uint16_t bswap16(uint16_t v) {
   return static_cast<uint16_t>((v << 8) | (v >> 8));
 }
 
@@ -49,11 +51,12 @@ inline uint16_t ip_checksum(const uint8_t* hdr, size_t len) {
   if (len & 1) sum += static_cast<uint32_t>(hdr[len - 1]) << 8;
   while (sum >> 16) sum = (sum & 0xffff) + (sum >> 16);
   const uint16_t folded = static_cast<uint16_t>(~sum);
-  return htons_u16(folded);  // network order, ready to memcpy at offset 10
+  return bswap16(folded);  // network order, ready to memcpy at offset 10
 }
 
 // Class-D test (224/4). Byte-wise so this header stays free of arpa/inet.h;
-// the companion of mcast_mac -- every backend classifies its --dst with this.
+// the companion of mcast_mac -- every backend classifies Config::dst_ip
+// with this.
 inline bool is_mcast(uint32_t ip_be) {
   return (reinterpret_cast<const uint8_t*>(&ip_be)[0] >> 4) == 0xe;
 }
@@ -91,8 +94,8 @@ inline Template with_dst(const Template& t, const dgram_io::Endpoint& to) {
 
 // "aa:bb:cc:dd:ee:ff" -> bytes; shared by the xdp and dpdk backends. Strict:
 // each octet is at most two hex digits and the string must end after the
-// sixth -- this is the fail-fast validator for --dst-mac, and on the DPDK
-// path a silently mis-parsed MAC means frames blackhole with no counter.
+// sixth -- this is the fail-fast validator for Config::dst_mac, and on the
+// DPDK path a silently mis-parsed MAC means frames blackhole with no counter.
 inline bool parse_mac(const char* s, uint8_t mac[6]) {
   unsigned v[6];
   int end = -1;
@@ -106,7 +109,8 @@ inline bool parse_mac(const char* s, uint8_t mac[6]) {
 
 // Writes headers + payload into frame (caller guarantees kHdrLen + len bytes);
 // returns the frame length. ip_id feeds the IPv4 identification field -- pass
-// an incrementing counter (debug/pcap readability; nothing depends on it).
+// an incrementing counter (pcap readability; nothing depends on it). len must
+// not exceed 65507, the most an IPv4 datagram can carry.
 inline size_t build(uint8_t* frame, const Template& t, uint16_t ip_id,
                     const void* payload, size_t len) {
   // Ethernet

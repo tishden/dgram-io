@@ -70,8 +70,9 @@ class LwipTcp {
   // Listens/connects and blocks (polling) until the peers are attached.
   bool wait_ready(std::string* err);
 
-  // Appends one length-prefixed record to a peer's send queue. false = the
-  // send window/queue is full; the record was not partially written.
+  // Appends one length-prefixed record to every live peer's send queue, or
+  // to none of them. false = some peer's send buffer is full (or no peer is
+  // left); nothing was written anywhere, so offering it again is safe.
   bool send_record(const void* payload, size_t len);
   bool send_record_to(const void* payload, size_t len, const Endpoint& to);
   // Hands everything queued to the stack and the frames to the wire.
@@ -80,6 +81,7 @@ class LwipTcp {
   // cheap) to call as often as the caller likes.
   void poll();
   // Pops reassembled records; views stay valid until the next take().
+  // -1 once no peer is left and nothing is buffered.
   int take(RxPacket* out, int max);
 
   void log_stats(FILE* f, const char* tag) const;
@@ -111,6 +113,8 @@ class LwipTcp {
 
   Peer* peer_for(tcp_pcb* pcb);
   void attach(tcp_pcb* pcb);
+  bool write_record(Peer& p, const void* payload, size_t len);
+  void drop_peer(Peer& p);
 
   LwipParams params_;
   LwipFrameIo* io_ = nullptr;

@@ -50,7 +50,7 @@ class Estimator {
 
  private:
   uint64_t ring_[kWindow] = {};
-  int idx_ = 0;
+  unsigned idx_ = 0;  // wraps harmlessly: kWindow divides 2^32
   int count_ = 0;
 };
 

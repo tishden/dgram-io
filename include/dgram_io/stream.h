@@ -73,7 +73,9 @@ class Deframer {
     if (tail_ - head_ < kRecPrefix) return false;
     const uint8_t* p = buf_.data() + head_;
     const uint32_t rec = static_cast<uint32_t>(p[0]) | (static_cast<uint32_t>(p[1]) << 8);
-    if (rec == 0 || rec > cap_) {
+    // A zero length is a legal record: an empty datagram, which kernel UDP
+    // carries too, so the stream backends must not treat it as damage.
+    if (rec > cap_) {
       *bad = true;
       return false;
     }
@@ -85,6 +87,14 @@ class Deframer {
   }
 
   size_t pending() const { return tail_ - head_; }
+
+  // A whole record is buffered: next() would return one (or flag desync).
+  bool has_record() const {
+    if (tail_ - head_ < kRecPrefix) return false;
+    const uint8_t* p = buf_.data() + head_;
+    const size_t rec = static_cast<size_t>(p[0]) | (static_cast<size_t>(p[1]) << 8);
+    return tail_ - head_ >= kRecPrefix + rec;
+  }
 
  private:
   std::vector<uint8_t> buf_;
@@ -103,19 +113,22 @@ class Framer {
     buf_.reserve(cap);
   }
 
+  // Whether a record of `len` bytes would be accepted right now. The budget
+  // is on bytes still owed to the peer, not on the vector's length: bytes
+  // already handed to the socket are dead weight that a reclaim can drop.
+  // Checking the vector instead would refuse records while most of the
+  // buffer is stale.
+  bool fits(size_t len) const { return size() + kRecPrefix + len <= cap_; }
+
   bool append(const void* payload, size_t len) {
     const size_t need = kRecPrefix + len;
-    // The budget is on bytes still owed to the peer, not on the vector's
-    // length: bytes already handed to the socket are dead weight that a
-    // reclaim can drop. Checking the vector instead would refuse records
-    // while most of the buffer is stale.
-    if (size() + need > cap_) return false;
+    if (!fits(len)) return false;
     if (buf_.size() + need > cap_ && sent_ > 0) reclaim();
     const size_t off = buf_.size();
     buf_.resize(off + kRecPrefix + len);
     buf_[off] = static_cast<uint8_t>(len & 0xff);
     buf_[off + 1] = static_cast<uint8_t>(len >> 8);
-    std::memcpy(buf_.data() + off + kRecPrefix, payload, len);
+    if (len) std::memcpy(buf_.data() + off + kRecPrefix, payload, len);
     return true;
   }
 

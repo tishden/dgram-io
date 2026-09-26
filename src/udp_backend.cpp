@@ -13,7 +13,6 @@
 #include <cerrno>
 #include <cstring>
 #include <string>
-
 #include <vector>
 
 #include "dgram_io/backend.h"
@@ -48,8 +47,13 @@ class UdpBackend final : public Backend {
     while (off < q_) {
       const int r = sendmmsg(fd_, mm_ + off, q_ - off, 0);
       if (r < 0) {
+        if (errno == EINTR) continue;
+        // sendmmsg reports the error of the first datagram it could not
+        // send. Count that one as lost and carry on with the rest, rather
+        // than dropping the whole batch behind it.
         ++send_errs_;
-        break;
+        ++off;
+        continue;
       }
       ++syscalls_;
       off += r;
@@ -65,7 +69,15 @@ class UdpBackend final : public Backend {
     }
     const int r = recvmmsg(fd_, rmm_, max, MSG_DONTWAIT, nullptr);
     if (r < 0) {
-      if (errno == EAGAIN || errno == EWOULDBLOCK) return 0;
+      if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) return 0;
+      // A connected socket reports an ICMP error from an earlier send (the
+      // peer's port was not open yet) on the next receive. That is news
+      // about one datagram, not a dead socket: count it and keep going.
+      if (errno == ECONNREFUSED || errno == EHOSTUNREACH ||
+          errno == ENETUNREACH) {
+        ++icmp_errs_;
+        return 0;
+      }
       return -1;
     }
     int n = 0;
@@ -92,9 +104,11 @@ class UdpBackend final : public Backend {
   const char* name() const override { return "udp"; }
 
   void log_stats(FILE* f) const override {
-    fprintf(f, "io_udp: syscalls=%llu send_errs=%llu rx_truncated=%llu\n",
+    fprintf(f,
+            "io_udp: syscalls=%llu send_errs=%llu rx_truncated=%llu "
+            "icmp_errs=%llu\n",
             (unsigned long long)syscalls_, (unsigned long long)send_errs_,
-            (unsigned long long)truncated_);
+            (unsigned long long)truncated_, (unsigned long long)icmp_errs_);
   }
 
  private:
@@ -103,7 +117,7 @@ class UdpBackend final : public Backend {
 
   bool enqueue(const void* payload, size_t len, const sockaddr_in* to) {
     if (len > dgram_) return false;
-    std::memcpy(txbuf(q_), payload, len);
+    if (len) std::memcpy(txbuf(q_), payload, len);
     iov_[q_] = {txbuf(q_), len};
     std::memset(&mm_[q_], 0, sizeof(mm_[q_]));
     mm_[q_].msg_hdr.msg_iov = &iov_[q_];
@@ -135,17 +149,12 @@ class UdpBackend final : public Backend {
   mmsghdr rmm_[kRxBatch];
   iovec riov_[kRxBatch];
   sockaddr_in rnames_[kRxBatch];
-  uint64_t syscalls_ = 0, send_errs_ = 0, truncated_ = 0;
+  uint64_t syscalls_ = 0, send_errs_ = 0, truncated_ = 0, icmp_errs_ = 0;
 };
 
 std::unique_ptr<Backend> UdpBackend::create(const Config& cfg,
                                             std::string* err) {
   auto b = std::unique_ptr<UdpBackend>(new UdpBackend());
-  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
-    *err = "max_datagram out of range (1.." +
-           std::to_string(kDatagramCap) + ")";
-    return nullptr;
-  }
   b->dgram_ = cfg.max_datagram;
   b->pool_.resize(static_cast<size_t>(kBatch) * b->dgram_);
   b->rbufs_.resize(static_cast<size_t>(kRxBatch) * b->dgram_);

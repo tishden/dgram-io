@@ -17,8 +17,8 @@
 //
 // Pacing: each loop turn queues the datagrams whose due time has passed (at
 // most kBurst), flushes once and reads replies, so when the loop falls behind
-// it batches instead of stalling -- the same "ring drained, send now" policy a
-// real sender uses. A case where the backend cannot keep up therefore shows as
+// it batches instead of stalling -- flushing whenever there is nothing more to
+// send right now, the policy a real sender uses. A case where the backend cannot keep up therefore shows as
 // achieved rate < offered rate and a rising tail, not as a silent slowdown.
 #include <algorithm>
 #include <cinttypes>
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
     else if (a == "--label") label = next();
     else if (a == "--header") header = true;
     else if (a == "--ifname") cfg.ifname = next();
-    else if (a == "--queue") cfg.queue = atoi(next().c_str());
+    else if (a == "--queue") cfg.xdp_queue = atoi(next().c_str());
     else if (a == "--dst-mac") cfg.dst_mac = next();
     else if (a == "--xdp-copy") cfg.force_copy = true;
     else if (a == "--dpdk-pci") cfg.dpdk_pci = next();
@@ -124,9 +124,11 @@ int main(int argc, char** argv) {
   const uint64_t t0 = now_ns();
   uint64_t t_last_send = t0;
 
-  auto drain = [&]() {
+  // false = the datapath failed (on a stream: the reflector went away).
+  auto drain = [&]() -> bool {
     const int n = net->rx(rx.data(), static_cast<int>(rx.size()));
-    if (n <= 0) return;
+    if (n < 0) return false;
+    if (n == 0) return true;
     const uint64_t t = now_ns();
     for (int k = 0; k < n; ++k) {
       if (!rx[k].data || rx[k].len < sizeof(Hdr)) { ++bad; continue; }
@@ -142,6 +144,12 @@ int main(int argc, char** argv) {
         rtt.push_back(d > UINT32_MAX ? UINT32_MAX : static_cast<uint32_t>(d));
       }
     }
+    return true;
+  };
+  auto fail = [&]() {
+    fprintf(stderr, "loadgen: datapath failed after %" PRIu64 " sent\n", sent);
+    net->log_stats(stderr);
+    return 1;
   };
 
   while (sent < n_total) {
@@ -161,7 +169,7 @@ int main(int argc, char** argv) {
         if (!net->queue(payload.data(), size)) {
           ++refused;
           net->flush();
-          drain();
+          if (!drain()) return fail();
           continue;
         }
         ++sent;
@@ -170,10 +178,12 @@ int main(int argc, char** argv) {
       ++flushes;
       t_last_send = now_ns();
     }
-    drain();
+    if (!drain()) return fail();
   }
-  // Stragglers: wait out a generous bound for the last replies.
-  while (got < sent && now_ns() - t_last_send < 500000000ull) drain();
+  // Stragglers: wait out a generous bound for the last replies. A reflector
+  // that closes now has answered all it will; what is missing counts as lost.
+  while (got < sent && now_ns() - t_last_send < 500000000ull && drain()) {
+  }
 
   const double elapsed = static_cast<double>(t_last_send - t0) / 1e9;
   std::sort(rtt.begin(), rtt.end());

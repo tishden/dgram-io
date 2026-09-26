@@ -3,9 +3,9 @@
 
 // TCP over DPDK: the same role split as --io tcp (sender listens, receiver
 // connects), but neither the kernel nor its socket layer is on the path. The
-// NIC is the ixgbe PMD behind vfio-pci -- the same port setup the raw-datagram
-// DPDK backend uses (dgram_io/dpdk_port.h) -- and the TCP state machine is lwIP,
-// linked into our process and driven from our poll loop (dgram_io/lwip_tcp.h).
+// NIC is a DPDK PMD behind vfio-pci -- the same port setup the raw-datagram
+// DPDK backend uses (dpdk_port.h) -- and the TCP state machine is lwIP,
+// linked into our process and driven from our poll loop (lwip_tcp.h).
 //
 // The division of labour, which is the whole point of the exercise:
 //   lwIP  : connection setup, sequence numbers, ACK/window management,
@@ -13,10 +13,7 @@
 //           deployed implementation of the protocol. We wrote none of it.
 //   here  : the frame transport (rte_mbuf in, rte_mbuf out), the poll cadence
 //           and the record framing that turns the byte stream back into the
-//           datagrams the transport above us expects.
-//
-// See the README for the stack survey (why lwIP and not F-Stack,
-// mTCP, TLDK or VPP's host stack) and the measurements.
+//           datagrams the caller of the Backend interface expects.
 #include "dgram_io/backend.h"
 
 #if defined(HAVE_DPDK) && defined(HAVE_LWIP)
@@ -27,8 +24,8 @@
 #include <cstring>
 #include <string>
 
-#include "dgram_io/dpdk_port.h"
-#include "dgram_io/lwip_tcp.h"
+#include "dpdk_port.h"
+#include "lwip_tcp.h"
 #include "dgram_io/limits.h"
 
 namespace dgram_io {
@@ -44,9 +41,10 @@ constexpr int kRxBurst = 64;   // must match the stack's poll burst
 // and the failure would look like a dead link, not like a missing memset.
 constexpr uint32_t kMinFrame = 60;
 // How long queue() will keep the sender inside the backend waiting for window
-// to free up before it gives up on a record. At 10G a full 2 MB send buffer
-// drains in ~1.7 ms; this is ~10x that, so a refusal means the peer really is
-// gone rather than merely slow.
+// to free up before it gives up on a record. Each spin polls the NIC once, so
+// this is milliseconds -- far more than a full send buffer (TCP_SND_BUF, 1 MB)
+// takes to drain at 10G -- and a refusal means the peer has stopped reading
+// rather than merely being slow.
 constexpr int kTxSpins = 20000;
 
 class DpdkFrameIo final : public LwipFrameIo {
@@ -90,7 +88,7 @@ class DpdkFrameIo final : public LwipFrameIo {
                                              static_cast<uint16_t>(q_ - off));
       off += sent;
       if (sent == 0) {
-        if (++spins_ < 100000) continue;  // same policy as the UDP PMD path
+        if (++spins_ < 100000) continue;  // same policy as the dpdk backend
         spins_ = 0;
         for (; off < q_; ++off) {
           rte_pktmbuf_free(txq_[off]);
@@ -138,7 +136,7 @@ class TcpDpdkBackend final : public Backend {
   static std::unique_ptr<Backend> create(const Config& cfg, std::string* err);
 
   bool queue(const void* payload, size_t len) override {
-    if (len > dgram_) return false;
+    if (len > dgram_ || stack_.live_peers() == 0) return false;
     for (int spin = 0; spin < kTxSpins; ++spin) {
       if (stack_.send_record(payload, len)) return true;
       // No window. Turning the crank is what frees it: poll pulls in ACKs,
@@ -199,10 +197,6 @@ class TcpDpdkBackend final : public Backend {
 
 std::unique_ptr<Backend> TcpDpdkBackend::create(const Config& cfg,
                                                 std::string* err) {
-  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
-    *err = "max_datagram out of range";
-    return nullptr;
-  }
   auto b = std::unique_ptr<TcpDpdkBackend>(new TcpDpdkBackend());
   b->dgram_ = cfg.max_datagram;
 
@@ -252,7 +246,8 @@ std::unique_ptr<Backend> make_tcp_dpdk_backend(const Config& cfg,
 namespace dgram_io {
 std::unique_ptr<Backend> make_tcp_dpdk_backend(const Config&, std::string* err) {
 #ifndef HAVE_DPDK
-  *err = "built without DPDK support (install dpdk-devel and rebuild)";
+  *err = "built without DPDK support (install DPDK's development package, "
+         "libdpdk in pkg-config, and rebuild)";
 #else
   *err =
       "built without the lwIP TCP stack: run scripts/get_lwip.sh to fetch it, "

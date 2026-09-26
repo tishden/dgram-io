@@ -20,9 +20,10 @@
 #define LWIP_PLATFORM_BYTESWAP  0
 #endif
 
-// Diagnostics go to stderr like every other line this transport prints, so a
-// stack complaint lands in the same .sender.log the bench driver collects.
-#define LWIP_PLATFORM_DIAG(x)   do { printf x; } while (0)
+// Diagnostics go to stderr like every other line the backends print. x is a
+// parenthesised printf argument list, hence the call without parentheses.
+void dgram_io_lwip_diag(const char* fmt, ...);
+#define LWIP_PLATFORM_DIAG(x)   do { dgram_io_lwip_diag x; } while (0)
 #define LWIP_PLATFORM_ASSERT(x)                                             \
   do {                                                                      \
     fprintf(stderr, "lwip assert \"%s\" failed at %s:%d\n", x, __FILE__,     \
@@ -30,6 +31,8 @@
     abort();                                                                \
   } while (0)
 
-// Initial sequence numbers and the ARP/TCP timers' jitter. Seeded in
-// lwip_port.c; nothing here is security-relevant on a point-to-point DAC.
-#define LWIP_RAND()             ((u32_t)random())
+// Initial sequence numbers and the ARP/TCP timers' jitter, from lwip_port.c.
+// Not cryptographic: ISNs from it are predictable to anyone who can see the
+// traffic, which is acceptable for a stack meant for a private link.
+uint32_t dgram_io_lwip_rand(void);
+#define LWIP_RAND()             ((u32_t)dgram_io_lwip_rand())

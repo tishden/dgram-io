@@ -2,13 +2,12 @@
 // Copyright 2026 Denis Tishkov
 
 // AF_XDP backend: an XSK socket bound to one NIC queue, kernel network stack
-// bypassed. The custom XDP program (xdp_filter.bpf.c)
-// redirects only our UDP port into the socket and XDP_PASSes everything else,
+// bypassed. The XDP program (xdp_filter.bpf.c) redirects only our UDP port into the socket and XDP_PASSes everything else,
 // so ARP/ICMP/ssh keep working and a concurrent kernel-UDP benchmark on
 // another port is unaffected.
 //
 // The XSK itself (UMEM geometry, filter attach, fill/completion bookkeeping,
-// TX frame allocation, carrier wait) lives in dgram_io/xdp_socket.h, shared with
+// TX frame allocation, carrier wait) lives in xdp_socket.h, shared with
 // the TCP-over-XDP backend. What is left here is what a frame contains: the
 // header template, ARP resolution of the peer, and the parse/port filter on
 // receive.
@@ -29,7 +28,7 @@
 
 #include "dgram_io/pkt.h"
 #include "dgram_io/limits.h"
-#include "dgram_io/xdp_socket.h"
+#include "xdp_socket.h"
 
 namespace dgram_io {
 
@@ -163,7 +162,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
   // standard MTU and nothing like jumbo (see xsk::kMaxRxFrame). Diagnosing
   // this after an unrelated ARP or BPF failure would be needlessly confusing.
   const uint32_t hdr_room = static_cast<uint32_t>(pkt::kHdrLen);
-  if (cfg.max_datagram + hdr_room > xsk::kMaxRxFrame) {
+  if (cfg.max_datagram > xsk::kMaxRxFrame - hdr_room) {
     *err = "xdp cannot carry a " + std::to_string(cfg.max_datagram) +
            "-byte datagram: an RX buffer holds " +
            std::to_string(xsk::kMaxRxFrame) + " bytes (headers take " +
@@ -174,7 +173,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
 
   xsk::Options opt;
   opt.ifname = cfg.ifname;
-  opt.queue = cfg.queue;
+  opt.queue = cfg.xdp_queue;
   opt.force_copy = cfg.force_copy;
   opt.bpf_obj = cfg.bpf_obj;
   opt.port = cfg.port;
@@ -201,7 +200,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
       }
     } else if (!arp_lookup(cfg.dst_ip, b->tmpl_.dst_mac)) {
       *err = "no ARP entry for " + cfg.dst_ip +
-             " -- ping it first or pass --dst-mac";
+             " -- ping it first or set Config::dst_mac";
       return nullptr;
     }
     b->have_dst_ = true;
@@ -223,8 +222,8 @@ std::unique_ptr<Backend> make_xdp_backend(const Config& cfg,
 namespace dgram_io {
 std::unique_ptr<Backend> make_xdp_backend(const Config&, std::string* err) {
   *err =
-      "built without AF_XDP support (install libxdp-devel and rebuild: the "
-      "Makefile detects it via pkg-config)";
+      "built without AF_XDP support (install libxdp's development package "
+      "and rebuild: the Makefile detects it via pkg-config)";
   return nullptr;
 }
 }  // namespace dgram_io

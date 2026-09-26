@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// TCP over AF_XDP: the third TCP datapath. Same role
-// split as --io tcp (sender listens, receiver connects) and the same
-// off-the-shelf stack as --io tcp-dpdk (lwIP, dgram_io/lwip_tcp.h) -- only the
+// TCP over AF_XDP: the third TCP datapath. Same role split as --io tcp (sender listens, receiver connects) and the same
+// off-the-shelf stack as --io tcp-dpdk (lwIP, lwip_tcp.h) -- only the
 // frame transport underneath changes, from a DPDK PMD to an XSK on a NIC
 // queue.
 //
@@ -14,7 +13,8 @@
 // Two things AF_XDP forces that DPDK does not:
 //   * the XDP program has to redirect TCP *and ARP* into the socket (the
 //     userspace stack does its own ARP), and it has to match on either port
-//     because the client's local port is ephemeral -- see xdp_filter.bpf.c;
+//     because the client's local port is ephemeral -- see
+//     xdp_tcp_filter.bpf.c;
 //   * frames must be padded to 60 bytes by us. Pure ACKs are 54 bytes and
 //     the XSK TX path does not pad, so without it the connection would not
 //     open at all. xsk::Port::tx_submit does the padding for both backends.
@@ -27,9 +27,10 @@
 #include <cstring>
 #include <string>
 
-#include "dgram_io/lwip_tcp.h"
 #include "dgram_io/limits.h"
-#include "dgram_io/xdp_socket.h"
+#include "dgram_io/pkt.h"
+#include "lwip_tcp.h"
+#include "xdp_socket.h"
 
 namespace dgram_io {
 
@@ -37,8 +38,8 @@ namespace {
 
 // How long queue() keeps the sender inside the backend waiting for send
 // window before it gives up on a record. Same rationale as the DPDK TCP
-// backend: an order of magnitude more than a full buffer takes to drain, so
-// a refusal means the peer is gone rather than merely slow.
+// backend: far more than a full send buffer takes to drain, so a refusal
+// means the peer has stopped reading rather than merely being slow.
 constexpr int kTxSpins = 20000;
 
 std::string ip_to_string(uint32_t be) {
@@ -82,7 +83,7 @@ class TcpXdpBackend final : public Backend {
   static std::unique_ptr<Backend> create(const Config& cfg, std::string* err);
 
   bool queue(const void* payload, size_t len) override {
-    if (len > dgram_) return false;
+    if (len > dgram_ || stack_.live_peers() == 0) return false;
     for (int spin = 0; spin < kTxSpins; ++spin) {
       if (stack_.send_record(payload, len)) return true;
       stack_.poll();   // ACKs free send buffer
@@ -129,14 +130,10 @@ class TcpXdpBackend final : public Backend {
 
 std::unique_ptr<Backend> TcpXdpBackend::create(const Config& cfg,
                                                std::string* err) {
-  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
-    *err = "max_datagram out of range";
-    return nullptr;
-  }
   // Frames here are bounded by the MSS, not by the record size, but the check
   // stays identical to the datagram XDP backend's so the two fail alike: a
   // record that could not travel as one datagram is refused here too.
-  if (cfg.max_datagram + 60 > xsk::kMaxRxFrame) {
+  if (cfg.max_datagram > xsk::kMaxRxFrame - pkt::kHdrLen) {
     *err = "tcp-xdp cannot carry a " + std::to_string(cfg.max_datagram) +
            "-byte datagram: an RX buffer holds " +
            std::to_string(xsk::kMaxRxFrame) + " bytes";
@@ -147,7 +144,7 @@ std::unique_ptr<Backend> TcpXdpBackend::create(const Config& cfg,
 
   xsk::Options opt;
   opt.ifname = cfg.ifname;
-  opt.queue = cfg.queue;
+  opt.queue = cfg.xdp_queue;
   opt.force_copy = cfg.force_copy;
   opt.bpf_obj = cfg.bpf_obj;
   opt.default_obj = "xdp_tcp_filter.bpf.o";  // TCP + ARP, either port
@@ -191,7 +188,8 @@ std::unique_ptr<Backend> make_tcp_xdp_backend(const Config& cfg,
 namespace dgram_io {
 std::unique_ptr<Backend> make_tcp_xdp_backend(const Config&, std::string* err) {
 #ifndef HAVE_XDP
-  *err = "built without AF_XDP support (install libxdp-devel and rebuild)";
+  *err = "built without AF_XDP support (install libxdp's development "
+         "package, libxdp in pkg-config, and rebuild)";
 #else
   *err =
       "built without the lwIP TCP stack: run scripts/get_lwip.sh to fetch it, "

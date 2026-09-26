@@ -178,22 +178,21 @@ class UringBackend final : public Backend {
   bool enqueue(const void* payload, size_t len, const sockaddr_in* to) {
     if (len > dgram_) return false;
     if (free_.empty()) {
+      // Every slot is on the wire or queued behind it. Push the queued ones
+      // and collect what completed; if still nothing is free, refuse rather
+      // than block -- back-pressure is the caller's to see (backend.h), and
+      // the caller decides whether to flush, service rx() and try again.
+      flush();
       reap();
       if (free_.empty()) {
-        // Every slot is on the wire or queued behind it. Wait for the kernel
-        // rather than drop: back-pressure here is the caller's to see.
         ++tx_stalls_;
-        while (free_.empty()) {
-          io_uring_submit_and_wait(&ring_, 1);
-          ++submits_;
-          reap();
-        }
+        return false;
       }
     }
     const int i = free_.back();
     free_.pop_back();
     TxSlot& s = slots_[i];
-    std::memcpy(txbuf(i), payload, len);
+    if (len) std::memcpy(txbuf(i), payload, len);
     s.iov = {txbuf(i), len};
     std::memset(&s.msg, 0, sizeof(s.msg));
     s.msg.msg_iov = &s.iov;
@@ -317,11 +316,6 @@ class UringBackend final : public Backend {
 std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
                                               std::string* err) {
   auto b = std::unique_ptr<UringBackend>(new UringBackend());
-  if (cfg.max_datagram == 0 || cfg.max_datagram > kDatagramCap) {
-    *err = "max_datagram out of range (1.." +
-           std::to_string(kDatagramCap) + ")";
-    return nullptr;
-  }
   b->dgram_ = cfg.max_datagram;
 
   UdpSocket sock;
@@ -423,8 +417,8 @@ std::unique_ptr<Backend> make_uring_backend(const Config& cfg,
 namespace dgram_io {
 std::unique_ptr<Backend> make_uring_backend(const Config&, std::string* err) {
   *err =
-      "built without io_uring support (install liburing-devel and rebuild: "
-      "the Makefile detects it via pkg-config)";
+      "built without io_uring support (install liburing's development "
+      "package and rebuild: the Makefile detects it via pkg-config)";
   return nullptr;
 }
 }  // namespace dgram_io
