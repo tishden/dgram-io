@@ -12,10 +12,26 @@
 #
 CXX      ?= g++
 CC       ?= gcc
-CXXFLAGS ?= -std=c++17 -O2 -Wall -Wextra -Iinclude
-LDLIBS   ?= -lrt -lpthread
 CLANG    ?= clang
+OBJCOPY  ?= objcopy
+# Yours to override (make CXXFLAGS=-O3 ...). What the build cannot do without
+# is appended below regardless.
+CXXFLAGS ?= -O2 -Wall -Wextra
+CFLAGS   ?= -O2
+LDLIBS   ?= -lrt -lpthread
+# -fPIC: the static library can then be linked into a shared object too.
+override CXXFLAGS += -std=c++17 -fPIC -Iinclude
 BIN      := bin
+
+# Install layout. Defined up here because the XDP backends are compiled with
+# BPFDIR baked in: it is where they look for their filter when it is not next
+# to the running binary.
+PREFIX  ?= /usr/local
+LIBDIR  ?= $(PREFIX)/lib
+INCDIR  ?= $(PREFIX)/include
+BPFDIR  ?= $(LIBDIR)/dgram_io
+PCDIR   ?= $(LIBDIR)/pkgconfig
+VERSION := 0.1.0
 
 HAVE_URING := $(shell pkg-config --exists liburing 2>/dev/null && echo 1)
 ifeq ($(HAVE_URING),1)
@@ -25,7 +41,7 @@ endif
 
 HAVE_XDP := $(shell pkg-config --exists libxdp 2>/dev/null && echo 1)
 ifeq ($(HAVE_XDP),1)
-XDP_CXXFLAGS := -DHAVE_XDP $(shell pkg-config --cflags libxdp)
+XDP_CXXFLAGS := -DHAVE_XDP -DDGRAM_IO_BPFDIR='"$(BPFDIR)"' $(shell pkg-config --cflags libxdp)
 XDP_LDLIBS   := $(shell pkg-config --libs libxdp) -lbpf
 endif
 
@@ -42,12 +58,16 @@ ifeq ($(HAVE_LWIP),1)
 LWIP_SRCS := $(wildcard $(LWIP_DIR)/src/core/*.c) \
              $(wildcard $(LWIP_DIR)/src/core/ipv4/*.c) \
              $(LWIP_DIR)/src/netif/ethernet.c
-LWIP_OBJS := $(patsubst $(LWIP_DIR)/src/%.c,$(BIN)/lwip/%.o,$(LWIP_SRCS)) \
-             $(BIN)/lwip_port.o $(BIN)/lwip_tcp.o
+LWIP_PARTS := $(patsubst $(LWIP_DIR)/src/%.c,$(BIN)/lwip/%.o,$(LWIP_SRCS)) \
+              $(BIN)/lwip_port.o $(BIN)/lwip_tcp.o
+# What goes into the library: the same objects with lwIP's symbols renamed
+# (see the rule for $(LWIP_STAMP) below).
+LWIP_STAMP := $(BIN)/lwip_r/.stamp
+LWIP_OBJS := $(addprefix $(BIN)/lwip_r/,$(notdir $(LWIP_PARTS)))
 LWIP_CPPFLAGS := -DHAVE_LWIP -I$(LWIP_DIR)/src/include -Isrc/lwip
 # lwIP is C89-flavoured C with its own opinions about unused parameters and
-# sign conversion. It is a vendored dependency, not our code: -w on purpose.
-LWIP_CFLAGS := -std=gnu99 -O2 -w $(LWIP_CPPFLAGS)
+# sign conversion. It is a fetched dependency, not our code: -w on purpose.
+LWIP_CFLAGS := $(CFLAGS) -std=gnu99 -fPIC -w $(LWIP_CPPFLAGS)
 endif
 
 HDRS := $(wildcard include/dgram_io/*.h)
@@ -56,7 +76,7 @@ HDRS := $(wildcard include/dgram_io/*.h)
 # liburing) after a first build leaves the old objects in place, `make config`
 # says yes, and the backend still answers "built without".
 FLAGS := $(BIN)/.detected
-DEPS  := $(HDRS) $(FLAGS)
+DEPS  := $(HDRS) $(wildcard src/*.h) $(FLAGS)
 OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/uring_backend.o \
         $(BIN)/xdp_backend.o \
         $(BIN)/dpdk_backend.o $(BIN)/tcp_backend.o $(BIN)/tcp_dpdk_backend.o \
@@ -74,16 +94,19 @@ config:
 
 lib: $(BIN)/libdgram_io.a
 
+# Rebuilt from scratch: `ar r` only ever adds, so an object that left OBJS
+# would otherwise stay in the archive.
 $(BIN)/libdgram_io.a: $(OBJS)
+	@rm -f $@
 	ar rcs $@ $^
 
 $(BIN):
 	mkdir -p $(BIN)
 
+# BPFDIR is in the stamp too: the XDP objects have it compiled in.
+DETECTED := uring=$(HAVE_URING) xdp=$(HAVE_XDP) dpdk=$(HAVE_DPDK) lwip=$(HAVE_LWIP) bpfdir=$(BPFDIR)
 $(FLAGS): FORCE | $(BIN)
-	@echo 'uring=$(HAVE_URING) xdp=$(HAVE_XDP) dpdk=$(HAVE_DPDK) lwip=$(HAVE_LWIP)' | \
-	  cmp -s - $@ 2>/dev/null || \
-	  echo 'uring=$(HAVE_URING) xdp=$(HAVE_XDP) dpdk=$(HAVE_DPDK) lwip=$(HAVE_LWIP)' > $@
+	@echo '$(DETECTED)' | cmp -s - $@ 2>/dev/null || echo '$(DETECTED)' > $@
 
 $(BIN)/factory.o: src/factory.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -102,16 +125,31 @@ $(BIN)/tcp_xdp_backend.o: src/tcp_xdp_backend.cpp $(DEPS) | $(BIN)
 $(BIN)/tcp_dpdk_backend.o: src/tcp_dpdk_backend.cpp $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) -c $< -o $@
 
-# Vendored lwIP, compiled once into bin/lwip/ mirroring the source layout.
+# lwIP, compiled once into bin/lwip/ mirroring the source layout.
 $(BIN)/lwip/%.o: $(LWIP_DIR)/src/%.c src/lwip/lwipopts.h $(FLAGS) | $(BIN)
 	@mkdir -p $(dir $@)
 	$(CC) $(LWIP_CFLAGS) -c $< -o $@
 $(BIN)/lwip_port.o: src/lwip/lwip_port.c src/lwip/lwipopts.h $(FLAGS) | $(BIN)
 	$(CC) $(LWIP_CFLAGS) -c $< -o $@
-$(BIN)/lwip_tcp.o: src/lwip_tcp.cpp $(DEPS) | $(BIN)
+$(BIN)/lwip_tcp.o: src/lwip_tcp.cpp src/lwip_tcp.h $(DEPS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(LWIP_CPPFLAGS) -c $< -o $@
+# Every global symbol lwIP and its C glue define gets a dgram_io_lwip__
+# prefix, in their objects and in the C++ glue that calls them. An application
+# that links its own lwIP (or has a tcp_write, sys_now, ... of its own) then
+# cannot collide with ours.
+$(LWIP_STAMP): $(LWIP_PARTS)
+	@mkdir -p $(BIN)/lwip_r
+	nm -g --defined-only $(filter-out $(BIN)/lwip_tcp.o,$^) | \
+	  awk 'NF == 3 && $$3 !~ /^dgram_io_/ {print $$3, "dgram_io_lwip__" $$3}' | \
+	  sort -u > $(BIN)/lwip_r/syms.map
+	for o in $^; do \
+	  $(OBJCOPY) --redefine-syms=$(BIN)/lwip_r/syms.map $$o $(BIN)/lwip_r/$$(basename $$o) || exit 1; \
+	done
+	@touch $@
+$(LWIP_OBJS): $(LWIP_STAMP)
 
-# XDP filter programs, loaded at runtime from next to the binary.
+# XDP filter programs, loaded at runtime (Config::bpf_obj, else next to the
+# binary, else BPFDIR).
 # Debian/Ubuntu keep asm/ under the multiarch dir and -target bpf does not
 # search it on its own; empty on el9-style layouts.
 BPF_ARCH_INC := $(wildcard /usr/include/$(shell uname -m)-linux-gnu)
@@ -133,22 +171,16 @@ example: $(BIN)/echo $(BIN)/loadgen $(BIN)/uring_probe
 $(BIN)/uring_probe: examples/uring_probe.cpp $(FLAGS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(URING_CXXFLAGS) $< -o $@ $(URING_LDLIBS)
 
+# The examples see only the public headers, as an installed user would.
 $(BIN)/echo $(BIN)/loadgen: $(BIN)/%: examples/%.cpp $(BIN)/libdgram_io.a $(HDRS) | $(BIN)
-	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) \
-	  $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(URING_LDLIBS) $(XDP_LDLIBS) \
-	  $(DPDK_LDLIBS)
+	$(CXX) $(CXXFLAGS) $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(URING_LDLIBS) \
+	  $(XDP_LDLIBS) $(DPDK_LDLIBS)
 
 # Installs the static library, the headers, the XDP filter objects and a
 # pkg-config file. The library is static, so the .pc lists the libraries of
-# every backend this build compiled in; `pkg-config --variable=bpfdir
-# dgram-io` is where the filters went (Config::bpf_obj, since the default
-# looks next to the running binary).
-PREFIX  ?= /usr/local
-LIBDIR  ?= $(PREFIX)/lib
-INCDIR  ?= $(PREFIX)/include
-BPFDIR  ?= $(LIBDIR)/dgram_io
-PCDIR   ?= $(LIBDIR)/pkgconfig
-VERSION := 0.1.0
+# every backend this build compiled in. The filters go to BPFDIR, where the
+# XDP backends find them on their own; `pkg-config --variable=bpfdir
+# dgram-io` prints it.
 
 $(BIN)/dgram-io.pc: $(FLAGS) | $(BIN)
 	@printf '%s\n' \
@@ -166,9 +198,13 @@ install: all $(BIN)/dgram-io.pc
 	install -m 644 $(BIN)/dgram-io.pc $(DESTDIR)$(PCDIR)/
 	$(if $(HAVE_XDP),install -d $(DESTDIR)$(BPFDIR) && install -m 644 $(BIN)/*.bpf.o $(DESTDIR)$(BPFDIR)/)
 
+# Removes exactly the files install put there, never a whole directory that
+# an overridden INCDIR or BPFDIR might point at.
 uninstall:
 	rm -f $(DESTDIR)$(LIBDIR)/libdgram_io.a $(DESTDIR)$(PCDIR)/dgram-io.pc
-	rm -rf $(DESTDIR)$(INCDIR)/dgram_io $(DESTDIR)$(BPFDIR)
+	rm -f $(addprefix $(DESTDIR)$(INCDIR)/dgram_io/,$(notdir $(HDRS)))
+	rm -f $(DESTDIR)$(BPFDIR)/xdp_filter.bpf.o $(DESTDIR)$(BPFDIR)/xdp_tcp_filter.bpf.o
+	-rmdir $(DESTDIR)$(INCDIR)/dgram_io $(DESTDIR)$(BPFDIR) 2>/dev/null
 
 clean:
 	rm -rf $(BIN)
