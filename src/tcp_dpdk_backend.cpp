@@ -143,9 +143,8 @@ class TcpDpdkBackend final : public Backend {
       if (stack_.send_record(payload, len)) return true;
       // No window. Turning the crank is what frees it: poll pulls in ACKs,
       // flush pushes out whatever is already queued. This is TCP
-      // back-pressure reaching the application -- the producer's ring backs
-      // up behind it and the sender's `laps` counter reports it, exactly as
-      // an overrun does on the UDP path.
+      // back-pressure reaching the application: if the window stays shut,
+      // queue() returns false and the caller's own queue backs up.
       stack_.poll();
       stack_.flush();
     }
@@ -225,11 +224,11 @@ std::unique_ptr<Backend> TcpDpdkBackend::create(const Config& cfg,
   p.setup_ms = cfg.tcp_setup_ms;
   p.nodelay = cfg.tcp_nodelay;
   if (p.ip.empty()) {
-    *err = "--io tcp-dpdk requires --dpdk-ip A.B.C.D (our IPv4)";
+    *err = "tcp-dpdk needs dpdk_ip, our IPv4";
     return nullptr;
   }
   if (!p.server && p.peer_ip.empty()) {
-    *err = "--io tcp-dpdk client needs --dst SERVER_IP";
+    *err = "tcp-dpdk client (listener) needs dst_ip, the server's address";
     return nullptr;
   }
   if (!b->stack_.init(p, &b->fio_, err)) return nullptr;

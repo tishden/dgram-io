@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Kernel-UDP backend: the step-1..6 socket path moved behind dgram_io::Backend,
-// byte-for-byte. Sender role: connected socket (or unconnected + explicit
-// address for multicast), TX batched into sendmmsg groups of 16. Receiver
-// role: bound socket, optional group join, recvmmsg batches of 32.
+// Kernel-UDP backend. Sender role: connected socket (or unconnected with an
+// explicit address for multicast and multi-peer fan-out), TX batched into
+// sendmmsg groups of 16. Receiver role: bound socket, optional group join,
+// recvmmsg batches of 32. The socket itself comes from udp_socket.h, shared
+// with the io_uring backend.
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -67,25 +68,25 @@ class UdpBackend final : public Backend {
       if (errno == EAGAIN || errno == EWOULDBLOCK) return 0;
       return -1;
     }
+    int n = 0;
     for (int i = 0; i < r; ++i) {
       // A datagram larger than the buffer comes back cut, with MSG_TRUNC set
       // and msg_len reporting only what was stored. Passing it up would look
-      // exactly like a corrupt packet and get quietly repaired by NACK, so it
-      // is counted and dropped instead -- a misconfigured MTU has to show up
-      // as itself.
+      // exactly like a corrupt packet and get quietly repaired by whatever
+      // recovers loss above, so it is counted and dropped instead -- a
+      // misconfigured MTU has to show up as itself.
       if (rmm_[i].msg_hdr.msg_flags & MSG_TRUNC) {
         ++truncated_;
-        out[i].data = nullptr;
-        out[i].len = 0;
         continue;
       }
-      out[i].data = rxbuf(i);
-      out[i].len = rmm_[i].msg_len;
-      out[i].from = Endpoint{};
-      out[i].from.ip_be = rnames_[i].sin_addr.s_addr;
-      out[i].from.port_be = rnames_[i].sin_port;
+      out[n].data = rxbuf(i);
+      out[n].len = rmm_[i].msg_len;
+      out[n].from = Endpoint{};
+      out[n].from.ip_be = rnames_[i].sin_addr.s_addr;
+      out[n].from.port_be = rnames_[i].sin_port;
+      ++n;
     }
-    return r;
+    return n;
   }
 
   const char* name() const override { return "udp"; }
@@ -122,9 +123,8 @@ class UdpBackend final : public Backend {
   int fd_ = -1;
   bool connected_ = false;
   sockaddr_in dst_{};
-  // Both pools are strided by the datagram size the run asked for: at the
-  // 1400 default they are the same 22 KB + 45 KB they always were, and jumbo
-  // pays for jumbo only where it is used.
+  // Both pools are strided by Config::max_datagram: 22 KB + 45 KB at the
+  // 1400 default, and jumbo pays for jumbo only where it is asked for.
   uint32_t dgram_ = kDefaultDatagram;
   std::vector<uint8_t> pool_;   // kBatch  x dgram_ (TX)
   std::vector<uint8_t> rbufs_;  // kRxBatch x dgram_ (RX)

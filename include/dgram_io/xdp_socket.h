@@ -297,7 +297,7 @@ inline bool Port::open(const Options& opt, std::string* err) {
   ifname_ = opt.ifname;
   queue_ = opt.queue;
   if (opt.ifname.empty()) {
-    *err = "AF_XDP needs --xdp-if";
+    *err = "AF_XDP needs an interface (Config::ifname)";
     return false;
   }
   ifindex_ = static_cast<int>(if_nametoindex(opt.ifname.c_str()));
@@ -368,7 +368,7 @@ inline bool Port::open(const Options& opt, std::string* err) {
   prog_ = xdp_program__open_file(obj.c_str(), nullptr, nullptr);
   if (libxdp_get_error(prog_)) {
     *err = "xdp_program__open_file " + obj +
-           " failed (make builds it; override with --xdp-obj)";
+           " failed (make builds it next to the binary; Config::bpf_obj overrides)";
     prog_ = nullptr;
     return false;
   }
@@ -378,7 +378,7 @@ inline bool Port::open(const Options& opt, std::string* err) {
     // A program is already attached. Almost always it is *ours*, orphaned by
     // a process that died without running its destructor (SIGKILL, or a
     // sweep interrupted at the wrong moment): the attach then fails with
-    // "Device or resource busy" on every subsequent run and the stand looks
+    // "Device or resource busy" on every later start and the host looks
     // permanently broken until someone detaches it by hand. Clean up after
     // ourselves -- but only if the attached program really is ours, by name.
     // Anyone else's XDP program is none of our business.

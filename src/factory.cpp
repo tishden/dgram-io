@@ -38,9 +38,7 @@ std::unique_ptr<Backend> make_backend(const Config& cfg, std::string* err) {
   return nullptr;
 }
 
-// True for the reliable-stream backends. Callers use it to refuse loss
-// recovery (FEC, NACK) and loss injection: those have nothing to repair on a
-// stream, but would still change the send path if left enabled.
+// True for the reliable-stream backends (see backend.h).
 bool is_stream_backend(const std::string& kind) {
   return kind == "tcp" || kind == "tcp-dpdk" || kind == "tcp-xdp";
 }

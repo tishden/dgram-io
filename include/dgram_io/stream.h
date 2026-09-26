@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Record framing for the stream backends (--io tcp, --io tcp-dpdk).
+// Record framing for the stream backends (tcp, tcp-dpdk, tcp-xdp).
 //
-// The protocol layers above dgram_io::Backend speak datagrams: one PktHeader plus a
-// batch of harness frames, delimited by the datagram boundary itself. TCP has
-// no such boundary -- it delivers an unbroken byte stream, and a 1400-byte
-// write can arrive as three reads of 500, 800 and 100 bytes. So every
-// datagram handed to a stream backend is wrapped in a 2-byte little-endian
-// length prefix, and the receiving side reassembles records out of whatever
-// the stream hands it.
-//
-// This is exactly the framing the FPGA TCP core uses ([u16 len][frame]),
-// deliberately: the same reassembly logic then reads both wires.
+// Callers of dgram_io::Backend speak datagrams, delimited by the datagram
+// boundary itself. TCP has no such boundary -- it delivers an unbroken byte
+// stream, and a 1400-byte write can arrive as three reads of 500, 800 and 100
+// bytes. So every datagram handed to a stream backend is wrapped in a 2-byte
+// little-endian length prefix ([u16 len][record]), and the receiving side
+// reassembles records out of whatever the stream hands it.
 //
 // The prefix is the *only* thing the stream backends add to the wire. It costs
 // 2 bytes per datagram (0.14% at the 1400-byte default) and, unlike a

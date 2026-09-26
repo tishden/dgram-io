@@ -8,8 +8,8 @@
 //
 // Receiver role: bound to cfg.port on INADDR_ANY, optional group join.
 // Sender role: connected to cfg.dst_ip:cfg.port, except for multicast and
-// multi-peer fan-out, which stay unconnected so every receiver's NACKs get in
-// -- the caller then addresses each datagram with UdpSocket::dst.
+// multi-peer fan-out, which stay unconnected so replies from every receiver
+// get in -- the caller then addresses each datagram with UdpSocket::dst.
 #pragma once
 
 #include <arpa/inet.h>
@@ -62,7 +62,7 @@ inline bool open_udp_socket(const Config& cfg, UdpSocket* s,
       mr.imr_interface.s_addr = htonl(INADDR_ANY);
       if (!cfg.mcast_if.empty() &&
           inet_pton(AF_INET, cfg.mcast_if.c_str(), &mr.imr_interface) != 1)
-        return fail("bad mcast-if " + cfg.mcast_if);
+        return fail("bad mcast_if " + cfg.mcast_if);
       if (setsockopt(s->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mr, sizeof(mr)) !=
           0)
         return fail(std::string("IP_ADD_MEMBERSHIP: ") + strerror(errno));
@@ -76,21 +76,21 @@ inline bool open_udp_socket(const Config& cfg, UdpSocket* s,
   s->dst.sin_family = AF_INET;
   s->dst.sin_port = htons(cfg.port);
   if (inet_pton(AF_INET, cfg.dst_ip.c_str(), &s->dst.sin_addr) != 1)
-    return fail("bad dst " + cfg.dst_ip);
+    return fail("bad dst_ip " + cfg.dst_ip);
   if (pkt::is_mcast(s->dst.sin_addr.s_addr)) {
     in_addr ifaddr{};
     ifaddr.s_addr = htonl(INADDR_ANY);
     if (!cfg.mcast_if.empty() &&
         inet_pton(AF_INET, cfg.mcast_if.c_str(), &ifaddr) != 1)
-      return fail("bad mcast-if " + cfg.mcast_if);
+      return fail("bad mcast_if " + cfg.mcast_if);
     setsockopt(s->fd, IPPROTO_IP, IP_MULTICAST_IF, &ifaddr, sizeof(ifaddr));
     const uint8_t ttl = 1, loop = 1;
     setsockopt(s->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
     setsockopt(s->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    // Unconnected: NACKs come back from receivers' own unicast addresses.
+    // Unconnected: replies come back from receivers' own unicast addresses.
   } else if (cfg.multi_peer) {
     // Unicast replication fan-out: same reason as multicast above -- a
-    // connect()ed socket would make the kernel silently discard NACKs from
+    // connect()ed socket would make the kernel silently discard replies from
     // every receiver except the primary.
   } else {
     if (connect(s->fd, reinterpret_cast<const sockaddr*>(&s->dst),

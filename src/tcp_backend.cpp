@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Kernel-TCP backend: the same transport, carried by a
-// reliable stream instead of datagrams. Role split follows the brief -- the
-// **sender is the server** (binds, listens, accepts) and the **receiver is the
-// client** (connects, retrying until the server is up). That inversion of the
-// usual "listener = receiver" convention is why cfg.listener is not what
-// decides the socket role here.
+// Kernel-TCP backend: the same datagram interface, carried by a reliable
+// stream. The **sender is the server** (binds, listens, accepts) and the
+// **receiver is the client** (connects, retrying until the server is up):
+// one sender fanning out to several receivers is the shape this was built
+// for, and it is the side with the fan-out that has to accept. That inversion
+// of the usual "listener = receiver" convention is why cfg.listener is not
+// what decides the socket role here.
 //
 // What TCP replaces:
-//  * loss: none to inject and none to repair. The reverse channel (NACK) and
-//    the parity budget (FEC) are switched off for these runs by construction;
-//    the sender/receiver refuse to start with either enabled, because a NACK
-//    over a lossless stream would measure nothing while quietly changing the
-//    send path.
+//  * loss: there is none to repair. A layer above that recovers loss itself
+//    should switch that off on a stream (is_stream_backend()): it would
+//    measure nothing while still changing the send path.
 //  * datagram boundaries: gone. Records get a 2-byte length prefix
-//    (io/stream.h) and the reader reassembles them.
+//    (dgram_io/stream.h) and the reader reassembles them.
 //  * a dropped packet: gone as a concept, replaced by *back-pressure*. When
 //    the socket buffer fills, send() returns EAGAIN and the unsent bytes stay
-//    in our staging buffer; the producer's own ring is what overruns then, and
-//    that shows up in the sender's `laps` counter exactly as it does over UDP.
-//    A record is never truncated: half a record on the wire would desync the
-//    peer for the rest of the run.
+//    in our staging buffer; once that is full too, queue() returns false and
+//    the caller's own queue is what backs up. A record is never truncated:
+//    half a record on the wire would desync the peer for the rest of the
+//    connection.
 //
 // Fan-out: the server accepts cfg.tcp_peers connections and writes the same
 // framed stream to each. That is unicast replication with the kernel doing the
@@ -134,7 +133,7 @@ class TcpBackend final : public Backend {
     return ok;
   }
 
-  // The reverse-direction path (NACK/echo replies). Over TCP the answer goes
+  // The reverse-direction path (replies). Over TCP the answer goes
   // back down the same connection the request came from; the endpoint match
   // keeps it honest when several peers are attached.
   bool queue_to(const void* payload, size_t len, const Endpoint& to) override {
@@ -169,7 +168,7 @@ class TcpBackend final : public Backend {
         if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
           // Window/socket buffer full. Leave the bytes staged: the next
           // flush() (one sender loop away) retries. This is where TCP's
-          // back-pressure becomes visible as producer-ring laps.
+          // back-pressure starts to reach the caller.
           ++tx_stalls_;
           break;
         }
@@ -356,7 +355,7 @@ std::unique_ptr<Backend> TcpBackend::create(const Config& cfg,
         return nullptr;
       }
     }
-    close(b->listen_fd_);  // no late joiners: the run is a closed set
+    close(b->listen_fd_);  // no late joiners: the peer set is fixed at startup
     b->listen_fd_ = -1;
     return b;
   }

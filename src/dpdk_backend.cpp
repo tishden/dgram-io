@@ -95,11 +95,11 @@ class DpdkBackend final : public Backend {
     int emitted = 0;
     for (uint16_t i = 0; i < n; ++i) {
       held_[held_n_++] = bufs[i];
-      // A peer that resolves our MAC itself gets no answer otherwise. On the
-      // cloud stand every destination MAC was configured explicitly, so this
-      // never came up; a peer with its own IP stack -- the FPGA's udp_ip core
-      // -- simply ARPs, gets silence, and transmits nothing at all. From the
-      // outside that is indistinguishable from a card that does not work.
+      // A peer that resolves our MAC itself gets no answer otherwise. With
+      // every destination MAC configured explicitly (as on AWS) this never
+      // comes up; a peer with its own IP stack -- a hardware UDP endpoint,
+      // say -- simply ARPs, gets silence, and transmits nothing at all. From
+      // the outside that is indistinguishable from a card that does not work.
       if (arp_reply(bufs[i])) continue;
       pkt::View v;
       if (pkt::parse(rte_pktmbuf_mtod(bufs[i], const uint8_t*),
@@ -217,7 +217,7 @@ std::unique_ptr<Backend> DpdkBackend::create(const Config& cfg,
   std::memcpy(b->tmpl_.src_mac, b->port_.mac, 6);
   if (cfg.dpdk_ip.empty() ||
       inet_pton(AF_INET, cfg.dpdk_ip.c_str(), &b->tmpl_.src_ip_be) != 1) {
-    *err = "--io dpdk requires --dpdk-ip A.B.C.D (our IPv4 for headers)";
+    *err = "dpdk needs dpdk_ip, our IPv4 for the headers we build";
     return nullptr;
   }
   b->tmpl_.src_port_be = pkt::htons_u16(cfg.port);
@@ -225,18 +225,18 @@ std::unique_ptr<Backend> DpdkBackend::create(const Config& cfg,
 
   if (!cfg.listener) {
     if (inet_pton(AF_INET, cfg.dst_ip.c_str(), &b->tmpl_.dst_ip_be) != 1) {
-      *err = "bad dst " + cfg.dst_ip;
+      *err = "bad dst_ip " + cfg.dst_ip;
       return nullptr;
     }
     const bool mcast = pkt::is_mcast(b->tmpl_.dst_ip_be);
     if (mcast) {
       pkt::mcast_mac(b->tmpl_.dst_ip_be, b->tmpl_.dst_mac);
     } else if (cfg.dst_mac.empty()) {
-      *err = "--io dpdk needs --dst-mac (no kernel, no ARP; "
-             "setup_dpdk.sh records the port MACs before binding)";
+      *err = "dpdk needs dst_mac, the peer's MAC: there is no kernel under "
+             "the port and so no ARP (read it before binding to vfio-pci)";
       return nullptr;
     } else if (!pkt::parse_mac(cfg.dst_mac.c_str(), b->tmpl_.dst_mac)) {
-      *err = "bad --dst-mac " + cfg.dst_mac;
+      *err = "bad dst_mac " + cfg.dst_mac;
       return nullptr;
     }
     b->have_dst_ = true;

@@ -54,13 +54,13 @@ struct Config {
   // from it rather than from the compile-time cap, so asking for jumbo costs
   // memory only in the runs that asked. A backend that cannot carry the size
   // requested must fail loudly at setup: truncating on receive would look
-  // like packet loss and get repaired by NACK, hiding the misconfiguration
-  // behind a plausible number.
+  // like packet loss, and whatever recovery layer sits above would quietly
+  // repair it, hiding the misconfiguration behind a plausible number.
   uint32_t max_datagram = kDefaultDatagram;
   bool listener = false;     // receiver role: bind/join instead of connect
   std::string dst_ip;        // sender role: where data goes (may be multicast)
   bool multi_peer = false;   // sender fans out to several unicast peers: stay
-                             // unconnected so every receiver's NACKs get in
+                             // unconnected so replies from every peer get in
   uint16_t port = 0;         // UDP port, host order (both src and dst for xdp)
   std::string mcast_if;      // multicast: egress interface / join interface IP
   std::string group;         // listener: multicast group to join
@@ -71,9 +71,9 @@ struct Config {
   int queue = 0;             // NIC queue index
   bool force_copy = false;   // skip the XDP_ZEROCOPY attempt
   std::string bpf_obj;       // xdp_filter.bpf.o path; empty = next to binary
-  // tcp + tcp-dpdk: the sender is the server, the
-  // receiver is the client. A stream has no datagram boundary, so records
-  // carry a 2-byte length prefix (io/stream.h).
+  // tcp, tcp-dpdk, tcp-xdp: the sender (listener = false) is the TCP
+  // server, the receiver the client. A stream has no datagram boundary, so
+  // records carry a 2-byte length prefix (dgram_io/stream.h).
   int tcp_peers = 1;             // sender: connections to wait for at startup
   // accept/connect deadline. Generous on purpose: on the PMD/XSK datapaths
   // each end's bind resets the NIC and retrains the DAC, so the pair can
@@ -81,9 +81,10 @@ struct Config {
   unsigned tcp_setup_ms = 90000;
   unsigned tcp_busy_poll_us = 0; // kernel tcp: SO_BUSY_POLL (0 = off)
   bool tcp_nodelay = true;       // kernel tcp + lwIP: Nagle off by default
-  // dpdk only (the port has no kernel netdev: identity comes from flags)
+  // dpdk only (the port has no kernel netdev: its identity comes from here)
   std::string dpdk_pci;      // PCI address to take over (-a allow-list)
-  std::string dpdk_vdev;     // virtual device (smoke: net_af_packet,iface=..)
+  std::string dpdk_vdev;     // virtual device, for a test without a NIC
+                             // (net_af_packet,iface=..)
   std::string dpdk_ip;       // our IPv4 for the headers we build
   // uring only
   bool uring_sqpoll = false; // a kernel thread polls the submission queue:
@@ -94,22 +95,32 @@ struct Config {
 class Backend {
  public:
   virtual ~Backend() = default;
+  // Copy one datagram into the backend's batch, addressed to the configured
+  // destination (queue) or to `to` (queue_to; a reply to RxPacket::from).
+  // false = not accepted: larger than max_datagram, or -- on the backends
+  // with a bounded TX ring -- the ring is full right now. The latter is
+  // back-pressure: flush(), service rx(), and offer the datagram again.
   virtual bool queue(const void* payload, size_t len) = 0;
   virtual bool queue_to(const void* payload, size_t len,
                         const Endpoint& to) = 0;
+  // Hand everything queued to the datapath.
   virtual void flush() = 0;
+  // Up to `max` received datagrams into `out`, without blocking. Returns the
+  // count (0 = nothing yet) or -1 on a failed datapath; the views stay valid
+  // until the next rx().
   virtual int rx(RxPacket* out, int max) = 0;
   virtual const char* name() const = 0;
-  // One "<name>: k=v ..." counters line into f (appended to the final log).
+  // One "<name>: k=v ..." line of counters into f.
   virtual void log_stats(FILE* f) const = 0;
 };
 
 // Returns nullptr and fills *err on failure (unknown kind, socket/XSK setup).
 std::unique_ptr<Backend> make_backend(const Config& cfg, std::string* err);
 
-// True for the reliable-stream backends (tcp, tcp-dpdk). The protocol layers
-// use it to refuse NACK/FEC/loss injection, which have nothing to repair on a
-// stream but would still change the send path.
+// True for the reliable-stream backends (tcp, tcp-dpdk, tcp-xdp). A layer
+// above that adds its own loss recovery (retransmission, FEC) or injects loss
+// for testing should switch that off here: on a stream there is nothing to
+// repair, and it would still change the send path.
 bool is_stream_backend(const std::string& kind);
 
 }  // namespace dgram_io

@@ -2,7 +2,7 @@
 // Copyright 2026 Denis Tishkov
 
 // Unit tests for the record framing the stream backends put on top of TCP
-// (io/stream.h). The interesting cases are all about the fact that a stream
+// (dgram_io/stream.h). The interesting cases are all about the fact that a stream
 // hands the bytes back in arbitrary chunks: a record split anywhere, several
 // records in one chunk, a length prefix split across two reads, and a buffer
 // that fills up before it is drained.

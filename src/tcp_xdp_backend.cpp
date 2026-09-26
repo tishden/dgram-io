@@ -100,9 +100,9 @@ class TcpXdpBackend final : public Backend {
   }
 
   void flush() override {
-    // Poll before output, and poll here at all: with --nack 0 the sender
-    // never calls rx(), so this is its only chance to take ACKs in. Without
-    // it the window closes and the run stalls.
+    // Poll before output, and poll here at all: a sender that never calls
+    // rx() gets no other chance to take ACKs in. Without it the window
+    // closes and the stream stalls.
     stack_.poll();
     stack_.flush();
   }
@@ -168,7 +168,7 @@ std::unique_ptr<Backend> TcpXdpBackend::create(const Config& cfg,
   p.setup_ms = cfg.tcp_setup_ms;
   p.nodelay = cfg.tcp_nodelay;
   if (!p.server && p.peer_ip.empty()) {
-    *err = "--io tcp-xdp client needs --dst SERVER_IP";
+    *err = "tcp-xdp client (listener) needs dst_ip, the server's address";
     return nullptr;
   }
   if (!b->stack_.init(p, &b->fio_, err)) return nullptr;

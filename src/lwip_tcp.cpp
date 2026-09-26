@@ -32,7 +32,7 @@ namespace {
 
 // One RX burst handed to the stack per poll round. Deep enough that a 10G
 // line-rate burst between two polls does not sit in the NIC ring, shallow
-// enough that we return to the caller (and its shm ring) promptly.
+// enough that we return to the caller (and its own queue) promptly.
 constexpr int kRxBurst = 64;
 
 // lwIP is a per-process singleton: its PCB lists, memory pools and timer
@@ -129,7 +129,7 @@ err_t LwipTcp::on_accept(void* arg, tcp_pcb* newpcb, err_t err) {
   LwipTcp* self = static_cast<LwipTcp*>(arg);
   if (err != ERR_OK || newpcb == nullptr) return ERR_VAL;
   if (static_cast<int>(self->peers_.size()) >= self->params_.peers) {
-    tcp_abort(newpcb);  // the run is a closed set; no late joiners
+    tcp_abort(newpcb);  // the peer set is fixed at startup; no late joiners
     return ERR_ABRT;
   }
   self->attach(newpcb);
@@ -204,7 +204,7 @@ bool LwipTcp::init(const LwipParams& p, LwipFrameIo* io, std::string* err) {
 
   ip4_addr_t ip{}, mask{}, gw{};
   if (!ip4addr_aton(params_.ip.c_str(), &ip)) {
-    *err = "bad --dpdk-ip " + params_.ip;
+    *err = "bad dpdk_ip " + params_.ip;
     return false;
   }
   if (!ip4addr_aton(params_.netmask.c_str(), &mask)) {
@@ -263,8 +263,8 @@ bool LwipTcp::wait_ready(std::string* err) {
   // One connect attempt, then keep polling: unlike a kernel socket there is
   // nothing to retry against -- if the server is not listening yet its stack
   // answers the SYN with a RST, lwIP reports it through on_err, and we open a
-  // fresh pcb. The bench driver starts the receiver first, so this loop
-  // normally runs for as long as it takes the sender process to start.
+  // fresh pcb. When the receiver is started first, this loop runs for as
+  // long as it takes the sender to start listening.
   for (;;) {
     peers_.clear();
     peers_.emplace_back();

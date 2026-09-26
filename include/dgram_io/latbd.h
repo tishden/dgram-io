@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Per-stage latency breakdown : where do the microseconds
-// go between the producer's timestamp and the consumer's ring?
+// Per-stage latency breakdown: one Stage per segment of a pipeline you want
+// to see separately, each collecting nanosecond samples and printing p50,
+// p99, p99.9 and max. What the stages are is the caller's choice; a sender
+// might split
 //
-//   sender:   ring_wait  = t_deq - send_ts_ns   (sat in the producer ring)
-//             build      = t_queued - t_deq     (framing/FEC/queue, pre-syscall)
-//   receiver: to_rx      = t_rx - send_ts_ns    (everything up to backend rx;
-//                          cross-host validity = clock sync quality, report
-//                          it next to the clock-uncertainty column)
-//             publish    = t_enq - t_rx         (unpack + shm publish)
+//   ring_wait = dequeued - enqueued      (time spent waiting in its queue)
+//   build     = handed_to_backend - dequeued
 //
-// The wire+stack segment is the cross-check: to_rx - (ring_wait + build).
+// and a receiver measure `to_rx = received - send_timestamp` (cross-host, so
+// only as good as the clock sync -- report the two together). Whatever the
+// explicit stages do not cover is the wire and the stacks.
 //
-// Sampling: every K-th unit (--lat-breakdown K, 0 = off). Cost per sampled
-// unit is two clock reads; unsampled units pay one predictable branch.
-// Reservoir keeps the first kCap samples -- at K=64 that covers 4M messages,
-// more than any single case in the matrix.
+// Sampling is up to the caller (every K-th unit keeps the cost to two clock
+// reads per sample). The reservoir keeps the first kCap samples and counts
+// the rest, so a long run reports its percentiles over the start of it.
 #pragma once
 
 #include <algorithm>

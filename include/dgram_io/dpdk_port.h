@@ -70,14 +70,14 @@ struct Port {
 inline bool setup(const Config& cfg, const Options& opt, Port* p,
                   std::string* err) {
   if (cfg.dpdk_pci.empty() && cfg.dpdk_vdev.empty()) {
-    *err = "--io " + cfg.kind + " requires --dpdk-pci ADDR or --dpdk-vdev SPEC";
+    *err = cfg.kind + " needs dpdk_pci (a PCI address) or dpdk_vdev (a virtual device)";
     return false;
   }
 
   // EAL on the core we are already pinned to; the caller's taskset is the
   // single source of core placement, EAL just inherits it.
   p->core = sched_getcpu();
-  std::vector<std::string> args = {"transport", "--no-telemetry", "-l",
+  std::vector<std::string> args = {"dgram_io", "--no-telemetry", "-l",
                                    std::to_string(p->core < 0 ? 0 : p->core)};
   if (!cfg.dpdk_pci.empty()) {
     args.push_back("--in-memory");  // no runtime-dir collisions between procs
@@ -89,7 +89,7 @@ inline bool setup(const Config& cfg, const Options& opt, Port* p,
     // runtime dir with a unique file-prefix instead -- same effect (two
     // EALs on one host must not share lock files), accepted by 23.11+.
     args.push_back("--no-huge");
-    args.push_back("--file-prefix=transport" + std::to_string(getpid()));
+    args.push_back("--file-prefix=dgram_io" + std::to_string(getpid()));
     args.push_back("--vdev=" + cfg.dpdk_vdev);
     args.push_back("--no-pci");
   }
@@ -155,12 +155,12 @@ inline bool setup(const Config& cfg, const Options& opt, Port* p,
   rte_eth_macaddr_get(p->id, &mac);
   std::memcpy(p->mac, mac.addr_bytes, 6);
 
-  // Physical ports: wait for the link. Each dev_start resets the 82599, and on
-  // this stand the DAC retrain is a roulette -- a good spin links in a few
-  // seconds, a wedged one never converges (30 s did not help). So fail fast at
-  // 20 s and let the bench driver respin with a fresh process (dev_start);
+  // Physical ports: wait for the link. Each dev_start resets the 82599, and
+  // over a DAC cable the retrain is a roulette -- a good spin links in a few
+  // seconds, a wedged one never converges (30 s did not help). So give up at
+  // 20 s and let the caller retry with a fresh process (a new dev_start);
   // waiting longer on a wedged spin is wasted. Traffic sent into a down link
-  // is lost, which the driver detects as hw_ipackets=0 and retries.
+  // is lost, and shows as hw_ipackets=0 in log_stats.
   if (opt.wait_link && !cfg.dpdk_pci.empty()) {
     rte_eth_link link{};
     for (int i = 0; i < 200; ++i) {  // <= 20 s

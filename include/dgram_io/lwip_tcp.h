@@ -4,13 +4,11 @@
 // A TCP endpoint built on lwIP, driven from a poll loop, over a frame
 // transport supplied by the caller.
 //
-// Why the frame transport is abstract: the production user is the DPDK
-// backend, where a frame is an rte_mbuf on a vfio-bound 82599. But the same
-// code has to be testable without a NIC and without root, so the smoke test
-// (test/lwip_smoke.cpp) supplies a socketpair instead and runs the identical
-// connect/accept/write/read path between two forked processes. Anything that
-// only works with a real NIC underneath is not really tested until the wire is
-// free.
+// Why the frame transport is abstract: two backends drive this same stack,
+// tcp-dpdk (a frame is an rte_mbuf on a vfio-bound port) and tcp-xdp (a
+// frame is a UMEM slot of an AF_XDP socket). Anything else that can move
+// whole Ethernet frames -- a socketpair between two processes, for a test
+// without a NIC or root -- can carry it too.
 //
 // Threading: none. lwIP is built with NO_SYS=1, so every entry point below --
 // and every lwIP callback it triggers -- runs on the calling thread, inside

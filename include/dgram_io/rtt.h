@@ -1,25 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// RTT estimation for the NACK timers.
+// Round-trip estimation that keeps a rolling MINIMUM of the samples.
 //
-// Why: the retry cadence and the sender's history depth were tuned on a
-// wire with RTT ~10 µs. On a VPC (50-100+ µs) or a real WAN (ms), a fixed
-// 100 µs retry re-requests packets whose retransmit is still in flight --
-// wasted reverse-path bandwidth and duplicate repairs at exactly the moment
-// the channel is stressed.
+// Minimum, not mean: a sample taken by a loop that polls sparsely (a control
+// socket read every N microseconds, because syscalls cost) carries 0..N of
+// polling delay on top of the true path RTT, always in the same direction.
+// The floor of the distribution is the path RTT; the mean is not. A rolling
+// window rather than an all-time minimum lets the estimate follow a route
+// change.
 //
-// How: the receiver stamps echo requests, the sender reflects them, and the
-// receiver keeps a rolling MINIMUM of the samples. Minimum, not mean: the
-// sender only polls its control socket every --nack-poll-us (deliberately
-// sparse, syscalls cost p50), so every sample carries 0..poll_us of that
-// jitter on top of the true path RTT. The floor of the distribution is the
-// path RTT; the mean is not. A rolling window (not an all-time min) lets the
-// estimate follow route changes.
-//
-// The adapted retry interval never goes BELOW the configured base: on a
-// fast LAN the estimator converges to the old fixed behavior, so local
-// results stay comparable.
+// retry_ns() turns it into a retransmit timer for a layer above that repairs
+// loss: a fixed retry tuned on a 10 us LAN re-requests packets whose repair
+// is still in flight once the path is a 100 us VPC or a millisecond WAN,
+// spending the reverse path exactly when it is stressed.
 #pragma once
 
 #include <algorithm>
@@ -45,10 +39,10 @@ class Estimator {
     return m == UINT64_MAX ? 0 : m;
   }
 
-  // Retry no earlier than the repair could possibly arrive: one RTT for
-  // NACK+retransmit, x1.5 for scheduling/serialization slack, plus a fixed
-  // floor for the sender's sparse control poll. Never below the configured
-  // base -- LAN behavior is unchanged.
+  // Retry no earlier than the repair could possibly arrive: one RTT for the
+  // request and the retransmit, x1.5 for scheduling/serialization slack, plus
+  // a fixed allowance for a sparsely polled peer. Never below the configured
+  // base, so on a fast LAN the timer stays what it was configured to be.
   uint64_t retry_ns(uint64_t base_ns) const {
     if (!have()) return base_ns;
     return std::max(base_ns, min_ns() * 3 / 2 + 20'000);

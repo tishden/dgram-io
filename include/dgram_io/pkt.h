@@ -80,7 +80,7 @@ struct Template {
 };
 
 // The queue_to() path of every L2 backend: same flow template, different
-// destination (NACK replies go to the endpoint learned from RX).
+// destination (a reply goes to the endpoint learned from RX).
 inline Template with_dst(const Template& t, const dgram_io::Endpoint& to) {
   Template r = t;
   std::memcpy(r.dst_mac, to.mac, 6);
@@ -149,7 +149,7 @@ inline size_t build(uint8_t* frame, const Template& t, uint16_t ip_id,
   return flen;
 }
 
-// Parse result: view into the frame + the sender's endpoint (for NACK reply).
+// Parse result: view into the frame + the sender's endpoint (to reply to).
 struct View {
   const uint8_t* payload;
   uint32_t len;

@@ -188,7 +188,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
 
   if (!cfg.listener) {
     if (inet_pton(AF_INET, cfg.dst_ip.c_str(), &b->tmpl_.dst_ip_be) != 1) {
-      *err = "bad dst " + cfg.dst_ip;
+      *err = "bad dst_ip " + cfg.dst_ip;
       return nullptr;
     }
     const bool mcast = pkt::is_mcast(b->tmpl_.dst_ip_be);
@@ -196,7 +196,7 @@ std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
       pkt::mcast_mac(b->tmpl_.dst_ip_be, b->tmpl_.dst_mac);
     } else if (!cfg.dst_mac.empty()) {
       if (!pkt::parse_mac(cfg.dst_mac.c_str(), b->tmpl_.dst_mac)) {
-        *err = "bad --xdp-dst-mac " + cfg.dst_mac;
+        *err = "bad dst_mac " + cfg.dst_mac;
         return nullptr;
       }
     } else if (!arp_lookup(cfg.dst_ip, b->tmpl_.dst_mac)) {
