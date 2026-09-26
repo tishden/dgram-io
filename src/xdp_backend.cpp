@@ -8,7 +8,7 @@
 // another port is unaffected.
 //
 // The XSK itself (UMEM geometry, filter attach, fill/completion bookkeeping,
-// TX frame allocation, carrier wait) lives in io/xdp_socket.h, shared with
+// TX frame allocation, carrier wait) lives in dgram_io/xdp_socket.h, shared with
 // the TCP-over-XDP backend. What is left here is what a frame contains: the
 // header template, ARP resolution of the peer, and the parse/port filter on
 // receive.

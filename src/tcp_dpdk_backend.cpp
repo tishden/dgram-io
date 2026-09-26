@@ -4,8 +4,8 @@
 // TCP over DPDK: the same role split as --io tcp (sender listens, receiver
 // connects), but neither the kernel nor its socket layer is on the path. The
 // NIC is the ixgbe PMD behind vfio-pci -- the same port setup the raw-datagram
-// DPDK backend uses (io/dpdk_port.h) -- and the TCP state machine is lwIP,
-// linked into our process and driven from our poll loop (io/lwip_tcp.h).
+// DPDK backend uses (dgram_io/dpdk_port.h) -- and the TCP state machine is lwIP,
+// linked into our process and driven from our poll loop (dgram_io/lwip_tcp.h).
 //
 // The division of labour, which is the whole point of the exercise:
 //   lwIP  : connection setup, sequence numbers, ACK/window management,

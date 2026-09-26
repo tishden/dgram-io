@@ -75,15 +75,15 @@ that rate and every lower one were delivered in full, with the p50 there.
 | backend | 82599: p50 at 20k msg/s | 82599: holds up to | AWS: p50 at 20k msg/s | AWS: holds up to |
 |---|---|---|---|---|
 | `dpdk` | **7.4 us** | 1.6M (7.9 us) | **17.4 us** | 200k (32.2 us) |
-| `tcp-dpdk` | 8.4 us | 1.6M (10.2 us) | 18.4 us | 1.6M (2.5 ms) |
-| `xdp`, zero-copy | 12.9 us | 1.6M (15.0 us) | — | — |
-| `xdp`, copy mode | 11.4 us | 1.6M (25.7 us) | 29.8 us | 200k (41.4 us) |
-| `tcp-xdp`, zero-copy | 14.1 us | 20k: breaks above ¹ | — | — |
-| `tcp-xdp`, copy mode | 13.1 us | 1.6M (19.1 us) | 31.7 us | 400k (89.9 us) ² |
-| `udp` | 17.3 us | 400k (37.4 us) | 21.0 us | 200k (37.4 us) |
-| `tcp` | 19.0 us | **1.6M (31.1 us)** | 21.4 us | **1.6M (52.8 us)** |
-| `uring` | 20.7 us | 400k (65.2 us) | 38.4 us | 200k (82.9 us) ³ |
-| `uring` + SQPOLL | not run ⁴ | — | 34.1 us | 200k (54.2 us) |
+| `tcp-dpdk` | 8.3 us | 1.6M (10.2 us) | 18.4 us | 1.6M (2.5 ms) |
+| `xdp`, zero-copy | 12.8 us | 1.6M (16.7 us) | — | — |
+| `xdp`, copy mode | 11.4 us | 1.6M (25.9 us) | 29.8 us | 200k (41.4 us) |
+| `tcp-xdp`, zero-copy | 13.9 us | 1.6M (18.6 us) | — | — |
+| `tcp-xdp`, copy mode | 12.8 us | 1.6M (19.9 us) | 31.7 us | 400k (89.9 us) ¹ |
+| `udp` | 17.2 us | 400k (37.0 us) | 21.0 us | 200k (37.4 us) |
+| `tcp` | 18.9 us | **1.6M (28.7 us)** | 21.4 us | **1.6M (52.8 us)** |
+| `uring` | 20.1 us | 400k (66.1 us) | 38.4 us | 200k (82.9 us) ² |
+| `uring` + SQPOLL | 20.5 us | 200k (29.0 us) | 34.1 us | 200k (54.2 us) |
 
 What it says:
 
@@ -97,16 +97,19 @@ What it says:
 * **Streams carry the rate by packing** several messages into a segment.
   Kernel TCP does it without queueing: on AWS it is the only path under 60 us
   p50 at 1.6M, where lwIP keeps the rate but queues into milliseconds.
-* **io_uring is not a faster `udp`**: 3.4 us slower at low load on the 82599,
-  17 us on AWS (see [The backends](#the-backends)).
+* **io_uring is not a faster `udp`**: 2.9 us slower at low load on the 82599,
+  17 us on AWS (see [The backends](#the-backends)); SQPOLL buys little and
+  costs capacity.
 * **Past its ceiling a bypass path queues, a kernel socket drops**: on AWS
   DPDK and AF_XDP sit at 6-19 ms with under 0.3% lost, kernel UDP loses half.
 
-¹ lwIP runs out of pool pbufs on the reflector and aborts the connection; the
-same stack in copy mode is clean to 1.6M. An open bug, written up in the
-benchmarks. ² The main run's 800k case fell to 513k msg/s; two other runs held
-800k at about 1 ms. ³ 53.9 us in the repeat. ⁴ RHEL 9's 5.14 refuses
-`IORING_SETUP_SQ_AFF`.
+¹ The main run's 800k case fell to 513k msg/s; two other runs held 800k at
+about 1 ms. ² 53.9 us in the repeat.
+
+Running this found two bugs that are fixed here: AF_XDP zero-copy on the
+82599 dropped every frame over 1 KB (the RX buffer it derives from a
+2048-byte UMEM chunk), and the benchmark script's own CPU confinement --
+both in [docs/BENCHMARKS.md](docs/BENCHMARKS.md#found-by-these-runs).
 
 ## The backends
 
@@ -121,7 +124,7 @@ benchmarks. ² The main run's 800k case fell to 513k msg/s; two other runs held
 | `tcp-xdp` | lwIP in-process, frames over an AF_XDP socket | libxdp + lwIP |
 
 `uring` is not a faster `udp`. Measured under load it trails plain
-`sendmmsg`/`recvmmsg` by 3.4 us p50 on an 82599 and by 17 us on AWS
+`sendmmsg`/`recvmmsg` by 2.9 us p50 on an 82599 and by 17 us on AWS
 ([docs/BENCHMARKS.md](docs/BENCHMARKS.md)): a receive goes through the
 interrupt, softirq and task_work before its completion is visible, and does
 not get the socket's busy polling. What it does buy is an idle `rx()` that

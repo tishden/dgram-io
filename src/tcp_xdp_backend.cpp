@@ -3,7 +3,7 @@
 
 // TCP over AF_XDP: the third TCP datapath. Same role
 // split as --io tcp (sender listens, receiver connects) and the same
-// off-the-shelf stack as --io tcp-dpdk (lwIP, io/lwip_tcp.h) -- only the
+// off-the-shelf stack as --io tcp-dpdk (lwIP, dgram_io/lwip_tcp.h) -- only the
 // frame transport underneath changes, from a DPDK PMD to an XSK on a NIC
 // queue.
 //

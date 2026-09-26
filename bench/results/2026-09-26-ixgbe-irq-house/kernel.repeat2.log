@@ -1,5 +1,5 @@
-# sender   PCI "" MAC "<driver-port-mac>" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
-# receiver PCI "" MAC "<reflector-port-mac>" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -7,11 +7,70 @@
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 800000 drv: io_lwip: listening on :6201 for 1 peer(s)
-# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:64310
-# tcp-xdp 800000 drv: io_lwip: connection error -14
-# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10519 rx_records=6 tx_refused=4308016161 rx_backpressure=0 frames_tx=13870 frames_rx=13495 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
-# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=13867 tcp_recv=13492 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4243288
-# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=13870 kicks=2995 tx_stall=0 padded=3 rx_pkts=13495 alloc_fail=0 tx_refused=215400 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:55349
+# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=4518489 frames_rx=3435951 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=4518487 tcp_recv=3435949 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=154440
+# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4518489 kicks=4505265 tx_stall=0 padded=193955 rx_pkts=3435951 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
+# tcp-xdp 800000 drv: io_lwip: connection error -13
+# tcp-xdp 800000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 800000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 800000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 800000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 800000 refl: io_lwip: connected to 192.168.10.100:6201
+# tcp-xdp 800000 refl: server on tcp-xdp
+# tcp-xdp 800000 refl: reflected 100000
+# tcp-xdp 800000 refl: reflected 200001
+# tcp-xdp 800000 refl: reflected 300001
+# tcp-xdp 800000 refl: reflected 400000
+# tcp-xdp 800000 refl: reflected 500000
+# tcp-xdp 800000 refl: reflected 600001
+# tcp-xdp 800000 refl: reflected 700000
+# tcp-xdp 800000 refl: reflected 800000
+# tcp-xdp 800000 refl: reflected 900001
+# tcp-xdp 800000 refl: reflected 1000002
+# tcp-xdp 800000 refl: reflected 1100001
+# tcp-xdp 800000 refl: reflected 1200003
+# tcp-xdp 800000 refl: reflected 1300000
+# tcp-xdp 800000 refl: reflected 1400002
+# tcp-xdp 800000 refl: reflected 1500001
+# tcp-xdp 800000 refl: reflected 1600003
+# tcp-xdp 800000 refl: reflected 1700002
+# tcp-xdp 800000 refl: reflected 1800001
+# tcp-xdp 800000 refl: reflected 1900000
+# tcp-xdp 800000 refl: reflected 2000003
+# tcp-xdp 800000 refl: reflected 2100003
+# tcp-xdp 800000 refl: reflected 2200000
+# tcp-xdp 800000 refl: reflected 2300003
+# tcp-xdp 800000 refl: reflected 2400000
+# tcp-xdp 800000 refl: reflected 2500001
+# tcp-xdp 800000 refl: reflected 2600002
+# tcp-xdp 800000 refl: reflected 2700001
+# tcp-xdp 800000 refl: reflected 2800000
+# tcp-xdp 800000 refl: reflected 2900003
+# tcp-xdp 800000 refl: reflected 3000001
+# tcp-xdp 800000 refl: reflected 3100000
+# tcp-xdp 800000 refl: reflected 3200000
+# tcp-xdp 800000 refl: reflected 3300001
+# tcp-xdp 800000 refl: reflected 3400002
+# tcp-xdp 800000 refl: reflected 3500001
+# tcp-xdp 800000 refl: reflected 3600001
+# tcp-xdp 800000 refl: reflected 3700001
+# tcp-xdp 800000 refl: reflected 3800000
+# tcp-xdp 800000 refl: reflected 3900001
+# tcp-xdp 800000 refl: reflected 4000002
+# tcp-xdp 800000 refl: reflected 4100002
+# tcp-xdp 800000 refl: reflected 4200002
+# tcp-xdp 800000 refl: reflected 4300000
+# tcp-xdp 800000 refl: reflected 4400000
+# tcp-xdp 800000 refl: reflected 4500000
+# tcp-xdp 800000 refl: reflected 4600000
+# tcp-xdp 800000 refl: reflected 4700001
+# tcp-xdp 800000 refl: reflected 4800000
+# tcp-xdp 800000 refl: reflected 4800000 in total
+# tcp-xdp 800000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=3435951 frames_rx=4518489 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 800000 refl: io_tcp_xdp_stack: tcp_xmit=3435953 tcp_recv=4518487 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=29744
+# tcp-xdp 800000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=3435951 kicks=3190039 tx_stall=0 padded=1578575 rx_pkts=4518489 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 800000 refl: io_lwip: connection error -13
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -19,14 +78,275 @@
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 1600000 drv: io_lwip: listening on :6202 for 1 peer(s)
-# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:51871
-# tcp-xdp 1600000 drv: io_lwip: connection error -14
-# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10281 rx_records=1 tx_refused=3881456520 rx_backpressure=0 frames_tx=8239 frames_rx=7826 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
-# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=8236 tcp_recv=7823 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=2569408
-# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=8239 kicks=1721 tx_stall=0 padded=3 rx_pkts=7826 alloc_fail=0 tx_refused=194072 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:53492
+# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=4128797 frames_rx=3186003 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=4128795 tcp_recv=3186001 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=151320
+# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4128797 kicks=4118833 tx_stall=0 padded=174183 rx_pkts=3186003 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: io_lwip: connection error -13
+# tcp-xdp 1600000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 1600000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 1600000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 1600000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 1600000 refl: io_lwip: connected to 192.168.10.100:6202
+# tcp-xdp 1600000 refl: server on tcp-xdp
+# tcp-xdp 1600000 refl: reflected 100000
+# tcp-xdp 1600000 refl: reflected 200005
+# tcp-xdp 1600000 refl: reflected 300002
+# tcp-xdp 1600000 refl: reflected 400003
+# tcp-xdp 1600000 refl: reflected 500003
+# tcp-xdp 1600000 refl: reflected 600001
+# tcp-xdp 1600000 refl: reflected 700001
+# tcp-xdp 1600000 refl: reflected 800002
+# tcp-xdp 1600000 refl: reflected 900008
+# tcp-xdp 1600000 refl: reflected 1000002
+# tcp-xdp 1600000 refl: reflected 1100000
+# tcp-xdp 1600000 refl: reflected 1200003
+# tcp-xdp 1600000 refl: reflected 1300000
+# tcp-xdp 1600000 refl: reflected 1400006
+# tcp-xdp 1600000 refl: reflected 1500004
+# tcp-xdp 1600000 refl: reflected 1600000
+# tcp-xdp 1600000 refl: reflected 1700004
+# tcp-xdp 1600000 refl: reflected 1800005
+# tcp-xdp 1600000 refl: reflected 1900000
+# tcp-xdp 1600000 refl: reflected 2000005
+# tcp-xdp 1600000 refl: reflected 2100005
+# tcp-xdp 1600000 refl: reflected 2200006
+# tcp-xdp 1600000 refl: reflected 2300002
+# tcp-xdp 1600000 refl: reflected 2400002
+# tcp-xdp 1600000 refl: reflected 2500005
+# tcp-xdp 1600000 refl: reflected 2600004
+# tcp-xdp 1600000 refl: reflected 2700001
+# tcp-xdp 1600000 refl: reflected 2800004
+# tcp-xdp 1600000 refl: reflected 2900001
+# tcp-xdp 1600000 refl: reflected 3000003
+# tcp-xdp 1600000 refl: reflected 3100004
+# tcp-xdp 1600000 refl: reflected 3200003
+# tcp-xdp 1600000 refl: reflected 3300003
+# tcp-xdp 1600000 refl: reflected 3400005
+# tcp-xdp 1600000 refl: reflected 3500005
+# tcp-xdp 1600000 refl: reflected 3600008
+# tcp-xdp 1600000 refl: reflected 3700002
+# tcp-xdp 1600000 refl: reflected 3800000
+# tcp-xdp 1600000 refl: reflected 3900006
+# tcp-xdp 1600000 refl: reflected 4000000
+# tcp-xdp 1600000 refl: reflected 4100004
+# tcp-xdp 1600000 refl: reflected 4200000
+# tcp-xdp 1600000 refl: reflected 4300004
+# tcp-xdp 1600000 refl: reflected 4400000
+# tcp-xdp 1600000 refl: reflected 4500007
+# tcp-xdp 1600000 refl: reflected 4600001
+# tcp-xdp 1600000 refl: reflected 4700001
+# tcp-xdp 1600000 refl: reflected 4800006
+# tcp-xdp 1600000 refl: reflected 4900001
+# tcp-xdp 1600000 refl: reflected 5000003
+# tcp-xdp 1600000 refl: reflected 5100002
+# tcp-xdp 1600000 refl: reflected 5200000
+# tcp-xdp 1600000 refl: reflected 5300005
+# tcp-xdp 1600000 refl: reflected 5400000
+# tcp-xdp 1600000 refl: reflected 5500003
+# tcp-xdp 1600000 refl: reflected 5600000
+# tcp-xdp 1600000 refl: reflected 5700001
+# tcp-xdp 1600000 refl: reflected 5800001
+# tcp-xdp 1600000 refl: reflected 5900002
+# tcp-xdp 1600000 refl: reflected 6000001
+# tcp-xdp 1600000 refl: reflected 6100002
+# tcp-xdp 1600000 refl: reflected 6200006
+# tcp-xdp 1600000 refl: reflected 6300002
+# tcp-xdp 1600000 refl: reflected 6400001
+# tcp-xdp 1600000 refl: reflected 6500005
+# tcp-xdp 1600000 refl: reflected 6600006
+# tcp-xdp 1600000 refl: reflected 6700000
+# tcp-xdp 1600000 refl: reflected 6800002
+# tcp-xdp 1600000 refl: reflected 6900000
+# tcp-xdp 1600000 refl: reflected 7000004
+# tcp-xdp 1600000 refl: reflected 7100003
+# tcp-xdp 1600000 refl: reflected 7200002
+# tcp-xdp 1600000 refl: reflected 7300001
+# tcp-xdp 1600000 refl: reflected 7400001
+# tcp-xdp 1600000 refl: reflected 7500001
+# tcp-xdp 1600000 refl: reflected 7600000
+# tcp-xdp 1600000 refl: reflected 7700000
+# tcp-xdp 1600000 refl: reflected 7800001
+# tcp-xdp 1600000 refl: reflected 7900003
+# tcp-xdp 1600000 refl: reflected 8000004
+# tcp-xdp 1600000 refl: reflected 8100001
+# tcp-xdp 1600000 refl: reflected 8200004
+# tcp-xdp 1600000 refl: reflected 8300000
+# tcp-xdp 1600000 refl: reflected 8400003
+# tcp-xdp 1600000 refl: reflected 8500004
+# tcp-xdp 1600000 refl: reflected 8600005
+# tcp-xdp 1600000 refl: reflected 8700001
+# tcp-xdp 1600000 refl: reflected 8800001
+# tcp-xdp 1600000 refl: reflected 8900003
+# tcp-xdp 1600000 refl: reflected 9000005
+# tcp-xdp 1600000 refl: reflected 9100010
+# tcp-xdp 1600000 refl: reflected 9200004
+# tcp-xdp 1600000 refl: reflected 9300005
+# tcp-xdp 1600000 refl: reflected 9400006
+# tcp-xdp 1600000 refl: reflected 9500001
+# tcp-xdp 1600000 refl: reflected 9600000
+# tcp-xdp 1600000 refl: reflected 9600000 in total
+# tcp-xdp 1600000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=3186017 frames_rx=4128797 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 1600000 refl: io_tcp_xdp_stack: tcp_xmit=3186019 tcp_recv=4128795 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=42120
+# tcp-xdp 1600000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=3186017 kicks=3055055 tx_stall=0 padded=1389209 rx_pkts=4128797 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 1600000 refl: io_lwip: connection error -13
 # tcp 800000 drv: io_tcp: listening on :6203 for 1 peer(s)
-# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:34494
-# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1983338 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:55614
+# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=2108816 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 800000 refl: io_tcp: connected to 192.168.10.100:6203
+# tcp 800000 refl: server on tcp
+# tcp 800000 refl: reflected 100002
+# tcp 800000 refl: reflected 200003
+# tcp 800000 refl: reflected 300000
+# tcp 800000 refl: reflected 400000
+# tcp 800000 refl: reflected 500004
+# tcp 800000 refl: reflected 600002
+# tcp 800000 refl: reflected 700003
+# tcp 800000 refl: reflected 800006
+# tcp 800000 refl: reflected 900001
+# tcp 800000 refl: reflected 1000003
+# tcp 800000 refl: reflected 1100005
+# tcp 800000 refl: reflected 1200000
+# tcp 800000 refl: reflected 1300001
+# tcp 800000 refl: reflected 1400001
+# tcp 800000 refl: reflected 1500002
+# tcp 800000 refl: reflected 1600000
+# tcp 800000 refl: reflected 1700001
+# tcp 800000 refl: reflected 1800002
+# tcp 800000 refl: reflected 1900003
+# tcp 800000 refl: reflected 2000000
+# tcp 800000 refl: reflected 2100001
+# tcp 800000 refl: reflected 2200004
+# tcp 800000 refl: reflected 2300001
+# tcp 800000 refl: reflected 2400004
+# tcp 800000 refl: reflected 2500002
+# tcp 800000 refl: reflected 2600001
+# tcp 800000 refl: reflected 2700005
+# tcp 800000 refl: reflected 2800000
+# tcp 800000 refl: reflected 2900001
+# tcp 800000 refl: reflected 3000000
+# tcp 800000 refl: reflected 3100003
+# tcp 800000 refl: reflected 3200005
+# tcp 800000 refl: reflected 3300004
+# tcp 800000 refl: reflected 3400003
+# tcp 800000 refl: reflected 3500004
+# tcp 800000 refl: reflected 3600002
+# tcp 800000 refl: reflected 3700000
+# tcp 800000 refl: reflected 3800002
+# tcp 800000 refl: reflected 3900001
+# tcp 800000 refl: reflected 4000003
+# tcp 800000 refl: reflected 4100002
+# tcp 800000 refl: reflected 4200000
+# tcp 800000 refl: reflected 4300003
+# tcp 800000 refl: reflected 4400000
+# tcp 800000 refl: reflected 4500005
+# tcp 800000 refl: reflected 4600002
+# tcp 800000 refl: reflected 4700005
+# tcp 800000 refl: reflected 4800000
+# tcp 800000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 800000 refl: reflected 4800000 in total
+# tcp 800000 refl: io_tcp: role=client conns=1 live=0 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1995988 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 1600000 drv: io_tcp: listening on :6204 for 1 peer(s)
-# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:53264
-# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1691745 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:49848
+# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1816164 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 refl: io_tcp: connected to 192.168.10.100:6204
+# tcp 1600000 refl: server on tcp
+# tcp 1600000 refl: reflected 100001
+# tcp 1600000 refl: reflected 200002
+# tcp 1600000 refl: reflected 300000
+# tcp 1600000 refl: reflected 400009
+# tcp 1600000 refl: reflected 500000
+# tcp 1600000 refl: reflected 600003
+# tcp 1600000 refl: reflected 700001
+# tcp 1600000 refl: reflected 800003
+# tcp 1600000 refl: reflected 900004
+# tcp 1600000 refl: reflected 1000002
+# tcp 1600000 refl: reflected 1100002
+# tcp 1600000 refl: reflected 1200006
+# tcp 1600000 refl: reflected 1300006
+# tcp 1600000 refl: reflected 1400011
+# tcp 1600000 refl: reflected 1500006
+# tcp 1600000 refl: reflected 1600034
+# tcp 1600000 refl: reflected 1700000
+# tcp 1600000 refl: reflected 1800013
+# tcp 1600000 refl: reflected 1900004
+# tcp 1600000 refl: reflected 2000005
+# tcp 1600000 refl: reflected 2100005
+# tcp 1600000 refl: reflected 2200000
+# tcp 1600000 refl: reflected 2300003
+# tcp 1600000 refl: reflected 2400002
+# tcp 1600000 refl: reflected 2500005
+# tcp 1600000 refl: reflected 2600010
+# tcp 1600000 refl: reflected 2700009
+# tcp 1600000 refl: reflected 2800002
+# tcp 1600000 refl: reflected 2900007
+# tcp 1600000 refl: reflected 3000009
+# tcp 1600000 refl: reflected 3100002
+# tcp 1600000 refl: reflected 3200001
+# tcp 1600000 refl: reflected 3300003
+# tcp 1600000 refl: reflected 3400007
+# tcp 1600000 refl: reflected 3500001
+# tcp 1600000 refl: reflected 3600008
+# tcp 1600000 refl: reflected 3700003
+# tcp 1600000 refl: reflected 3800002
+# tcp 1600000 refl: reflected 3900006
+# tcp 1600000 refl: reflected 4000002
+# tcp 1600000 refl: reflected 4100004
+# tcp 1600000 refl: reflected 4200006
+# tcp 1600000 refl: reflected 4300007
+# tcp 1600000 refl: reflected 4400001
+# tcp 1600000 refl: reflected 4500007
+# tcp 1600000 refl: reflected 4600010
+# tcp 1600000 refl: reflected 4700001
+# tcp 1600000 refl: reflected 4800001
+# tcp 1600000 refl: reflected 4900000
+# tcp 1600000 refl: reflected 5000007
+# tcp 1600000 refl: reflected 5100008
+# tcp 1600000 refl: reflected 5200004
+# tcp 1600000 refl: reflected 5300007
+# tcp 1600000 refl: reflected 5400001
+# tcp 1600000 refl: reflected 5500007
+# tcp 1600000 refl: reflected 5600005
+# tcp 1600000 refl: reflected 5700003
+# tcp 1600000 refl: reflected 5800000
+# tcp 1600000 refl: reflected 5900010
+# tcp 1600000 refl: reflected 6000009
+# tcp 1600000 refl: reflected 6100008
+# tcp 1600000 refl: reflected 6200005
+# tcp 1600000 refl: reflected 6300005
+# tcp 1600000 refl: reflected 6400003
+# tcp 1600000 refl: reflected 6500003
+# tcp 1600000 refl: reflected 6600000
+# tcp 1600000 refl: reflected 6700003
+# tcp 1600000 refl: reflected 6800009
+# tcp 1600000 refl: reflected 6900006
+# tcp 1600000 refl: reflected 7000001
+# tcp 1600000 refl: reflected 7100001
+# tcp 1600000 refl: reflected 7200007
+# tcp 1600000 refl: reflected 7300008
+# tcp 1600000 refl: reflected 7400005
+# tcp 1600000 refl: reflected 7500008
+# tcp 1600000 refl: reflected 7600008
+# tcp 1600000 refl: reflected 7700001
+# tcp 1600000 refl: reflected 7800002
+# tcp 1600000 refl: reflected 7900014
+# tcp 1600000 refl: reflected 8000004
+# tcp 1600000 refl: reflected 8100003
+# tcp 1600000 refl: reflected 8200005
+# tcp 1600000 refl: reflected 8300008
+# tcp 1600000 refl: reflected 8400001
+# tcp 1600000 refl: reflected 8500000
+# tcp 1600000 refl: reflected 8600007
+# tcp 1600000 refl: reflected 8700005
+# tcp 1600000 refl: reflected 8800007
+# tcp 1600000 refl: reflected 8900010
+# tcp 1600000 refl: reflected 9000009
+# tcp 1600000 refl: reflected 9100002
+# tcp 1600000 refl: reflected 9200005
+# tcp 1600000 refl: reflected 9300007
+# tcp 1600000 refl: reflected 9400003
+# tcp 1600000 refl: reflected 9500003
+# tcp 1600000 refl: reflected 9600000
+# tcp 1600000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 1600000 refl: reflected 9600000 in total
+# tcp 1600000 refl: io_tcp: role=client conns=1 live=0 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1799186 send_errs=0 recv_errs=0 desyncs=0 closed=1

@@ -21,9 +21,12 @@ First public version.
   in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 * **Build:** `make install` with a pkg-config file (`dgram-io`).
 
-Known issues, written up in docs/BENCHMARKS.md:
+Found while benchmarking, fixed before the first release:
 
-* `tcp-xdp` in AF_XDP zero-copy mode (seen on ixgbe) aborts its connection
-  under load when lwIP's pbuf pool runs out; copy mode is not affected.
-* `uring` with SQPOLL cannot pin its SQ thread on RHEL 9's 5.14 kernel,
-  which refuses `IORING_SETUP_SQ_AFF`.
+* AF_XDP zero-copy on an 82599 dropped every frame over 1 KB: ixgbe sizes its
+  RX buffer from the UMEM chunk in whole kilobytes, and 2048-byte chunks gave
+  1024. UMEM frames are 4096 bytes now, and both XDP backends refuse a
+  `max_datagram` that does not fit one RX buffer instead of losing it on the
+  wire. This is what broke `tcp-xdp` under load in zero-copy mode.
+* `udp` returned a truncated datagram as an empty slot inside `rx()`'s count.
+* `uring` with SQPOLL could crash when its submission queue filled.

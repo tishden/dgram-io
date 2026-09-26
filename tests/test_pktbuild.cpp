@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Denis Tishkov
 
-// Unit tests for io/pkt.h: Ethernet/IPv4/UDP frame construction and parsing
+// Unit tests for dgram_io/pkt.h: Ethernet/IPv4/UDP frame construction and parsing
 // used by the L2 backends (AF_XDP now, DPDK later). No root, no sockets.
 #include "dgram_io/pkt.h"
 

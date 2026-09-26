@@ -18,6 +18,9 @@ The short version:
   message per datagram cannot.
 * **io_uring does not win here.** `uring` is 3 us slower than `udp` at low
   load on the 82599 and 17 us slower on AWS.
+* **Two silent failures were found by running this**, and fixed: AF_XDP
+  zero-copy on the 82599 dropped every frame over 1 KB, and a benchmark
+  script left its CPU confinement behind (see *Found by these runs*).
 
 ## Method
 
@@ -68,19 +71,21 @@ of a queue. On a stream, loss means the connection failed, shown as
 
 | backend | 20k | 100k | 200k | 400k | 800k | 1.6M |
 | --- | --- | --- | --- | --- | --- | --- |
-| dpdk | 7.4 / 9.2 | 7.4 / 8.0 | 7.4 / 7.8 | 7.5 / 7.9 | 7.7 / 8.1 | 7.9 / 8.8 |
-| tcp-dpdk | 8.4 / 10.1 | 8.3 / 10.1 | 8.4 / 9.8 | 8.5 / 10.7 | 8.6 / 13.0 | 10.2 / 18.7 |
-| xdp | 12.9 / 40.3 | 12.0 / 38.0 | 12.2 / 29.4 | 12.3 / 38.5 | 13.3 / 38.6 | 15.0 / 39.0 |
-| xdp-copy | 11.4 / 13.4 | 11.4 / 18.3 | 11.4 / 21.8 | 12.4 / 17.1 | 15.0 / 21.4 | 25.7 / 81.1 |
-| tcp-xdp | 14.1 / 40.7 | broken, 100% lost | broken, 100% lost | broken, 100% lost | broken, 100% lost | broken, 100% lost |
-| tcp-xdp-copy | 13.1 / 33.1 | 12.6 / 38.4 | 12.4 / 34.7 | 14.6 / 41.5 | 17.2 / 47.2 | 19.1 / 48.6 |
-| udp | 17.3 / 23.8 | 17.0 / 30.4 | 18.9 / 33.6 | 37.4 / 72.0 | sat. 600k, 50.0% | sat. 612k, 49.9% |
-| tcp | 19.0 / 26.2 | 19.0 / 41.7 | 23.9 / 52.4 | 24.3 / 59.0 | 26.1 / 60.3 | 31.1 / 71.0 |
-| uring | 20.7 / 41.8 | 20.1 / 45.5 | 24.2 / 53.0 | 65.2 / 133.1 | sat. 452k, 0.0% | sat. 453k, 0.0% |
+| dpdk | 7.4 / 8.1 | 7.4 / 7.8 | 7.4 / 7.8 | 7.5 / 8.0 | 7.7 / 8.7 | 7.9 / 9.9 |
+| tcp-dpdk | 8.3 / 9.6 | 8.3 / 9.8 | 8.4 / 10.4 | 8.5 / 11.9 | 8.6 / 14.4 | 10.2 / 20.5 |
+| xdp | 12.8 / 15.9 | 12.1 / 25.3 | 12.1 / 17.1 | 14.4 / 19.1 | 14.7 / 20.9 | 16.7 / 23.4 |
+| xdp-copy | 11.4 / 13.2 | 11.3 / 18.1 | 11.4 / 21.9 | 12.5 / 17.2 | 14.9 / 21.4 | 25.9 / 77.0 |
+| tcp-xdp | 13.9 / 16.8 | 13.2 / 26.8 | 14.7 / 25.4 | 15.1 / 20.9 | 16.9 / 23.6 | 18.6 / 27.3 |
+| tcp-xdp-copy | 12.8 / 15.1 | 13.8 / 19.9 | 13.2 / 25.2 | 15.5 / 22.4 | 17.9 / 25.3 | 19.9 / 29.1 |
+| udp | 17.2 / 18.9 | 17.0 / 21.3 | 19.6 / 29.3 | 37.0 / 59.5 | sat. 613k, 50.0% | sat. 621k, 50.0% |
+| tcp | 18.9 / 23.4 | 19.0 / 25.9 | 24.0 / 36.9 | 23.4 / 37.6 | 25.0 / 38.4 | 28.7 / 46.7 |
+| uring | 20.1 / 25.2 | 19.5 / 31.5 | 24.3 / 39.1 | 66.1 / 152.0 | sat. 430k, 0.0% | sat. 427k, 0.0% |
+| uring-sqpoll | 20.5 / 24.5 | 20.6 / 28.1 | 29.0 / 46.6 | sat. 400k, 76.1% | sat. 594k, 85.1% | sat. 591k, 85.2% |
 
-`uring` with SQPOLL has no row: this kernel refused it (see *Open issues*).
-`tcp-xdp` in zero-copy mode breaks from 100k; the same stack in copy mode is
-fine, so this is a bug, not a result (see *Open issues*).
+Everything here held its rate without loss up to 1.6M except the kernel
+socket paths: `udp` and `uring` saturate past 400k, and `uring` with SQPOLL
+already at 400k -- where it loses 76% while plain `uring` still delivers
+everything.
 
 ## Results: AWS c6in.4xlarge pair (`bench/results/2026-09-26-aws-c6in.4xlarge`)
 
@@ -118,20 +123,22 @@ AF_XDP at 17-19 ms with under 0.3% lost; kernel UDP turns a 64 MB socket
 buffer into a 20-150 ms queue and then loses half.
 
 **Streams pack, and the kernel's TCP packs best.** From 200k to 1.6M/s
-kernel `tcp` stays at 24-31 us p50 locally and 41-53 us on AWS, carrying up
-to 9.5 messages per flush locally at the top. lwIP packs only once it is
+kernel `tcp` stays at 23-29 us p50 locally and 41-53 us on AWS, carrying up
+to 9.4 messages per flush locally at the top. lwIP packs only once it is
 behind: on AWS `tcp-dpdk` and `tcp-xdp` keep the rate but queue into
 milliseconds from 800k. Locally `tcp-dpdk` never gets there.
 
-**AF_XDP copy mode beat zero-copy on the 82599 below 800k** -- 11.4 against
-12.0-12.9 us p50, and a much tighter p99 (13-22 against 29-40 us). Zero-copy
-takes over from 800k, where copy mode's per-packet copy starts to cost
-(15.0 against 13.3 us, and 25.7 against 15.0 at 1.6M). On ENA there was no
-choice: copy mode only.
+**AF_XDP copy mode beat zero-copy on the 82599 up to 400k** -- 11.3-12.5
+against 12.1-14.4 us p50, with a similar p99. The two meet at 800k (14.9 and
+14.7 us), and at 1.6M copy mode's per-packet copy costs it: 25.9 against
+16.7 us. The same holds for the lwIP stack on top (`tcp-xdp` 18.6 us at 1.6M
+in zero-copy, 19.9 in copy mode). On ENA there was no choice: copy mode
+only.
 
 **io_uring is the slowest kernel path at every rate.** `uring` trails `udp` by
-3.4 us p50 at 20k on the 82599 and by 17 us on AWS; locally it holds 400k at
-65 us p50 where `udp` does 37, and caps at 452k. `net.core.busy_read` lets
+2.9 us p50 at 20k on the 82599 and by 17 us on AWS; locally it holds 400k at
+66 us p50 where `udp` does 37, and caps at 430k. SQPOLL buys nothing at low
+load locally (20.5 against 20.1 us) and 4 us on AWS, and costs capacity. `net.core.busy_read` lets
 `recvmmsg` spin on the NIC queue; a multishot receive only sees a packet after
 the interrupt, softirq and task_work have run, and io_uring polls NAPI only
 when registered for it (`IORING_REGISTER_NAPI`, not used yet). That is the
@@ -141,15 +148,16 @@ SENDMSGs are retried from poll wake-ups without an order between them.
 
 **Where the IRQ goes matters as much as a backend choice.** The same local
 matrix with each port's IRQ on the idle hyperthread of its process's core
-([`2026-09-26-ixgbe-irq-sibling`](../bench/results/2026-09-26-ixgbe-irq-sibling))
-instead of a housekeeping CPU:
+([`2026-09-26-ixgbe-irq-sibling`](../bench/results/2026-09-26-ixgbe-irq-sibling),
+an earlier build: its `tcp-xdp` row shows the zero-copy bug described
+below, and it has no `uring-sqpoll`) instead of a housekeeping CPU:
 
 | backend | 20k p50, IRQ on housekeeping CPU | 20k p50, IRQ on HT sibling | highest sustained rate, housekeeping / sibling |
 | --- | --- | --- | --- |
-| udp | 17.3 us | 20.1 us | 400k / 200k |
-| uring | 20.7 us | 25.5 us | 400k / 200k |
-| xdp (zero-copy) | 12.9 us | 15.7 us | 1.6M / 1.6M |
-| tcp | 19.0 us | 21.9 us | 1.6M / 1.6M |
+| udp | 17.2 us | 20.1 us | 400k / 200k |
+| uring | 20.1 us | 25.5 us | 400k / 200k |
+| xdp (zero-copy) | 12.8 us | 15.7 us | 1.6M / 1.6M |
+| tcp | 18.9 us | 21.9 us | 1.6M / 1.6M |
 | dpdk | 7.4 us | 7.4 us | 1.6M / 1.6M |
 
 The softirq on the sibling hyperthread competes with the busy-polling
@@ -159,20 +167,29 @@ earlier pass with that layout lost 50-62% in the kernel paths at 200k while
 the machine was in use (that pass's raw data was overwritten by the next
 one; the figures are from its console output).
 
-## Open issues found by these runs
+## Found by these runs
 
-* **tcp-xdp breaks in zero-copy mode (ixgbe).** From 100k/s -- and at 20k in
-  one repeat -- the reflector's lwIP runs out of pool pbufs (`pbuf_err` 39 to
-  452 per case), then aborts the connection (`tcp_proterr=1`, `closed=2-3`);
-  the driver sees `ERR_ABRT` and refuses every write after that. Copy mode on
-  the same ports runs clean to 1.6M. `PBUF_POOL_SIZE` is 2048 against a 1 MB
-  `TCP_WND`; why only zero-copy exhausts it is not established.
-* **uring with SQPOLL on RHEL 9.7's 5.14.** `bin/uring_probe` shows the kernel
-  accepts SQPOLL but refuses `IORING_SETUP_SQ_AFF` with EINVAL. The backend
-  then falls back to creating the ring from the target CPU so the SQ thread
-  inherits it; in the benchmark that fallback also failed. The backend now
-  reports which step failed; the next `wire_bench.sh` run records the answer
-  (and the scope's cpuset) in its passport. 7.0-aws accepted SQ_AFF.
+* **AF_XDP zero-copy on the 82599 dropped every frame over 1 KB.** In
+  zero-copy mode ixgbe sizes the 82599's RX buffer from the UMEM chunk minus
+  the kernel's 256-byte headroom, in whole kilobytes rounded down. With the
+  usual 2048-byte chunks that is 1024 bytes; a longer frame needs a second
+  descriptor, which the zero-copy path does not handle, and the frame is
+  dropped where no XSK counter sees it. 100-byte datagrams never cross the
+  line. `tcp-xdp` did as soon as lwIP coalesced records into full segments:
+  one such segment was lost with every retransmission, the connection
+  stalled behind it and lwIP aborted it -- found with the lwIP trace
+  (`DGRAM_IO_LWIP_TRACE=1`). The datagram `xdp` backend would have lost
+  everything at its default 1400-byte `max_datagram`. UMEM frames are now
+  4096 bytes (3072 after the rounding), both XDP backends refuse a
+  `max_datagram` that does not fit one RX buffer, and 1200-byte datagrams run
+  clean in zero-copy (`xdp` 17.1 us, `tcp-xdp` 19.3 us p50 at 200k).
+* **The local benchmark left the host confined to 4 of its 8 CPUs.** An
+  empty `AllowedCPUs=` drops systemd's property but not the cgroup's cpuset,
+  so the restore step undid nothing; and the benchmark's own scope was sized
+  with `nproc`, which inside the confined slice counts 4. The second mistake
+  is what made `uring` with SQPOLL fail: its SQ threads' CPUs were outside
+  the scope, and the kernel rightly refused to pin them there. Both fixed;
+  `bin/uring_probe` (in the passport) now records what the scope may use.
 * **SQPOLL with the caller pinned to one CPU** starves the SQ thread, which
   inherits that CPU: round trips went from 30 us to milliseconds on the
   82599. The backend refuses that configuration at setup.

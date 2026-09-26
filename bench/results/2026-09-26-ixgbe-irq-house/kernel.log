@@ -1,95 +1,1084 @@
-# sender   PCI "" MAC "<driver-port-mac>" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
-# receiver PCI "" MAC "<reflector-port-mac>" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
-# udp 20000 drv: io_udp: syscalls=119999 send_errs=0 rx_truncated=0
-# udp 100000 drv: io_udp: syscalls=599984 send_errs=0 rx_truncated=0
-# udp 200000 drv: io_udp: syscalls=1153531 send_errs=0 rx_truncated=0
-# udp 400000 drv: io_udp: syscalls=520730 send_errs=0 rx_truncated=0
+# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# udp 20000 drv: io_udp: syscalls=120000 send_errs=0 rx_truncated=0
+# udp 20000 refl: server on udp
+# udp 20000 refl: reflected 100000
+# udp 20000 refl: reflected 120000 in total
+# udp 20000 refl: io_udp: syscalls=119999 send_errs=0 rx_truncated=0
+# udp 100000 drv: io_udp: syscalls=599988 send_errs=0 rx_truncated=0
+# udp 100000 refl: server on udp
+# udp 100000 refl: reflected 100000
+# udp 100000 refl: reflected 200000
+# udp 100000 refl: reflected 300000
+# udp 100000 refl: reflected 400000
+# udp 100000 refl: reflected 500000
+# udp 100000 refl: reflected 600000
+# udp 100000 refl: reflected 600000 in total
+# udp 100000 refl: io_udp: syscalls=599883 send_errs=0 rx_truncated=0
+# udp 200000 drv: io_udp: syscalls=1123887 send_errs=0 rx_truncated=0
+# udp 200000 refl: server on udp
+# udp 200000 refl: reflected 100000
+# udp 200000 refl: reflected 200001
+# udp 200000 refl: reflected 300000
+# udp 200000 refl: reflected 400000
+# udp 200000 refl: reflected 500000
+# udp 200000 refl: reflected 600001
+# udp 200000 refl: reflected 700000
+# udp 200000 refl: reflected 800000
+# udp 200000 refl: reflected 900000
+# udp 200000 refl: reflected 1000000
+# udp 200000 refl: reflected 1100000
+# udp 200000 refl: reflected 1200000
+# udp 200000 refl: reflected 1200000 in total
+# udp 200000 refl: io_udp: syscalls=1013966 send_errs=0 rx_truncated=0
+# udp 400000 drv: io_udp: syscalls=483964 send_errs=0 rx_truncated=0
+# udp 400000 refl: server on udp
+# udp 400000 refl: reflected 100004
+# udp 400000 refl: reflected 200002
+# udp 400000 refl: reflected 300004
+# udp 400000 refl: reflected 400002
+# udp 400000 refl: reflected 500001
+# udp 400000 refl: reflected 600003
+# udp 400000 refl: reflected 700003
+# udp 400000 refl: reflected 800001
+# udp 400000 refl: reflected 900002
+# udp 400000 refl: reflected 1000000
+# udp 400000 refl: reflected 1100004
+# udp 400000 refl: reflected 1200007
+# udp 400000 refl: reflected 1300003
+# udp 400000 refl: reflected 1400001
+# udp 400000 refl: reflected 1500000
+# udp 400000 refl: reflected 1600000
+# udp 400000 refl: reflected 1700002
+# udp 400000 refl: reflected 1800005
+# udp 400000 refl: reflected 1900000
+# udp 400000 refl: reflected 2000006
+# udp 400000 refl: reflected 2100000
+# udp 400000 refl: reflected 2200001
+# udp 400000 refl: reflected 2300001
+# udp 400000 refl: reflected 2400000
+# udp 400000 refl: reflected 2400000 in total
+# udp 400000 refl: io_udp: syscalls=538631 send_errs=0 rx_truncated=0
 # udp 800000 drv: io_udp: syscalls=300003 send_errs=0 rx_truncated=0
+# udp 800000 refl: server on udp
+# udp 800000 refl: reflected 100023
+# udp 800000 refl: reflected 200004
+# udp 800000 refl: reflected 300027
+# udp 800000 refl: reflected 400016
+# udp 800000 refl: reflected 500012
+# udp 800000 refl: reflected 600020
+# udp 800000 refl: reflected 700005
+# udp 800000 refl: reflected 800005
+# udp 800000 refl: reflected 900010
+# udp 800000 refl: reflected 1000024
+# udp 800000 refl: reflected 1100011
+# udp 800000 refl: reflected 1200018
+# udp 800000 refl: reflected 1300021
+# udp 800000 refl: reflected 1400022
+# udp 800000 refl: reflected 1500020
+# udp 800000 refl: reflected 1600006
+# udp 800000 refl: reflected 1700024
+# udp 800000 refl: reflected 1800022
+# udp 800000 refl: reflected 1900008
+# udp 800000 refl: reflected 2000012
+# udp 800000 refl: reflected 2100018
+# udp 800000 refl: reflected 2200007
+# udp 800000 refl: reflected 2300021
+# udp 800000 refl: reflected 2400028
+# udp 800000 refl: reflected 2500022
+# udp 800000 refl: reflected 2600028
+# udp 800000 refl: reflected 2700018
+# udp 800000 refl: reflected 2800011
+# udp 800000 refl: reflected 2900021
+# udp 800000 refl: reflected 3000018
+# udp 800000 refl: reflected 3100002
+# udp 800000 refl: reflected 3200022
+# udp 800000 refl: reflected 3300013
+# udp 800000 refl: reflected 3400026
+# udp 800000 refl: reflected 3500010
+# udp 800000 refl: reflected 3600002
+# udp 800000 refl: reflected 3700004
+# udp 800000 refl: reflected 3800022
+# udp 800000 refl: reflected 3900003
+# udp 800000 refl: reflected 4000028
+# udp 800000 refl: reflected 4100028
+# udp 800000 refl: reflected 4200003
+# udp 800000 refl: reflected 4300012
+# udp 800000 refl: reflected 4400010
+# udp 800000 refl: reflected 4500016
+# udp 800000 refl: reflected 4600015
+# udp 800000 refl: reflected 4700000
+# udp 800000 refl: reflected 4800000
+# udp 800000 refl: reflected 4800000 in total
+# udp 800000 refl: io_udp: syscalls=356831 send_errs=0 rx_truncated=0
 # udp 1600000 drv: io_udp: syscalls=600002 send_errs=0 rx_truncated=0
+# udp 1600000 refl: server on udp
+# udp 1600000 refl: reflected 100009
+# udp 1600000 refl: reflected 200006
+# udp 1600000 refl: reflected 300000
+# udp 1600000 refl: reflected 400008
+# udp 1600000 refl: reflected 500020
+# udp 1600000 refl: reflected 600026
+# udp 1600000 refl: reflected 700010
+# udp 1600000 refl: reflected 800026
+# udp 1600000 refl: reflected 900007
+# udp 1600000 refl: reflected 1000020
+# udp 1600000 refl: reflected 1100003
+# udp 1600000 refl: reflected 1200020
+# udp 1600000 refl: reflected 1300013
+# udp 1600000 refl: reflected 1400023
+# udp 1600000 refl: reflected 1500017
+# udp 1600000 refl: reflected 1600017
+# udp 1600000 refl: reflected 1700011
+# udp 1600000 refl: reflected 1800010
+# udp 1600000 refl: reflected 1900025
+# udp 1600000 refl: reflected 2000004
+# udp 1600000 refl: reflected 2100000
+# udp 1600000 refl: reflected 2200021
+# udp 1600000 refl: reflected 2300014
+# udp 1600000 refl: reflected 2400009
+# udp 1600000 refl: reflected 2500004
+# udp 1600000 refl: reflected 2600002
+# udp 1600000 refl: reflected 2700020
+# udp 1600000 refl: reflected 2800006
+# udp 1600000 refl: reflected 2900009
+# udp 1600000 refl: reflected 3000019
+# udp 1600000 refl: reflected 3100011
+# udp 1600000 refl: reflected 3200014
+# udp 1600000 refl: reflected 3300016
+# udp 1600000 refl: reflected 3400004
+# udp 1600000 refl: reflected 3500012
+# udp 1600000 refl: reflected 3600005
+# udp 1600000 refl: reflected 3700015
+# udp 1600000 refl: reflected 3800024
+# udp 1600000 refl: reflected 3900006
+# udp 1600000 refl: reflected 4000025
+# udp 1600000 refl: reflected 4100013
+# udp 1600000 refl: reflected 4200006
+# udp 1600000 refl: reflected 4300013
+# udp 1600000 refl: reflected 4400011
+# udp 1600000 refl: reflected 4500028
+# udp 1600000 refl: reflected 4600010
+# udp 1600000 refl: reflected 4700014
+# udp 1600000 refl: reflected 4800023
+# udp 1600000 refl: reflected 4900017
+# udp 1600000 refl: reflected 5000028
+# udp 1600000 refl: reflected 5100025
+# udp 1600000 refl: reflected 5200004
+# udp 1600000 refl: reflected 5300021
+# udp 1600000 refl: reflected 5400017
+# udp 1600000 refl: reflected 5500021
+# udp 1600000 refl: reflected 5600000
+# udp 1600000 refl: reflected 5700017
+# udp 1600000 refl: reflected 5800006
+# udp 1600000 refl: reflected 5900002
+# udp 1600000 refl: reflected 6000026
+# udp 1600000 refl: reflected 6100009
+# udp 1600000 refl: reflected 6200023
+# udp 1600000 refl: reflected 6300008
+# udp 1600000 refl: reflected 6400018
+# udp 1600000 refl: reflected 6500030
+# udp 1600000 refl: reflected 6600017
+# udp 1600000 refl: reflected 6700017
+# udp 1600000 refl: reflected 6800020
+# udp 1600000 refl: reflected 6900024
+# udp 1600000 refl: reflected 7000020
+# udp 1600000 refl: reflected 7100004
+# udp 1600000 refl: reflected 7200028
+# udp 1600000 refl: reflected 7300019
+# udp 1600000 refl: reflected 7400012
+# udp 1600000 refl: reflected 7500016
+# udp 1600000 refl: reflected 7600018
+# udp 1600000 refl: reflected 7700014
+# udp 1600000 refl: reflected 7800020
+# udp 1600000 refl: reflected 7900020
+# udp 1600000 refl: reflected 8000019
+# udp 1600000 refl: reflected 8100020
+# udp 1600000 refl: reflected 8200028
+# udp 1600000 refl: reflected 8300012
+# udp 1600000 refl: reflected 8400028
+# udp 1600000 refl: reflected 8500019
+# udp 1600000 refl: reflected 8600010
+# udp 1600000 refl: reflected 8700031
+# udp 1600000 refl: reflected 8800026
+# udp 1600000 refl: reflected 8900027
+# udp 1600000 refl: reflected 9000009
+# udp 1600000 refl: reflected 9100030
+# udp 1600000 refl: reflected 9200023
+# udp 1600000 refl: reflected 9300004
+# udp 1600000 refl: reflected 9400012
+# udp 1600000 refl: reflected 9500029
+# udp 1600000 refl: reflected 9600000
+# udp 1600000 refl: reflected 9600000 in total
+# udp 1600000 refl: io_udp: syscalls=668622 send_errs=0 rx_truncated=0
 # uring 20000 drv: io_uring: submits=120001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring 100000 drv: io_uring: submits=599941 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring 200000 drv: io_uring: submits=1107223 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring 400000 drv: io_uring: submits=239225 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring 800000 drv: io_uring: submits=372718 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=72713 rx_nobufs=72713 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring 1600000 drv: io_uring: submits=739452 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=139449 rx_nobufs=139449 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
-# uring-sqpoll 20000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 20000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 100000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 100000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 200000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 200000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 400000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 400000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 800000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 800000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 1600000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
-# uring-sqpoll 1600000: no result; reflector log:
-#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring 20000 refl: server on uring
+# uring 20000 refl: reflected 100000
+# uring 20000 refl: reflected 120000 in total
+# uring 20000 refl: io_uring: submits=119997 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 100000 drv: io_uring: submits=599973 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 100000 refl: server on uring
+# uring 100000 refl: reflected 100000
+# uring 100000 refl: reflected 200000
+# uring 100000 refl: reflected 300000
+# uring 100000 refl: reflected 400000
+# uring 100000 refl: reflected 500000
+# uring 100000 refl: reflected 600000
+# uring 100000 refl: reflected 600000 in total
+# uring 100000 refl: io_uring: submits=597047 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 200000 drv: io_uring: submits=1107171 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 200000 refl: server on uring
+# uring 200000 refl: reflected 100000
+# uring 200000 refl: reflected 200000
+# uring 200000 refl: reflected 300000
+# uring 200000 refl: reflected 400000
+# uring 200000 refl: reflected 500000
+# uring 200000 refl: reflected 600000
+# uring 200000 refl: reflected 700000
+# uring 200000 refl: reflected 800000
+# uring 200000 refl: reflected 900001
+# uring 200000 refl: reflected 1000000
+# uring 200000 refl: reflected 1100000
+# uring 200000 refl: reflected 1200000
+# uring 200000 refl: reflected 1200000 in total
+# uring 200000 refl: io_uring: submits=869077 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 400000 drv: io_uring: submits=224997 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 400000 refl: server on uring
+# uring 400000 refl: reflected 100001
+# uring 400000 refl: reflected 200005
+# uring 400000 refl: reflected 300007
+# uring 400000 refl: reflected 400003
+# uring 400000 refl: reflected 500014
+# uring 400000 refl: reflected 600002
+# uring 400000 refl: reflected 700002
+# uring 400000 refl: reflected 800004
+# uring 400000 refl: reflected 900006
+# uring 400000 refl: reflected 1000005
+# uring 400000 refl: reflected 1100003
+# uring 400000 refl: reflected 1200003
+# uring 400000 refl: reflected 1300002
+# uring 400000 refl: reflected 1400002
+# uring 400000 refl: reflected 1500000
+# uring 400000 refl: reflected 1600008
+# uring 400000 refl: reflected 1700001
+# uring 400000 refl: reflected 1800001
+# uring 400000 refl: reflected 1900006
+# uring 400000 refl: reflected 2000004
+# uring 400000 refl: reflected 2100005
+# uring 400000 refl: reflected 2200010
+# uring 400000 refl: reflected 2300004
+# uring 400000 refl: reflected 2400000
+# uring 400000 refl: reflected 2400000 in total
+# uring 400000 refl: io_uring: submits=329909 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 800000 drv: io_uring: submits=300003 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 800000 refl: server on uring
+# uring 800000 refl: reflected 100001
+# uring 800000 refl: reflected 200011
+# uring 800000 refl: reflected 300001
+# uring 800000 refl: reflected 400001
+# uring 800000 refl: reflected 500005
+# uring 800000 refl: reflected 600007
+# uring 800000 refl: reflected 700017
+# uring 800000 refl: reflected 800009
+# uring 800000 refl: reflected 900001
+# uring 800000 refl: reflected 1000001
+# uring 800000 refl: reflected 1100001
+# uring 800000 refl: reflected 1200001
+# uring 800000 refl: reflected 1300001
+# uring 800000 refl: reflected 1400001
+# uring 800000 refl: reflected 1500007
+# uring 800000 refl: reflected 1600001
+# uring 800000 refl: reflected 1700001
+# uring 800000 refl: reflected 1800001
+# uring 800000 refl: reflected 1900014
+# uring 800000 refl: reflected 2000001
+# uring 800000 refl: reflected 2100017
+# uring 800000 refl: reflected 2200006
+# uring 800000 refl: reflected 2300003
+# uring 800000 refl: reflected 2400001
+# uring 800000 refl: reflected 2500013
+# uring 800000 refl: reflected 2600001
+# uring 800000 refl: reflected 2700001
+# uring 800000 refl: reflected 2800001
+# uring 800000 refl: reflected 2900001
+# uring 800000 refl: reflected 3000009
+# uring 800000 refl: reflected 3100001
+# uring 800000 refl: reflected 3200001
+# uring 800000 refl: reflected 3300005
+# uring 800000 refl: reflected 3400001
+# uring 800000 refl: reflected 3500001
+# uring 800000 refl: reflected 3600001
+# uring 800000 refl: reflected 3700001
+# uring 800000 refl: reflected 3800001
+# uring 800000 refl: reflected 3900000
+# uring 800000 refl: reflected 4000002
+# uring 800000 refl: reflected 4100007
+# uring 800000 refl: reflected 4200037
+# uring 800000 refl: reflected 4300001
+# uring 800000 refl: reflected 4400032
+# uring 800000 refl: reflected 4500001
+# uring 800000 refl: reflected 4600021
+# uring 800000 refl: reflected 4700002
+# uring 800000 refl: reflected 4800000
+# uring 800000 refl: reflected 4800000 in total
+# uring 800000 refl: io_uring: submits=476940 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 1600000 drv: io_uring: submits=600003 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 1600000 refl: server on uring
+# uring 1600000 refl: reflected 100007
+# uring 1600000 refl: reflected 200014
+# uring 1600000 refl: reflected 300009
+# uring 1600000 refl: reflected 400009
+# uring 1600000 refl: reflected 500004
+# uring 1600000 refl: reflected 600007
+# uring 1600000 refl: reflected 700011
+# uring 1600000 refl: reflected 800007
+# uring 1600000 refl: reflected 900007
+# uring 1600000 refl: reflected 1000003
+# uring 1600000 refl: reflected 1100014
+# uring 1600000 refl: reflected 1200003
+# uring 1600000 refl: reflected 1300006
+# uring 1600000 refl: reflected 1400002
+# uring 1600000 refl: reflected 1500014
+# uring 1600000 refl: reflected 1600003
+# uring 1600000 refl: reflected 1700002
+# uring 1600000 refl: reflected 1800014
+# uring 1600000 refl: reflected 1900005
+# uring 1600000 refl: reflected 2000005
+# uring 1600000 refl: reflected 2100003
+# uring 1600000 refl: reflected 2200000
+# uring 1600000 refl: reflected 2300012
+# uring 1600000 refl: reflected 2400010
+# uring 1600000 refl: reflected 2500011
+# uring 1600000 refl: reflected 2600004
+# uring 1600000 refl: reflected 2700018
+# uring 1600000 refl: reflected 2800003
+# uring 1600000 refl: reflected 2900011
+# uring 1600000 refl: reflected 3000003
+# uring 1600000 refl: reflected 3100001
+# uring 1600000 refl: reflected 3200007
+# uring 1600000 refl: reflected 3300017
+# uring 1600000 refl: reflected 3400010
+# uring 1600000 refl: reflected 3500006
+# uring 1600000 refl: reflected 3600001
+# uring 1600000 refl: reflected 3700014
+# uring 1600000 refl: reflected 3800008
+# uring 1600000 refl: reflected 3900003
+# uring 1600000 refl: reflected 4000011
+# uring 1600000 refl: reflected 4100014
+# uring 1600000 refl: reflected 4200014
+# uring 1600000 refl: reflected 4300024
+# uring 1600000 refl: reflected 4400014
+# uring 1600000 refl: reflected 4500018
+# uring 1600000 refl: reflected 4600007
+# uring 1600000 refl: reflected 4700014
+# uring 1600000 refl: reflected 4800004
+# uring 1600000 refl: reflected 4900001
+# uring 1600000 refl: reflected 5000016
+# uring 1600000 refl: reflected 5100015
+# uring 1600000 refl: reflected 5200002
+# uring 1600000 refl: reflected 5300012
+# uring 1600000 refl: reflected 5400004
+# uring 1600000 refl: reflected 5500007
+# uring 1600000 refl: reflected 5600010
+# uring 1600000 refl: reflected 5700004
+# uring 1600000 refl: reflected 5800007
+# uring 1600000 refl: reflected 5900001
+# uring 1600000 refl: reflected 6000007
+# uring 1600000 refl: reflected 6100000
+# uring 1600000 refl: reflected 6200003
+# uring 1600000 refl: reflected 6300014
+# uring 1600000 refl: reflected 6400000
+# uring 1600000 refl: reflected 6500014
+# uring 1600000 refl: reflected 6600005
+# uring 1600000 refl: reflected 6700007
+# uring 1600000 refl: reflected 6800028
+# uring 1600000 refl: reflected 6900003
+# uring 1600000 refl: reflected 7000014
+# uring 1600000 refl: reflected 7100003
+# uring 1600000 refl: reflected 7200014
+# uring 1600000 refl: reflected 7300030
+# uring 1600000 refl: reflected 7400003
+# uring 1600000 refl: reflected 7500011
+# uring 1600000 refl: reflected 7600002
+# uring 1600000 refl: reflected 7700000
+# uring 1600000 refl: reflected 7800000
+# uring 1600000 refl: reflected 7900002
+# uring 1600000 refl: reflected 8000006
+# uring 1600000 refl: reflected 8100017
+# uring 1600000 refl: reflected 8200014
+# uring 1600000 refl: reflected 8300005
+# uring 1600000 refl: reflected 8400003
+# uring 1600000 refl: reflected 8500009
+# uring 1600000 refl: reflected 8600006
+# uring 1600000 refl: reflected 8700003
+# uring 1600000 refl: reflected 8800026
+# uring 1600000 refl: reflected 8900004
+# uring 1600000 refl: reflected 9000014
+# uring 1600000 refl: reflected 9100007
+# uring 1600000 refl: reflected 9200007
+# uring 1600000 refl: reflected 9300006
+# uring 1600000 refl: reflected 9400004
+# uring 1600000 refl: reflected 9500009
+# uring 1600000 refl: reflected 9600000
+# uring 1600000 refl: reflected 9600000 in total
+# uring 1600000 refl: io_uring: submits=1010130 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring-sqpoll 20000 drv: io_uring: submits=120001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 20000 refl: server on uring
+# uring-sqpoll 20000 refl: reflected 100000
+# uring-sqpoll 20000 refl: reflected 120000 in total
+# uring-sqpoll 20000 refl: io_uring: submits=120001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 100000 drv: io_uring: submits=599999 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 100000 refl: server on uring
+# uring-sqpoll 100000 refl: reflected 100000
+# uring-sqpoll 100000 refl: reflected 200000
+# uring-sqpoll 100000 refl: reflected 300000
+# uring-sqpoll 100000 refl: reflected 400000
+# uring-sqpoll 100000 refl: reflected 500000
+# uring-sqpoll 100000 refl: reflected 600000
+# uring-sqpoll 100000 refl: reflected 600000 in total
+# uring-sqpoll 100000 refl: io_uring: submits=599996 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 200000 drv: io_uring: submits=1199933 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 200000 refl: server on uring
+# uring-sqpoll 200000 refl: reflected 100000
+# uring-sqpoll 200000 refl: reflected 200000
+# uring-sqpoll 200000 refl: reflected 300000
+# uring-sqpoll 200000 refl: reflected 400000
+# uring-sqpoll 200000 refl: reflected 500000
+# uring-sqpoll 200000 refl: reflected 600000
+# uring-sqpoll 200000 refl: reflected 700000
+# uring-sqpoll 200000 refl: reflected 800000
+# uring-sqpoll 200000 refl: reflected 900000
+# uring-sqpoll 200000 refl: reflected 1000000
+# uring-sqpoll 200000 refl: reflected 1100000
+# uring-sqpoll 200000 refl: reflected 1200000
+# uring-sqpoll 200000 refl: reflected 1200000 in total
+# uring-sqpoll 200000 refl: io_uring: submits=1199928 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 400000 drv: io_uring: submits=2140758 send_errs=0 tx_stalls=17075 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 400000 refl: server on uring
+# uring-sqpoll 400000 refl: reflected 100000
+# uring-sqpoll 400000 refl: reflected 200000
+# uring-sqpoll 400000 refl: reflected 300000
+# uring-sqpoll 400000 refl: reflected 400000
+# uring-sqpoll 400000 refl: reflected 500000
+# uring-sqpoll 400000 refl: reflected 600000
+# uring-sqpoll 400000 refl: reflected 700000
+# uring-sqpoll 400000 refl: reflected 800000
+# uring-sqpoll 400000 refl: reflected 900000
+# uring-sqpoll 400000 refl: reflected 1000000
+# uring-sqpoll 400000 refl: reflected 1100000
+# uring-sqpoll 400000 refl: reflected 1200000
+# uring-sqpoll 400000 refl: reflected 1300000
+# uring-sqpoll 400000 refl: reflected 1400000
+# uring-sqpoll 400000 refl: reflected 1500000
+# uring-sqpoll 400000 refl: reflected 1600000
+# uring-sqpoll 400000 refl: reflected 1700000
+# uring-sqpoll 400000 refl: reflected 1800000
+# uring-sqpoll 400000 refl: reflected 1900000
+# uring-sqpoll 400000 refl: reflected 2000000
+# uring-sqpoll 400000 refl: reflected 2100000
+# uring-sqpoll 400000 refl: reflected 2147805 in total
+# uring-sqpoll 400000 refl: io_uring: submits=2147361 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 800000 drv: io_uring: submits=323453 send_errs=0 tx_stalls=21255 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 800000 refl: server on uring
+# uring-sqpoll 800000 refl: reflected 100000
+# uring-sqpoll 800000 refl: reflected 200000
+# uring-sqpoll 800000 refl: reflected 300000
+# uring-sqpoll 800000 refl: reflected 400000
+# uring-sqpoll 800000 refl: reflected 500000
+# uring-sqpoll 800000 refl: reflected 600000
+# uring-sqpoll 800000 refl: reflected 700000
+# uring-sqpoll 800000 refl: reflected 800000
+# uring-sqpoll 800000 refl: reflected 900000
+# uring-sqpoll 800000 refl: reflected 1000000
+# uring-sqpoll 800000 refl: reflected 1100000
+# uring-sqpoll 800000 refl: reflected 1200000
+# uring-sqpoll 800000 refl: reflected 1300000
+# uring-sqpoll 800000 refl: reflected 1400000
+# uring-sqpoll 800000 refl: reflected 1500000
+# uring-sqpoll 800000 refl: reflected 1600000
+# uring-sqpoll 800000 refl: reflected 1700000
+# uring-sqpoll 800000 refl: reflected 1800000
+# uring-sqpoll 800000 refl: reflected 1900000
+# uring-sqpoll 800000 refl: reflected 2000000
+# uring-sqpoll 800000 refl: reflected 2100000
+# uring-sqpoll 800000 refl: reflected 2200000
+# uring-sqpoll 800000 refl: reflected 2300000
+# uring-sqpoll 800000 refl: reflected 2400000
+# uring-sqpoll 800000 refl: reflected 2500000
+# uring-sqpoll 800000 refl: reflected 2600000
+# uring-sqpoll 800000 refl: reflected 2700000
+# uring-sqpoll 800000 refl: reflected 2800000
+# uring-sqpoll 800000 refl: reflected 2900000
+# uring-sqpoll 800000 refl: reflected 2905536 in total
+# uring-sqpoll 800000 refl: io_uring: submits=2904965 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 1600000 drv: io_uring: submits=645815 send_errs=0 tx_stalls=42705 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
+# uring-sqpoll 1600000 refl: server on uring
+# uring-sqpoll 1600000 refl: reflected 100000
+# uring-sqpoll 1600000 refl: reflected 200000
+# uring-sqpoll 1600000 refl: reflected 300000
+# uring-sqpoll 1600000 refl: reflected 400000
+# uring-sqpoll 1600000 refl: reflected 500000
+# uring-sqpoll 1600000 refl: reflected 600000
+# uring-sqpoll 1600000 refl: reflected 700000
+# uring-sqpoll 1600000 refl: reflected 800000
+# uring-sqpoll 1600000 refl: reflected 900000
+# uring-sqpoll 1600000 refl: reflected 1000000
+# uring-sqpoll 1600000 refl: reflected 1100000
+# uring-sqpoll 1600000 refl: reflected 1200000
+# uring-sqpoll 1600000 refl: reflected 1300000
+# uring-sqpoll 1600000 refl: reflected 1400000
+# uring-sqpoll 1600000 refl: reflected 1500000
+# uring-sqpoll 1600000 refl: reflected 1600000
+# uring-sqpoll 1600000 refl: reflected 1700000
+# uring-sqpoll 1600000 refl: reflected 1800000
+# uring-sqpoll 1600000 refl: reflected 1900000
+# uring-sqpoll 1600000 refl: reflected 2000000
+# uring-sqpoll 1600000 refl: reflected 2100000
+# uring-sqpoll 1600000 refl: reflected 2200000
+# uring-sqpoll 1600000 refl: reflected 2300000
+# uring-sqpoll 1600000 refl: reflected 2400000
+# uring-sqpoll 1600000 refl: reflected 2500000
+# uring-sqpoll 1600000 refl: reflected 2600000
+# uring-sqpoll 1600000 refl: reflected 2700000
+# uring-sqpoll 1600000 refl: reflected 2800000
+# uring-sqpoll 1600000 refl: reflected 2900000
+# uring-sqpoll 1600000 refl: reflected 3000000
+# uring-sqpoll 1600000 refl: reflected 3100000
+# uring-sqpoll 1600000 refl: reflected 3200000
+# uring-sqpoll 1600000 refl: reflected 3300000
+# uring-sqpoll 1600000 refl: reflected 3400000
+# uring-sqpoll 1600000 refl: reflected 3500000
+# uring-sqpoll 1600000 refl: reflected 3600000
+# uring-sqpoll 1600000 refl: reflected 3700000
+# uring-sqpoll 1600000 refl: reflected 3800000
+# uring-sqpoll 1600000 refl: reflected 3900000
+# uring-sqpoll 1600000 refl: reflected 4000000
+# uring-sqpoll 1600000 refl: reflected 4100000
+# uring-sqpoll 1600000 refl: reflected 4200000
+# uring-sqpoll 1600000 refl: reflected 4300000
+# uring-sqpoll 1600000 refl: reflected 4400000
+# uring-sqpoll 1600000 refl: reflected 4500000
+# uring-sqpoll 1600000 refl: reflected 4600000
+# uring-sqpoll 1600000 refl: reflected 4700000
+# uring-sqpoll 1600000 refl: reflected 4800000
+# uring-sqpoll 1600000 refl: reflected 4900000
+# uring-sqpoll 1600000 refl: reflected 5000000
+# uring-sqpoll 1600000 refl: reflected 5100000
+# uring-sqpoll 1600000 refl: reflected 5200000
+# uring-sqpoll 1600000 refl: reflected 5300000
+# uring-sqpoll 1600000 refl: reflected 5400000
+# uring-sqpoll 1600000 refl: reflected 5500000
+# uring-sqpoll 1600000 refl: reflected 5600000
+# uring-sqpoll 1600000 refl: reflected 5700000
+# uring-sqpoll 1600000 refl: reflected 5800000
+# uring-sqpoll 1600000 refl: reflected 5835671 in total
+# uring-sqpoll 1600000 refl: io_uring: submits=5834445 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 sq_pin=sq_aff fixed_file=1
 # tcp 20000 drv: io_tcp: listening on :6019 for 1 peer(s)
-# tcp 20000 drv: io_tcp: peer 1 connected from 192.168.10.101:48994
-# tcp 20000 drv: io_tcp: role=server conns=1 live=1 tx_records=120000 tx_bytes=12240000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=120000 rx_bytes=12240000 syscalls=239991 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 20000 drv: io_tcp: peer 1 connected from 192.168.10.101:53534
+# tcp 20000 drv: io_tcp: role=server conns=1 live=1 tx_records=120000 tx_bytes=12240000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=120000 rx_bytes=12240000 syscalls=239999 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 20000 refl: io_tcp: connected to 192.168.10.100:6019
+# tcp 20000 refl: server on tcp
+# tcp 20000 refl: reflected 100000
+# tcp 20000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 20000 refl: reflected 120000 in total
+# tcp 20000 refl: io_tcp: role=client conns=1 live=0 tx_records=120000 tx_bytes=12240000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=120000 rx_bytes=12240000 syscalls=239998 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 100000 drv: io_tcp: listening on :6020 for 1 peer(s)
-# tcp 100000 drv: io_tcp: peer 1 connected from 192.168.10.101:40256
-# tcp 100000 drv: io_tcp: role=server conns=1 live=1 tx_records=600000 tx_bytes=61200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=600000 rx_bytes=61200000 syscalls=1187318 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 100000 drv: io_tcp: peer 1 connected from 192.168.10.101:33324
+# tcp 100000 drv: io_tcp: role=server conns=1 live=1 tx_records=600000 tx_bytes=61200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=600000 rx_bytes=61200000 syscalls=1199551 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 100000 refl: io_tcp: connected to 192.168.10.100:6020
+# tcp 100000 refl: server on tcp
+# tcp 100000 refl: reflected 100000
+# tcp 100000 refl: reflected 200000
+# tcp 100000 refl: reflected 300000
+# tcp 100000 refl: reflected 400000
+# tcp 100000 refl: reflected 500000
+# tcp 100000 refl: reflected 600000
+# tcp 100000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 100000 refl: reflected 600000 in total
+# tcp 100000 refl: io_tcp: role=client conns=1 live=0 tx_records=600000 tx_bytes=61200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=600000 rx_bytes=61200000 syscalls=1199548 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 200000 drv: io_tcp: listening on :6021 for 1 peer(s)
-# tcp 200000 drv: io_tcp: peer 1 connected from 192.168.10.101:45308
-# tcp 200000 drv: io_tcp: role=server conns=1 live=1 tx_records=1200000 tx_bytes=122400000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=1200000 rx_bytes=122400000 syscalls=1925297 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 200000 drv: io_tcp: peer 1 connected from 192.168.10.101:37326
+# tcp 200000 drv: io_tcp: role=server conns=1 live=1 tx_records=1200000 tx_bytes=122400000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=1200000 rx_bytes=122400000 syscalls=1956878 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 200000 refl: io_tcp: connected to 192.168.10.100:6021
+# tcp 200000 refl: server on tcp
+# tcp 200000 refl: reflected 100000
+# tcp 200000 refl: reflected 200000
+# tcp 200000 refl: reflected 300000
+# tcp 200000 refl: reflected 400000
+# tcp 200000 refl: reflected 500000
+# tcp 200000 refl: reflected 600000
+# tcp 200000 refl: reflected 700000
+# tcp 200000 refl: reflected 800001
+# tcp 200000 refl: reflected 900001
+# tcp 200000 refl: reflected 1000000
+# tcp 200000 refl: reflected 1100001
+# tcp 200000 refl: reflected 1200000
+# tcp 200000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 200000 refl: reflected 1200000 in total
+# tcp 200000 refl: io_tcp: role=client conns=1 live=0 tx_records=1200000 tx_bytes=122400000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=1200000 rx_bytes=122400000 syscalls=1872370 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 400000 drv: io_tcp: listening on :6022 for 1 peer(s)
-# tcp 400000 drv: io_tcp: peer 1 connected from 192.168.10.101:46012
-# tcp 400000 drv: io_tcp: role=server conns=1 live=1 tx_records=2400000 tx_bytes=244800000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=2400000 rx_bytes=244800000 syscalls=2034215 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 400000 drv: io_tcp: peer 1 connected from 192.168.10.101:42716
+# tcp 400000 drv: io_tcp: role=server conns=1 live=1 tx_records=2400000 tx_bytes=244800000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=2400000 rx_bytes=244800000 syscalls=2147998 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 400000 refl: io_tcp: connected to 192.168.10.100:6022
+# tcp 400000 refl: server on tcp
+# tcp 400000 refl: reflected 100000
+# tcp 400000 refl: reflected 200001
+# tcp 400000 refl: reflected 300000
+# tcp 400000 refl: reflected 400000
+# tcp 400000 refl: reflected 500002
+# tcp 400000 refl: reflected 600001
+# tcp 400000 refl: reflected 700001
+# tcp 400000 refl: reflected 800001
+# tcp 400000 refl: reflected 900001
+# tcp 400000 refl: reflected 1000001
+# tcp 400000 refl: reflected 1100001
+# tcp 400000 refl: reflected 1200000
+# tcp 400000 refl: reflected 1300001
+# tcp 400000 refl: reflected 1400000
+# tcp 400000 refl: reflected 1500002
+# tcp 400000 refl: reflected 1600000
+# tcp 400000 refl: reflected 1700000
+# tcp 400000 refl: reflected 1800000
+# tcp 400000 refl: reflected 1900000
+# tcp 400000 refl: reflected 2000001
+# tcp 400000 refl: reflected 2100000
+# tcp 400000 refl: reflected 2200001
+# tcp 400000 refl: reflected 2300001
+# tcp 400000 refl: reflected 2400000
+# tcp 400000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 400000 refl: reflected 2400000 in total
+# tcp 400000 refl: io_tcp: role=client conns=1 live=0 tx_records=2400000 tx_bytes=244800000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=2400000 rx_bytes=244800000 syscalls=2024866 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 800000 drv: io_tcp: listening on :6023 for 1 peer(s)
-# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:52274
-# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1977093 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:44588
+# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=2115748 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 800000 refl: io_tcp: connected to 192.168.10.100:6023
+# tcp 800000 refl: server on tcp
+# tcp 800000 refl: reflected 100003
+# tcp 800000 refl: reflected 200003
+# tcp 800000 refl: reflected 300004
+# tcp 800000 refl: reflected 400003
+# tcp 800000 refl: reflected 500000
+# tcp 800000 refl: reflected 600000
+# tcp 800000 refl: reflected 700002
+# tcp 800000 refl: reflected 800000
+# tcp 800000 refl: reflected 900002
+# tcp 800000 refl: reflected 1000003
+# tcp 800000 refl: reflected 1100003
+# tcp 800000 refl: reflected 1200002
+# tcp 800000 refl: reflected 1300000
+# tcp 800000 refl: reflected 1400001
+# tcp 800000 refl: reflected 1500002
+# tcp 800000 refl: reflected 1600003
+# tcp 800000 refl: reflected 1700003
+# tcp 800000 refl: reflected 1800003
+# tcp 800000 refl: reflected 1900002
+# tcp 800000 refl: reflected 2000004
+# tcp 800000 refl: reflected 2100001
+# tcp 800000 refl: reflected 2200003
+# tcp 800000 refl: reflected 2300000
+# tcp 800000 refl: reflected 2400001
+# tcp 800000 refl: reflected 2500001
+# tcp 800000 refl: reflected 2600002
+# tcp 800000 refl: reflected 2700000
+# tcp 800000 refl: reflected 2800000
+# tcp 800000 refl: reflected 2900001
+# tcp 800000 refl: reflected 3000003
+# tcp 800000 refl: reflected 3100003
+# tcp 800000 refl: reflected 3200006
+# tcp 800000 refl: reflected 3300002
+# tcp 800000 refl: reflected 3400003
+# tcp 800000 refl: reflected 3500001
+# tcp 800000 refl: reflected 3600002
+# tcp 800000 refl: reflected 3700003
+# tcp 800000 refl: reflected 3800002
+# tcp 800000 refl: reflected 3900000
+# tcp 800000 refl: reflected 4000004
+# tcp 800000 refl: reflected 4100002
+# tcp 800000 refl: reflected 4200000
+# tcp 800000 refl: reflected 4300001
+# tcp 800000 refl: reflected 4400002
+# tcp 800000 refl: reflected 4500001
+# tcp 800000 refl: reflected 4600005
+# tcp 800000 refl: reflected 4700002
+# tcp 800000 refl: reflected 4800000
+# tcp 800000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 800000 refl: reflected 4800000 in total
+# tcp 800000 refl: io_tcp: role=client conns=1 live=0 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1967906 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # tcp 1600000 drv: io_tcp: listening on :6024 for 1 peer(s)
-# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:37012
-# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1696261 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:39304
+# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1815500 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 refl: io_tcp: connected to 192.168.10.100:6024
+# tcp 1600000 refl: server on tcp
+# tcp 1600000 refl: reflected 100006
+# tcp 1600000 refl: reflected 200005
+# tcp 1600000 refl: reflected 300011
+# tcp 1600000 refl: reflected 400015
+# tcp 1600000 refl: reflected 500005
+# tcp 1600000 refl: reflected 600003
+# tcp 1600000 refl: reflected 700002
+# tcp 1600000 refl: reflected 800002
+# tcp 1600000 refl: reflected 900007
+# tcp 1600000 refl: reflected 1000009
+# tcp 1600000 refl: reflected 1100002
+# tcp 1600000 refl: reflected 1200001
+# tcp 1600000 refl: reflected 1300015
+# tcp 1600000 refl: reflected 1400006
+# tcp 1600000 refl: reflected 1500007
+# tcp 1600000 refl: reflected 1600002
+# tcp 1600000 refl: reflected 1700004
+# tcp 1600000 refl: reflected 1800006
+# tcp 1600000 refl: reflected 1900001
+# tcp 1600000 refl: reflected 2000013
+# tcp 1600000 refl: reflected 2100002
+# tcp 1600000 refl: reflected 2200009
+# tcp 1600000 refl: reflected 2300005
+# tcp 1600000 refl: reflected 2400008
+# tcp 1600000 refl: reflected 2500006
+# tcp 1600000 refl: reflected 2600002
+# tcp 1600000 refl: reflected 2700005
+# tcp 1600000 refl: reflected 2800006
+# tcp 1600000 refl: reflected 2900008
+# tcp 1600000 refl: reflected 3000004
+# tcp 1600000 refl: reflected 3100006
+# tcp 1600000 refl: reflected 3200002
+# tcp 1600000 refl: reflected 3300008
+# tcp 1600000 refl: reflected 3400004
+# tcp 1600000 refl: reflected 3500015
+# tcp 1600000 refl: reflected 3600004
+# tcp 1600000 refl: reflected 3700000
+# tcp 1600000 refl: reflected 3800017
+# tcp 1600000 refl: reflected 3900002
+# tcp 1600000 refl: reflected 4000008
+# tcp 1600000 refl: reflected 4100006
+# tcp 1600000 refl: reflected 4200011
+# tcp 1600000 refl: reflected 4300013
+# tcp 1600000 refl: reflected 4400010
+# tcp 1600000 refl: reflected 4500012
+# tcp 1600000 refl: reflected 4600001
+# tcp 1600000 refl: reflected 4700001
+# tcp 1600000 refl: reflected 4800006
+# tcp 1600000 refl: reflected 4900006
+# tcp 1600000 refl: reflected 5000007
+# tcp 1600000 refl: reflected 5100006
+# tcp 1600000 refl: reflected 5200005
+# tcp 1600000 refl: reflected 5300001
+# tcp 1600000 refl: reflected 5400007
+# tcp 1600000 refl: reflected 5500010
+# tcp 1600000 refl: reflected 5600002
+# tcp 1600000 refl: reflected 5700001
+# tcp 1600000 refl: reflected 5800007
+# tcp 1600000 refl: reflected 5900001
+# tcp 1600000 refl: reflected 6000008
+# tcp 1600000 refl: reflected 6100005
+# tcp 1600000 refl: reflected 6200014
+# tcp 1600000 refl: reflected 6300001
+# tcp 1600000 refl: reflected 6400007
+# tcp 1600000 refl: reflected 6500001
+# tcp 1600000 refl: reflected 6600014
+# tcp 1600000 refl: reflected 6700013
+# tcp 1600000 refl: reflected 6800008
+# tcp 1600000 refl: reflected 6900007
+# tcp 1600000 refl: reflected 7000008
+# tcp 1600000 refl: reflected 7100008
+# tcp 1600000 refl: reflected 7200003
+# tcp 1600000 refl: reflected 7300008
+# tcp 1600000 refl: reflected 7400004
+# tcp 1600000 refl: reflected 7500001
+# tcp 1600000 refl: reflected 7600002
+# tcp 1600000 refl: reflected 7700014
+# tcp 1600000 refl: reflected 7800008
+# tcp 1600000 refl: reflected 7900012
+# tcp 1600000 refl: reflected 8000005
+# tcp 1600000 refl: reflected 8100013
+# tcp 1600000 refl: reflected 8200003
+# tcp 1600000 refl: reflected 8300008
+# tcp 1600000 refl: reflected 8400005
+# tcp 1600000 refl: reflected 8500008
+# tcp 1600000 refl: reflected 8600007
+# tcp 1600000 refl: reflected 8700017
+# tcp 1600000 refl: reflected 8800001
+# tcp 1600000 refl: reflected 8900002
+# tcp 1600000 refl: reflected 9000013
+# tcp 1600000 refl: reflected 9100000
+# tcp 1600000 refl: reflected 9200003
+# tcp 1600000 refl: reflected 9300004
+# tcp 1600000 refl: reflected 9400005
+# tcp 1600000 refl: reflected 9500001
+# tcp 1600000 refl: reflected 9600000
+# tcp 1600000 refl: io_tcp: connection closed (eof: Resource temporarily unavailable)
+# tcp 1600000 refl: reflected 9600000 in total
+# tcp 1600000 refl: io_tcp: role=client conns=1 live=0 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=1792799 send_errs=0 recv_errs=0 desyncs=0 closed=1
 # xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 20000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120000 kicks=120001 tx_stall=0 padded=0 rx_pkts=117920 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120000 kicks=120001 tx_stall=0 padded=0 rx_pkts=117437 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 20000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 20000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 20000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 20000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 20000 refl: server on xdp
+# xdp 20000 refl: reflected 100000
+# xdp 20000 refl: reflected 120000 in total
+# xdp 20000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=117437 kicks=176338 tx_stall=2563 padded=0 rx_pkts=120000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
 # xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 100000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=600000 kicks=623913 tx_stall=2363 padded=0 rx_pkts=596760 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=600000 kicks=623325 tx_stall=2303 padded=0 rx_pkts=596801 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# xdp 100000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 100000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 100000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 100000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 100000 refl: server on xdp
+# xdp 100000 refl: reflected 100000
+# xdp 100000 refl: reflected 200000
+# xdp 100000 refl: reflected 300000
+# xdp 100000 refl: reflected 400000
+# xdp 100000 refl: reflected 500000
+# xdp 100000 refl: reflected 600000
+# xdp 100000 refl: reflected 600000 in total
+# xdp 100000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=596801 kicks=631295 tx_stall=3199 padded=0 rx_pkts=600000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=71302 xsk_rx_invalid=0
 # xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 200000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1200000 kicks=1189111 tx_stall=2046 padded=0 rx_pkts=1197555 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1200000 kicks=1188379 tx_stall=2215 padded=0 rx_pkts=1197357 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 200000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 200000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 200000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 200000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 200000 refl: server on xdp
+# xdp 200000 refl: reflected 100000
+# xdp 200000 refl: reflected 200000
+# xdp 200000 refl: reflected 300000
+# xdp 200000 refl: reflected 400000
+# xdp 200000 refl: reflected 500000
+# xdp 200000 refl: reflected 600000
+# xdp 200000 refl: reflected 700000
+# xdp 200000 refl: reflected 800000
+# xdp 200000 refl: reflected 900000
+# xdp 200000 refl: reflected 1000000
+# xdp 200000 refl: reflected 1100000
+# xdp 200000 refl: reflected 1200000
+# xdp 200000 refl: reflected 1200000 in total
+# xdp 200000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=1197361 kicks=1181833 tx_stall=2639 padded=0 rx_pkts=1200000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=67075 xsk_rx_invalid=0
 # xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 400000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=2400000 kicks=2317680 tx_stall=2198 padded=0 rx_pkts=2397638 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=2400000 kicks=2306762 tx_stall=2480 padded=0 rx_pkts=2397278 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 400000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 400000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 400000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 400000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 400000 refl: server on xdp
+# xdp 400000 refl: reflected 100016
+# xdp 400000 refl: reflected 200000
+# xdp 400000 refl: reflected 300000
+# xdp 400000 refl: reflected 400000
+# xdp 400000 refl: reflected 500000
+# xdp 400000 refl: reflected 600001
+# xdp 400000 refl: reflected 700000
+# xdp 400000 refl: reflected 800001
+# xdp 400000 refl: reflected 900001
+# xdp 400000 refl: reflected 1000001
+# xdp 400000 refl: reflected 1100001
+# xdp 400000 refl: reflected 1200001
+# xdp 400000 refl: reflected 1300001
+# xdp 400000 refl: reflected 1400001
+# xdp 400000 refl: reflected 1500000
+# xdp 400000 refl: reflected 1600000
+# xdp 400000 refl: reflected 1700001
+# xdp 400000 refl: reflected 1800000
+# xdp 400000 refl: reflected 1900000
+# xdp 400000 refl: reflected 2000000
+# xdp 400000 refl: reflected 2100000
+# xdp 400000 refl: reflected 2200000
+# xdp 400000 refl: reflected 2300000
+# xdp 400000 refl: reflected 2400000
+# xdp 400000 refl: reflected 2400000 in total
+# xdp 400000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=2397338 kicks=1782164 tx_stall=2662 padded=0 rx_pkts=2400000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=77782 xsk_rx_invalid=0
 # xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 800000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4800000 kicks=4527750 tx_stall=2421 padded=0 rx_pkts=4797565 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4800000 kicks=4523901 tx_stall=2491 padded=0 rx_pkts=4797473 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 800000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 800000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 800000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 800000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 800000 refl: server on xdp
+# xdp 800000 refl: reflected 100048
+# xdp 800000 refl: reflected 200024
+# xdp 800000 refl: reflected 300048
+# xdp 800000 refl: reflected 400001
+# xdp 800000 refl: reflected 500002
+# xdp 800000 refl: reflected 600000
+# xdp 800000 refl: reflected 700000
+# xdp 800000 refl: reflected 800000
+# xdp 800000 refl: reflected 900003
+# xdp 800000 refl: reflected 1000000
+# xdp 800000 refl: reflected 1100001
+# xdp 800000 refl: reflected 1200003
+# xdp 800000 refl: reflected 1300001
+# xdp 800000 refl: reflected 1400005
+# xdp 800000 refl: reflected 1500002
+# xdp 800000 refl: reflected 1600005
+# xdp 800000 refl: reflected 1700001
+# xdp 800000 refl: reflected 1800001
+# xdp 800000 refl: reflected 1900000
+# xdp 800000 refl: reflected 2000000
+# xdp 800000 refl: reflected 2100002
+# xdp 800000 refl: reflected 2200002
+# xdp 800000 refl: reflected 2300001
+# xdp 800000 refl: reflected 2400000
+# xdp 800000 refl: reflected 2500001
+# xdp 800000 refl: reflected 2600000
+# xdp 800000 refl: reflected 2700000
+# xdp 800000 refl: reflected 2800000
+# xdp 800000 refl: reflected 2900001
+# xdp 800000 refl: reflected 3000000
+# xdp 800000 refl: reflected 3100000
+# xdp 800000 refl: reflected 3200002
+# xdp 800000 refl: reflected 3300001
+# xdp 800000 refl: reflected 3400001
+# xdp 800000 refl: reflected 3500001
+# xdp 800000 refl: reflected 3600001
+# xdp 800000 refl: reflected 3700000
+# xdp 800000 refl: reflected 3800001
+# xdp 800000 refl: reflected 3900002
+# xdp 800000 refl: reflected 4000002
+# xdp 800000 refl: reflected 4100002
+# xdp 800000 refl: reflected 4200001
+# xdp 800000 refl: reflected 4300001
+# xdp 800000 refl: reflected 4400002
+# xdp 800000 refl: reflected 4500000
+# xdp 800000 refl: reflected 4600002
+# xdp 800000 refl: reflected 4700002
+# xdp 800000 refl: reflected 4800000
+# xdp 800000 refl: reflected 4800000 in total
+# xdp 800000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=4797483 kicks=1827329 tx_stall=2517 padded=0 rx_pkts=4800000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=85458 xsk_rx_invalid=0
 # xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp 1600000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=9600000 kicks=6650183 tx_stall=3011 padded=0 rx_pkts=9597160 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=9600000 kicks=6713675 tx_stall=2645 padded=0 rx_pkts=9597480 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 1600000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp 1600000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp 1600000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp 1600000 refl: io_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 1600000 refl: server on xdp
+# xdp 1600000 refl: reflected 100044
+# xdp 1600000 refl: reflected 200025
+# xdp 1600000 refl: reflected 300052
+# xdp 1600000 refl: reflected 400000
+# xdp 1600000 refl: reflected 500032
+# xdp 1600000 refl: reflected 600008
+# xdp 1600000 refl: reflected 700052
+# xdp 1600000 refl: reflected 800005
+# xdp 1600000 refl: reflected 900001
+# xdp 1600000 refl: reflected 1000000
+# xdp 1600000 refl: reflected 1100008
+# xdp 1600000 refl: reflected 1200000
+# xdp 1600000 refl: reflected 1300002
+# xdp 1600000 refl: reflected 1400007
+# xdp 1600000 refl: reflected 1500002
+# xdp 1600000 refl: reflected 1600003
+# xdp 1600000 refl: reflected 1700003
+# xdp 1600000 refl: reflected 1800002
+# xdp 1600000 refl: reflected 1900001
+# xdp 1600000 refl: reflected 2000004
+# xdp 1600000 refl: reflected 2100004
+# xdp 1600000 refl: reflected 2200001
+# xdp 1600000 refl: reflected 2300003
+# xdp 1600000 refl: reflected 2400005
+# xdp 1600000 refl: reflected 2500000
+# xdp 1600000 refl: reflected 2600001
+# xdp 1600000 refl: reflected 2700005
+# xdp 1600000 refl: reflected 2800003
+# xdp 1600000 refl: reflected 2900005
+# xdp 1600000 refl: reflected 3000002
+# xdp 1600000 refl: reflected 3100000
+# xdp 1600000 refl: reflected 3200003
+# xdp 1600000 refl: reflected 3300003
+# xdp 1600000 refl: reflected 3400002
+# xdp 1600000 refl: reflected 3500000
+# xdp 1600000 refl: reflected 3600006
+# xdp 1600000 refl: reflected 3700001
+# xdp 1600000 refl: reflected 3800002
+# xdp 1600000 refl: reflected 3900002
+# xdp 1600000 refl: reflected 4000004
+# xdp 1600000 refl: reflected 4100002
+# xdp 1600000 refl: reflected 4200001
+# xdp 1600000 refl: reflected 4300005
+# xdp 1600000 refl: reflected 4400003
+# xdp 1600000 refl: reflected 4500000
+# xdp 1600000 refl: reflected 4600004
+# xdp 1600000 refl: reflected 4700001
+# xdp 1600000 refl: reflected 4800000
+# xdp 1600000 refl: reflected 4900001
+# xdp 1600000 refl: reflected 5000003
+# xdp 1600000 refl: reflected 5100001
+# xdp 1600000 refl: reflected 5200004
+# xdp 1600000 refl: reflected 5300007
+# xdp 1600000 refl: reflected 5400000
+# xdp 1600000 refl: reflected 5500000
+# xdp 1600000 refl: reflected 5600007
+# xdp 1600000 refl: reflected 5700004
+# xdp 1600000 refl: reflected 5800005
+# xdp 1600000 refl: reflected 5900005
+# xdp 1600000 refl: reflected 6000005
+# xdp 1600000 refl: reflected 6100007
+# xdp 1600000 refl: reflected 6200002
+# xdp 1600000 refl: reflected 6300002
+# xdp 1600000 refl: reflected 6400003
+# xdp 1600000 refl: reflected 6500001
+# xdp 1600000 refl: reflected 6600000
+# xdp 1600000 refl: reflected 6700005
+# xdp 1600000 refl: reflected 6800002
+# xdp 1600000 refl: reflected 6900001
+# xdp 1600000 refl: reflected 7000000
+# xdp 1600000 refl: reflected 7100002
+# xdp 1600000 refl: reflected 7200003
+# xdp 1600000 refl: reflected 7300002
+# xdp 1600000 refl: reflected 7400001
+# xdp 1600000 refl: reflected 7500000
+# xdp 1600000 refl: reflected 7600001
+# xdp 1600000 refl: reflected 7700000
+# xdp 1600000 refl: reflected 7800000
+# xdp 1600000 refl: reflected 7900000
+# xdp 1600000 refl: reflected 8000000
+# xdp 1600000 refl: reflected 8100002
+# xdp 1600000 refl: reflected 8200010
+# xdp 1600000 refl: reflected 8300001
+# xdp 1600000 refl: reflected 8400004
+# xdp 1600000 refl: reflected 8500003
+# xdp 1600000 refl: reflected 8600002
+# xdp 1600000 refl: reflected 8700005
+# xdp 1600000 refl: reflected 8800000
+# xdp 1600000 refl: reflected 8900003
+# xdp 1600000 refl: reflected 9000004
+# xdp 1600000 refl: reflected 9100002
+# xdp 1600000 refl: reflected 9200003
+# xdp 1600000 refl: reflected 9300010
+# xdp 1600000 refl: reflected 9400003
+# xdp 1600000 refl: reflected 9500006
+# xdp 1600000 refl: reflected 9600000
+# xdp 1600000 refl: reflected 9600000 in total
+# xdp 1600000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=9597500 kicks=1673625 tx_stall=2500 padded=0 rx_pkts=9600000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=121148 xsk_rx_invalid=0
 # tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -97,11 +1086,23 @@
 # tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 20000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 20000 drv: io_lwip: listening on :6031 for 1 peer(s)
-# tcp-xdp 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:52506
-# tcp-xdp 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120442 frames_rx=120007 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp 20000 drv: io_tcp_xdp_stack: tcp_xmit=120440 tcp_recv=120005 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4680
-# tcp-xdp 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120442 kicks=120441 tx_stall=0 padded=440 rx_pkts=120007 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:49301
+# tcp-xdp 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120246 frames_rx=120006 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 20000 drv: io_tcp_xdp_stack: tcp_xmit=120244 tcp_recv=120004 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4680
+# tcp-xdp 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120246 kicks=120245 tx_stall=0 padded=245 rx_pkts=120006 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
 # tcp-xdp 20000 drv: io_lwip: connection error -13
+# tcp-xdp 20000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 20000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 20000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 20000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 20000 refl: io_lwip: connected to 192.168.10.100:6031
+# tcp-xdp 20000 refl: server on tcp-xdp
+# tcp-xdp 20000 refl: reflected 100000
+# tcp-xdp 20000 refl: reflected 120000 in total
+# tcp-xdp 20000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120010 frames_rx=120246 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 20000 refl: io_tcp_xdp_stack: tcp_xmit=120012 tcp_recv=120244 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3120
+# tcp-xdp 20000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=120010 kicks=120007 tx_stall=0 padded=8 rx_pkts=120246 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 20000 refl: io_lwip: connection error -13
 # tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -109,11 +1110,28 @@
 # tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 100000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 100000 drv: io_lwip: listening on :6032 for 1 peer(s)
-# tcp-xdp 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:52306
+# tcp-xdp 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:59268
+# tcp-xdp 100000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=643080 frames_rx=599859 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 100000 drv: io_tcp_xdp_stack: tcp_xmit=643078 tcp_recv=599857 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=28080
+# tcp-xdp 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=643080 kicks=643078 tx_stall=0 padded=43085 rx_pkts=599859 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
 # tcp-xdp 100000 drv: io_lwip: connection error -13
-# tcp-xdp 100000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=48094 rx_records=32129 tx_refused=1938713155 rx_backpressure=0 frames_tx=81907 frames_rx=73457 tx_frame_drops=0 write_mem=1938713155 closed=1 desyncs=0
-# tcp-xdp 100000 drv: io_tcp_xdp_stack: tcp_xmit=81905 tcp_recv=73455 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=1938713155 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=429 mem_err=0 mem_max=4480456
-# tcp-xdp 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=81907 kicks=51104 tx_stall=0 padded=521 rx_pkts=73886 alloc_fail=0 tx_refused=96935 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 100000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 100000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 100000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 100000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 100000 refl: io_lwip: connected to 192.168.10.100:6032
+# tcp-xdp 100000 refl: server on tcp-xdp
+# tcp-xdp 100000 refl: reflected 100000
+# tcp-xdp 100000 refl: reflected 200000
+# tcp-xdp 100000 refl: reflected 300000
+# tcp-xdp 100000 refl: reflected 400000
+# tcp-xdp 100000 refl: reflected 500000
+# tcp-xdp 100000 refl: reflected 600000
+# tcp-xdp 100000 refl: reflected 600000 in total
+# tcp-xdp 100000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=599860 frames_rx=643080 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 100000 refl: io_tcp_xdp_stack: tcp_xmit=599862 tcp_recv=643078 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=9360
+# tcp-xdp 100000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=599860 kicks=599787 tx_stall=0 padded=502 rx_pkts=643080 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 100000 refl: io_lwip: connection error -13
 # tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -121,11 +1139,34 @@
 # tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 200000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 200000 drv: io_lwip: listening on :6033 for 1 peer(s)
-# tcp-xdp 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:63676
+# tcp-xdp 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:53022
+# tcp-xdp 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1369070 frames_rx=1193820 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 200000 drv: io_tcp_xdp_stack: tcp_xmit=1369068 tcp_recv=1193818 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=45240
+# tcp-xdp 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1369070 kicks=1369055 tx_stall=0 padded=169084 rx_pkts=1193820 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
 # tcp-xdp 200000 drv: io_lwip: connection error -13
-# tcp-xdp 200000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=25367 rx_records=337 tx_refused=1940684129 rx_backpressure=0 frames_tx=56722 frames_rx=45558 tx_frame_drops=0 write_mem=1940684129 closed=1 desyncs=0
-# tcp-xdp 200000 drv: io_tcp_xdp_stack: tcp_xmit=56720 tcp_recv=45556 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=1940684129 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=482 mem_err=0 mem_max=4480456
-# tcp-xdp 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=56722 kicks=25416 tx_stall=0 padded=27 rx_pkts=46040 alloc_fail=0 tx_refused=97034 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
+# tcp-xdp 200000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 200000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 200000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 200000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 200000 refl: io_lwip: connected to 192.168.10.100:6033
+# tcp-xdp 200000 refl: server on tcp-xdp
+# tcp-xdp 200000 refl: reflected 100000
+# tcp-xdp 200000 refl: reflected 200000
+# tcp-xdp 200000 refl: reflected 300000
+# tcp-xdp 200000 refl: reflected 400000
+# tcp-xdp 200000 refl: reflected 500000
+# tcp-xdp 200000 refl: reflected 600000
+# tcp-xdp 200000 refl: reflected 700000
+# tcp-xdp 200000 refl: reflected 800000
+# tcp-xdp 200000 refl: reflected 900000
+# tcp-xdp 200000 refl: reflected 1000000
+# tcp-xdp 200000 refl: reflected 1100000
+# tcp-xdp 200000 refl: reflected 1200000
+# tcp-xdp 200000 refl: reflected 1200000 in total
+# tcp-xdp 200000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1193824 frames_rx=1369070 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 200000 refl: io_tcp_xdp_stack: tcp_xmit=1193826 tcp_recv=1369068 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=14040
+# tcp-xdp 200000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=1193824 kicks=1191952 tx_stall=0 padded=31489 rx_pkts=1369070 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 200000 refl: io_lwip: connection error -13
 # tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -133,11 +1174,46 @@
 # tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 400000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 400000 drv: io_lwip: listening on :6034 for 1 peer(s)
-# tcp-xdp 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:57602
-# tcp-xdp 400000 drv: io_lwip: connection error -14
-# tcp-xdp 400000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=9166 rx_records=0 tx_refused=3345504390 rx_backpressure=0 frames_tx=18129 frames_rx=16040 tx_frame_drops=0 write_mem=3345504390 closed=1 desyncs=0
-# tcp-xdp 400000 drv: io_tcp_xdp_stack: tcp_xmit=18126 tcp_recv=16037 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=3345504390 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4480408
-# tcp-xdp 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=18129 kicks=6043 tx_stall=0 padded=3 rx_pkts=16040 alloc_fail=0 tx_refused=167275 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:54726
+# tcp-xdp 400000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=2527658 frames_rx=2383484 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 400000 drv: io_tcp_xdp_stack: tcp_xmit=2527656 tcp_recv=2383482 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=104520
+# tcp-xdp 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=2527658 kicks=2527186 tx_stall=0 padded=129399 rx_pkts=2383484 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 400000 drv: io_lwip: connection error -13
+# tcp-xdp 400000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 400000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 400000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 400000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 400000 refl: io_lwip: connected to 192.168.10.100:6034
+# tcp-xdp 400000 refl: server on tcp-xdp
+# tcp-xdp 400000 refl: reflected 100000
+# tcp-xdp 400000 refl: reflected 200001
+# tcp-xdp 400000 refl: reflected 300000
+# tcp-xdp 400000 refl: reflected 400000
+# tcp-xdp 400000 refl: reflected 500000
+# tcp-xdp 400000 refl: reflected 600000
+# tcp-xdp 400000 refl: reflected 700001
+# tcp-xdp 400000 refl: reflected 800001
+# tcp-xdp 400000 refl: reflected 900000
+# tcp-xdp 400000 refl: reflected 1000000
+# tcp-xdp 400000 refl: reflected 1100000
+# tcp-xdp 400000 refl: reflected 1200000
+# tcp-xdp 400000 refl: reflected 1300000
+# tcp-xdp 400000 refl: reflected 1400000
+# tcp-xdp 400000 refl: reflected 1500000
+# tcp-xdp 400000 refl: reflected 1600000
+# tcp-xdp 400000 refl: reflected 1700001
+# tcp-xdp 400000 refl: reflected 1800000
+# tcp-xdp 400000 refl: reflected 1900000
+# tcp-xdp 400000 refl: reflected 2000000
+# tcp-xdp 400000 refl: reflected 2100000
+# tcp-xdp 400000 refl: reflected 2200001
+# tcp-xdp 400000 refl: reflected 2300000
+# tcp-xdp 400000 refl: reflected 2400000
+# tcp-xdp 400000 refl: reflected 2400000 in total
+# tcp-xdp 400000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=2383488 frames_rx=2527657 tx_frame_drops=0 write_mem=0 closed=2 desyncs=0
+# tcp-xdp 400000 refl: io_tcp_xdp_stack: tcp_xmit=2383488 tcp_recv=2527656 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=20280
+# tcp-xdp 400000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=2383488 kicks=2381402 tx_stall=0 padded=560736 rx_pkts=2527657 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 400000 refl: io_lwip: connection error -13
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -145,11 +1221,70 @@
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 800000 drv: io_lwip: listening on :6035 for 1 peer(s)
-# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:64680
+# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:58055
+# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=4577725 frames_rx=3481330 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=4577723 tcp_recv=3481328 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=99840
+# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4577725 kicks=4563384 tx_stall=0 padded=195260 rx_pkts=3481330 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
 # tcp-xdp 800000 drv: io_lwip: connection error -13
-# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=157221 rx_records=0 tx_refused=2444054079 rx_backpressure=0 frames_tx=178912 frames_rx=105141 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
-# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=178910 tcp_recv=105139 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4271280
-# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=178912 kicks=148982 tx_stall=0 padded=2 rx_pkts=105141 alloc_fail=0 tx_refused=122202 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 800000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 800000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 800000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 800000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 800000 refl: io_lwip: connected to 192.168.10.100:6035
+# tcp-xdp 800000 refl: server on tcp-xdp
+# tcp-xdp 800000 refl: reflected 100001
+# tcp-xdp 800000 refl: reflected 200001
+# tcp-xdp 800000 refl: reflected 300000
+# tcp-xdp 800000 refl: reflected 400000
+# tcp-xdp 800000 refl: reflected 500001
+# tcp-xdp 800000 refl: reflected 600000
+# tcp-xdp 800000 refl: reflected 700001
+# tcp-xdp 800000 refl: reflected 800001
+# tcp-xdp 800000 refl: reflected 900001
+# tcp-xdp 800000 refl: reflected 1000000
+# tcp-xdp 800000 refl: reflected 1100000
+# tcp-xdp 800000 refl: reflected 1200001
+# tcp-xdp 800000 refl: reflected 1300000
+# tcp-xdp 800000 refl: reflected 1400000
+# tcp-xdp 800000 refl: reflected 1500000
+# tcp-xdp 800000 refl: reflected 1600000
+# tcp-xdp 800000 refl: reflected 1700003
+# tcp-xdp 800000 refl: reflected 1800002
+# tcp-xdp 800000 refl: reflected 1900003
+# tcp-xdp 800000 refl: reflected 2000000
+# tcp-xdp 800000 refl: reflected 2100002
+# tcp-xdp 800000 refl: reflected 2200002
+# tcp-xdp 800000 refl: reflected 2300002
+# tcp-xdp 800000 refl: reflected 2400002
+# tcp-xdp 800000 refl: reflected 2500000
+# tcp-xdp 800000 refl: reflected 2600000
+# tcp-xdp 800000 refl: reflected 2700001
+# tcp-xdp 800000 refl: reflected 2800000
+# tcp-xdp 800000 refl: reflected 2900001
+# tcp-xdp 800000 refl: reflected 3000003
+# tcp-xdp 800000 refl: reflected 3100000
+# tcp-xdp 800000 refl: reflected 3200004
+# tcp-xdp 800000 refl: reflected 3300001
+# tcp-xdp 800000 refl: reflected 3400003
+# tcp-xdp 800000 refl: reflected 3500001
+# tcp-xdp 800000 refl: reflected 3600001
+# tcp-xdp 800000 refl: reflected 3700001
+# tcp-xdp 800000 refl: reflected 3800001
+# tcp-xdp 800000 refl: reflected 3900001
+# tcp-xdp 800000 refl: reflected 4000003
+# tcp-xdp 800000 refl: reflected 4100000
+# tcp-xdp 800000 refl: reflected 4200001
+# tcp-xdp 800000 refl: reflected 4300000
+# tcp-xdp 800000 refl: reflected 4400001
+# tcp-xdp 800000 refl: reflected 4500002
+# tcp-xdp 800000 refl: reflected 4600000
+# tcp-xdp 800000 refl: reflected 4700000
+# tcp-xdp 800000 refl: reflected 4800000
+# tcp-xdp 800000 refl: reflected 4800000 in total
+# tcp-xdp 800000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=3481339 frames_rx=4577724 tx_frame_drops=0 write_mem=0 closed=2 desyncs=0
+# tcp-xdp 800000 refl: io_tcp_xdp_stack: tcp_xmit=3481339 tcp_recv=4577723 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=23504
+# tcp-xdp 800000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=3481339 kicks=3209388 tx_stall=0 padded=1615949 rx_pkts=4577724 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 800000 refl: io_lwip: connection error -13
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -157,53 +1292,376 @@
 # tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp 1600000 drv: io_lwip: listening on :6036 for 1 peer(s)
-# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:64088
-# tcp-xdp 1600000 drv: io_lwip: connection error -14
-# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10281 rx_records=1 tx_refused=3950545485 rx_backpressure=0 frames_tx=1656 frames_rx=1584 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
-# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=1653 tcp_recv=1581 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=2566288
-# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1656 kicks=1620 tx_stall=0 padded=3 rx_pkts=1584 alloc_fail=0 tx_refused=197527 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:62607
+# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=4114635 frames_rx=3156089 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=4114633 tcp_recv=3156087 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=123240
+# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4114635 kicks=4104367 tx_stall=0 padded=172535 rx_pkts=3156089 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: io_lwip: connection error -13
+# tcp-xdp 1600000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp 1600000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp 1600000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp 1600000 refl: io_tcp_xdp: enp3s0f1 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 1600000 refl: io_lwip: connected to 192.168.10.100:6036
+# tcp-xdp 1600000 refl: server on tcp-xdp
+# tcp-xdp 1600000 refl: reflected 100002
+# tcp-xdp 1600000 refl: reflected 200013
+# tcp-xdp 1600000 refl: reflected 300006
+# tcp-xdp 1600000 refl: reflected 400000
+# tcp-xdp 1600000 refl: reflected 500000
+# tcp-xdp 1600000 refl: reflected 600000
+# tcp-xdp 1600000 refl: reflected 700002
+# tcp-xdp 1600000 refl: reflected 800005
+# tcp-xdp 1600000 refl: reflected 900001
+# tcp-xdp 1600000 refl: reflected 1000012
+# tcp-xdp 1600000 refl: reflected 1100005
+# tcp-xdp 1600000 refl: reflected 1200001
+# tcp-xdp 1600000 refl: reflected 1300001
+# tcp-xdp 1600000 refl: reflected 1400000
+# tcp-xdp 1600000 refl: reflected 1500002
+# tcp-xdp 1600000 refl: reflected 1600007
+# tcp-xdp 1600000 refl: reflected 1700000
+# tcp-xdp 1600000 refl: reflected 1800018
+# tcp-xdp 1600000 refl: reflected 1900002
+# tcp-xdp 1600000 refl: reflected 2000001
+# tcp-xdp 1600000 refl: reflected 2100004
+# tcp-xdp 1600000 refl: reflected 2200000
+# tcp-xdp 1600000 refl: reflected 2300000
+# tcp-xdp 1600000 refl: reflected 2400013
+# tcp-xdp 1600000 refl: reflected 2500004
+# tcp-xdp 1600000 refl: reflected 2600018
+# tcp-xdp 1600000 refl: reflected 2700003
+# tcp-xdp 1600000 refl: reflected 2800020
+# tcp-xdp 1600000 refl: reflected 2900001
+# tcp-xdp 1600000 refl: reflected 3000007
+# tcp-xdp 1600000 refl: reflected 3100007
+# tcp-xdp 1600000 refl: reflected 3200000
+# tcp-xdp 1600000 refl: reflected 3300001
+# tcp-xdp 1600000 refl: reflected 3400006
+# tcp-xdp 1600000 refl: reflected 3500006
+# tcp-xdp 1600000 refl: reflected 3600012
+# tcp-xdp 1600000 refl: reflected 3700004
+# tcp-xdp 1600000 refl: reflected 3800015
+# tcp-xdp 1600000 refl: reflected 3900001
+# tcp-xdp 1600000 refl: reflected 4000000
+# tcp-xdp 1600000 refl: reflected 4100000
+# tcp-xdp 1600000 refl: reflected 4200000
+# tcp-xdp 1600000 refl: reflected 4300003
+# tcp-xdp 1600000 refl: reflected 4400007
+# tcp-xdp 1600000 refl: reflected 4500005
+# tcp-xdp 1600000 refl: reflected 4600001
+# tcp-xdp 1600000 refl: reflected 4700001
+# tcp-xdp 1600000 refl: reflected 4800000
+# tcp-xdp 1600000 refl: reflected 4900005
+# tcp-xdp 1600000 refl: reflected 5000006
+# tcp-xdp 1600000 refl: reflected 5100000
+# tcp-xdp 1600000 refl: reflected 5200008
+# tcp-xdp 1600000 refl: reflected 5300004
+# tcp-xdp 1600000 refl: reflected 5400011
+# tcp-xdp 1600000 refl: reflected 5500001
+# tcp-xdp 1600000 refl: reflected 5600001
+# tcp-xdp 1600000 refl: reflected 5700001
+# tcp-xdp 1600000 refl: reflected 5800000
+# tcp-xdp 1600000 refl: reflected 5900004
+# tcp-xdp 1600000 refl: reflected 6000009
+# tcp-xdp 1600000 refl: reflected 6100000
+# tcp-xdp 1600000 refl: reflected 6200008
+# tcp-xdp 1600000 refl: reflected 6300005
+# tcp-xdp 1600000 refl: reflected 6400000
+# tcp-xdp 1600000 refl: reflected 6500003
+# tcp-xdp 1600000 refl: reflected 6600006
+# tcp-xdp 1600000 refl: reflected 6700005
+# tcp-xdp 1600000 refl: reflected 6800000
+# tcp-xdp 1600000 refl: reflected 6900004
+# tcp-xdp 1600000 refl: reflected 7000007
+# tcp-xdp 1600000 refl: reflected 7100000
+# tcp-xdp 1600000 refl: reflected 7200000
+# tcp-xdp 1600000 refl: reflected 7300002
+# tcp-xdp 1600000 refl: reflected 7400010
+# tcp-xdp 1600000 refl: reflected 7500004
+# tcp-xdp 1600000 refl: reflected 7600000
+# tcp-xdp 1600000 refl: reflected 7700002
+# tcp-xdp 1600000 refl: reflected 7800001
+# tcp-xdp 1600000 refl: reflected 7900001
+# tcp-xdp 1600000 refl: reflected 8000006
+# tcp-xdp 1600000 refl: reflected 8100001
+# tcp-xdp 1600000 refl: reflected 8200017
+# tcp-xdp 1600000 refl: reflected 8300001
+# tcp-xdp 1600000 refl: reflected 8400008
+# tcp-xdp 1600000 refl: reflected 8500003
+# tcp-xdp 1600000 refl: reflected 8600000
+# tcp-xdp 1600000 refl: reflected 8700001
+# tcp-xdp 1600000 refl: reflected 8800000
+# tcp-xdp 1600000 refl: reflected 8900004
+# tcp-xdp 1600000 refl: reflected 9000000
+# tcp-xdp 1600000 refl: reflected 9100001
+# tcp-xdp 1600000 refl: reflected 9200000
+# tcp-xdp 1600000 refl: reflected 9300003
+# tcp-xdp 1600000 refl: reflected 9400000
+# tcp-xdp 1600000 refl: reflected 9500000
+# tcp-xdp 1600000 refl: reflected 9600000
+# tcp-xdp 1600000 refl: reflected 9600000 in total
+# tcp-xdp 1600000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=3156102 frames_rx=4114635 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp 1600000 refl: io_tcp_xdp_stack: tcp_xmit=3156104 tcp_recv=4114633 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=34320
+# tcp-xdp 1600000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=1 tx_pkts=3156102 kicks=3030067 tx_stall=0 padded=1379677 rx_pkts=4114635 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 1600000 refl: io_lwip: connection error -13
 # xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 20000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120000 kicks=120000 tx_stall=0 padded=0 rx_pkts=111420 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120000 kicks=120000 tx_stall=0 padded=0 rx_pkts=111376 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 20000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 20000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 20000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 20000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 20000 refl: server on xdp
+# xdp-copy 20000 refl: reflected 100000
+# xdp-copy 20000 refl: reflected 120000 in total
+# xdp-copy 20000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=120000 kicks=120000 tx_stall=0 padded=0 rx_pkts=120000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 100000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=600000 kicks=600000 tx_stall=0 padded=0 rx_pkts=544710 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=600000 kicks=600000 tx_stall=0 padded=0 rx_pkts=544716 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 100000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 100000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 100000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 100000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 100000 refl: server on xdp
+# xdp-copy 100000 refl: reflected 100000
+# xdp-copy 100000 refl: reflected 200000
+# xdp-copy 100000 refl: reflected 300000
+# xdp-copy 100000 refl: reflected 400000
+# xdp-copy 100000 refl: reflected 500000
+# xdp-copy 100000 refl: reflected 600000
+# xdp-copy 100000 refl: reflected 600000 in total
+# xdp-copy 100000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=600000 kicks=599845 tx_stall=0 padded=0 rx_pkts=600000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 200000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1200000 kicks=1199941 tx_stall=0 padded=0 rx_pkts=1121047 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1200000 kicks=1199941 tx_stall=0 padded=0 rx_pkts=1111736 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 200000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 200000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 200000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 200000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 200000 refl: server on xdp
+# xdp-copy 200000 refl: reflected 100000
+# xdp-copy 200000 refl: reflected 200000
+# xdp-copy 200000 refl: reflected 300000
+# xdp-copy 200000 refl: reflected 400000
+# xdp-copy 200000 refl: reflected 500000
+# xdp-copy 200000 refl: reflected 600000
+# xdp-copy 200000 refl: reflected 700000
+# xdp-copy 200000 refl: reflected 800000
+# xdp-copy 200000 refl: reflected 900000
+# xdp-copy 200000 refl: reflected 1000000
+# xdp-copy 200000 refl: reflected 1100000
+# xdp-copy 200000 refl: reflected 1167017 in total
+# xdp-copy 200000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=1165210 kicks=1118236 tx_stall=1807 padded=0 rx_pkts=1167017 rx_filtered=0 xsk_rx_dropped=32983 xsk_rx_ring_full=0 xsk_fill_empty=32983 xsk_rx_invalid=0
 # xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 400000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2400000 kicks=2398321 tx_stall=0 padded=0 rx_pkts=2047975 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2400000 kicks=2399394 tx_stall=0 padded=0 rx_pkts=2181231 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 400000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 400000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 400000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 400000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 400000 refl: server on xdp
+# xdp-copy 400000 refl: reflected 100000
+# xdp-copy 400000 refl: reflected 200001
+# xdp-copy 400000 refl: reflected 300000
+# xdp-copy 400000 refl: reflected 400000
+# xdp-copy 400000 refl: reflected 500000
+# xdp-copy 400000 refl: reflected 600000
+# xdp-copy 400000 refl: reflected 700001
+# xdp-copy 400000 refl: reflected 800001
+# xdp-copy 400000 refl: reflected 900001
+# xdp-copy 400000 refl: reflected 1000000
+# xdp-copy 400000 refl: reflected 1100000
+# xdp-copy 400000 refl: reflected 1200000
+# xdp-copy 400000 refl: reflected 1300001
+# xdp-copy 400000 refl: reflected 1400000
+# xdp-copy 400000 refl: reflected 1500000
+# xdp-copy 400000 refl: reflected 1600000
+# xdp-copy 400000 refl: reflected 1700000
+# xdp-copy 400000 refl: reflected 1800000
+# xdp-copy 400000 refl: reflected 1900000
+# xdp-copy 400000 refl: reflected 2000001
+# xdp-copy 400000 refl: reflected 2100000
+# xdp-copy 400000 refl: reflected 2200001
+# xdp-copy 400000 refl: reflected 2246879 in total
+# xdp-copy 400000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=2244677 kicks=1596106 tx_stall=2202 padded=0 rx_pkts=2246879 rx_filtered=0 xsk_rx_dropped=153121 xsk_rx_ring_full=0 xsk_fill_empty=153121 xsk_rx_invalid=0
 # xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 800000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=4800000 kicks=4760921 tx_stall=0 padded=0 rx_pkts=4430606 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=4800000 kicks=4758244 tx_stall=0 padded=0 rx_pkts=4458196 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 800000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 800000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 800000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 800000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 800000 refl: server on xdp
+# xdp-copy 800000 refl: reflected 100001
+# xdp-copy 800000 refl: reflected 200002
+# xdp-copy 800000 refl: reflected 300000
+# xdp-copy 800000 refl: reflected 400000
+# xdp-copy 800000 refl: reflected 500002
+# xdp-copy 800000 refl: reflected 600001
+# xdp-copy 800000 refl: reflected 700001
+# xdp-copy 800000 refl: reflected 800002
+# xdp-copy 800000 refl: reflected 900002
+# xdp-copy 800000 refl: reflected 1000002
+# xdp-copy 800000 refl: reflected 1100002
+# xdp-copy 800000 refl: reflected 1200003
+# xdp-copy 800000 refl: reflected 1300003
+# xdp-copy 800000 refl: reflected 1400002
+# xdp-copy 800000 refl: reflected 1500001
+# xdp-copy 800000 refl: reflected 1600003
+# xdp-copy 800000 refl: reflected 1700000
+# xdp-copy 800000 refl: reflected 1800003
+# xdp-copy 800000 refl: reflected 1900000
+# xdp-copy 800000 refl: reflected 2000002
+# xdp-copy 800000 refl: reflected 2100002
+# xdp-copy 800000 refl: reflected 2200003
+# xdp-copy 800000 refl: reflected 2300001
+# xdp-copy 800000 refl: reflected 2400002
+# xdp-copy 800000 refl: reflected 2500001
+# xdp-copy 800000 refl: reflected 2600001
+# xdp-copy 800000 refl: reflected 2700002
+# xdp-copy 800000 refl: reflected 2800000
+# xdp-copy 800000 refl: reflected 2900004
+# xdp-copy 800000 refl: reflected 3000002
+# xdp-copy 800000 refl: reflected 3100003
+# xdp-copy 800000 refl: reflected 3200000
+# xdp-copy 800000 refl: reflected 3300001
+# xdp-copy 800000 refl: reflected 3400002
+# xdp-copy 800000 refl: reflected 3500003
+# xdp-copy 800000 refl: reflected 3600003
+# xdp-copy 800000 refl: reflected 3700003
+# xdp-copy 800000 refl: reflected 3800001
+# xdp-copy 800000 refl: reflected 3900002
+# xdp-copy 800000 refl: reflected 4000001
+# xdp-copy 800000 refl: reflected 4100000
+# xdp-copy 800000 refl: reflected 4200000
+# xdp-copy 800000 refl: reflected 4300001
+# xdp-copy 800000 refl: reflected 4400002
+# xdp-copy 800000 refl: reflected 4500002
+# xdp-copy 800000 refl: reflected 4509799 in total
+# xdp-copy 800000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=4508086 kicks=1436714 tx_stall=1713 padded=0 rx_pkts=4509799 rx_filtered=0 xsk_rx_dropped=290201 xsk_rx_ring_full=0 xsk_fill_empty=290201 xsk_rx_invalid=0
 # xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # xdp-copy 1600000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
-# xdp-copy 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=9600000 kicks=1938843 tx_stall=0 padded=0 rx_pkts=8881818 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=9600000 kicks=1841703 tx_stall=0 padded=0 rx_pkts=8851059 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 1600000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# xdp-copy 1600000 refl: libxdp: Can't use dispatcher without a working bpffs
+# xdp-copy 1600000 refl: libxdp: Falling back to loading single prog without dispatcher
+# xdp-copy 1600000 refl: io_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 1600000 refl: server on xdp
+# xdp-copy 1600000 refl: reflected 100025
+# xdp-copy 1600000 refl: reflected 200007
+# xdp-copy 1600000 refl: reflected 300009
+# xdp-copy 1600000 refl: reflected 400006
+# xdp-copy 1600000 refl: reflected 500005
+# xdp-copy 1600000 refl: reflected 600015
+# xdp-copy 1600000 refl: reflected 700011
+# xdp-copy 1600000 refl: reflected 800009
+# xdp-copy 1600000 refl: reflected 900001
+# xdp-copy 1600000 refl: reflected 1000003
+# xdp-copy 1600000 refl: reflected 1100006
+# xdp-copy 1600000 refl: reflected 1200003
+# xdp-copy 1600000 refl: reflected 1300010
+# xdp-copy 1600000 refl: reflected 1400006
+# xdp-copy 1600000 refl: reflected 1500002
+# xdp-copy 1600000 refl: reflected 1600005
+# xdp-copy 1600000 refl: reflected 1700003
+# xdp-copy 1600000 refl: reflected 1800008
+# xdp-copy 1600000 refl: reflected 1900001
+# xdp-copy 1600000 refl: reflected 2000002
+# xdp-copy 1600000 refl: reflected 2100003
+# xdp-copy 1600000 refl: reflected 2200032
+# xdp-copy 1600000 refl: reflected 2300000
+# xdp-copy 1600000 refl: reflected 2400007
+# xdp-copy 1600000 refl: reflected 2500008
+# xdp-copy 1600000 refl: reflected 2600035
+# xdp-copy 1600000 refl: reflected 2700003
+# xdp-copy 1600000 refl: reflected 2800017
+# xdp-copy 1600000 refl: reflected 2900003
+# xdp-copy 1600000 refl: reflected 3000000
+# xdp-copy 1600000 refl: reflected 3100006
+# xdp-copy 1600000 refl: reflected 3200004
+# xdp-copy 1600000 refl: reflected 3300000
+# xdp-copy 1600000 refl: reflected 3400009
+# xdp-copy 1600000 refl: reflected 3500002
+# xdp-copy 1600000 refl: reflected 3600004
+# xdp-copy 1600000 refl: reflected 3700008
+# xdp-copy 1600000 refl: reflected 3800000
+# xdp-copy 1600000 refl: reflected 3900010
+# xdp-copy 1600000 refl: reflected 4000008
+# xdp-copy 1600000 refl: reflected 4100001
+# xdp-copy 1600000 refl: reflected 4200003
+# xdp-copy 1600000 refl: reflected 4300014
+# xdp-copy 1600000 refl: reflected 4400001
+# xdp-copy 1600000 refl: reflected 4500013
+# xdp-copy 1600000 refl: reflected 4600012
+# xdp-copy 1600000 refl: reflected 4700005
+# xdp-copy 1600000 refl: reflected 4800003
+# xdp-copy 1600000 refl: reflected 4900002
+# xdp-copy 1600000 refl: reflected 5000003
+# xdp-copy 1600000 refl: reflected 5100001
+# xdp-copy 1600000 refl: reflected 5200005
+# xdp-copy 1600000 refl: reflected 5300001
+# xdp-copy 1600000 refl: reflected 5400000
+# xdp-copy 1600000 refl: reflected 5500007
+# xdp-copy 1600000 refl: reflected 5600002
+# xdp-copy 1600000 refl: reflected 5700016
+# xdp-copy 1600000 refl: reflected 5800003
+# xdp-copy 1600000 refl: reflected 5900014
+# xdp-copy 1600000 refl: reflected 6000008
+# xdp-copy 1600000 refl: reflected 6100000
+# xdp-copy 1600000 refl: reflected 6200000
+# xdp-copy 1600000 refl: reflected 6300009
+# xdp-copy 1600000 refl: reflected 6400006
+# xdp-copy 1600000 refl: reflected 6500008
+# xdp-copy 1600000 refl: reflected 6600013
+# xdp-copy 1600000 refl: reflected 6700003
+# xdp-copy 1600000 refl: reflected 6800010
+# xdp-copy 1600000 refl: reflected 6900001
+# xdp-copy 1600000 refl: reflected 7000005
+# xdp-copy 1600000 refl: reflected 7100002
+# xdp-copy 1600000 refl: reflected 7200011
+# xdp-copy 1600000 refl: reflected 7300002
+# xdp-copy 1600000 refl: reflected 7400004
+# xdp-copy 1600000 refl: reflected 7500010
+# xdp-copy 1600000 refl: reflected 7600011
+# xdp-copy 1600000 refl: reflected 7700008
+# xdp-copy 1600000 refl: reflected 7800000
+# xdp-copy 1600000 refl: reflected 7900001
+# xdp-copy 1600000 refl: reflected 8000003
+# xdp-copy 1600000 refl: reflected 8100002
+# xdp-copy 1600000 refl: reflected 8200004
+# xdp-copy 1600000 refl: reflected 8300009
+# xdp-copy 1600000 refl: reflected 8400009
+# xdp-copy 1600000 refl: reflected 8500000
+# xdp-copy 1600000 refl: reflected 8600008
+# xdp-copy 1600000 refl: reflected 8700005
+# xdp-copy 1600000 refl: reflected 8800000
+# xdp-copy 1600000 refl: reflected 8900008
+# xdp-copy 1600000 refl: reflected 8903428 in total
+# xdp-copy 1600000 refl: io_xdp: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=8901585 kicks=846670 tx_stall=1843 padded=0 rx_pkts=8903428 rx_filtered=0 xsk_rx_dropped=696572 xsk_rx_ring_full=0 xsk_fill_empty=696572 xsk_rx_invalid=0
 # tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -211,11 +1669,23 @@
 # tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 20000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 20000 drv: io_lwip: listening on :6043 for 1 peer(s)
-# tcp-xdp-copy 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:52442
-# tcp-xdp-copy 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120290 frames_rx=120008 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 20000 drv: io_tcp_xdp_stack: tcp_xmit=120287 tcp_recv=120005 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3120
-# tcp-xdp-copy 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120290 kicks=120289 tx_stall=0 padded=288 rx_pkts=120008 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:52053
+# tcp-xdp-copy 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120247 frames_rx=120008 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 20000 drv: io_tcp_xdp_stack: tcp_xmit=120244 tcp_recv=120005 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4680
+# tcp-xdp-copy 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120247 kicks=120246 tx_stall=0 padded=245 rx_pkts=120008 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 20000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 20000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 20000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 20000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 20000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 20000 refl: io_lwip: connected to 192.168.10.100:6043
+# tcp-xdp-copy 20000 refl: server on tcp-xdp
+# tcp-xdp-copy 20000 refl: reflected 100000
+# tcp-xdp-copy 20000 refl: reflected 120000 in total
+# tcp-xdp-copy 20000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120012 frames_rx=120245 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 20000 refl: io_tcp_xdp_stack: tcp_xmit=120013 tcp_recv=120244 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4680
+# tcp-xdp-copy 20000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=120012 kicks=120008 tx_stall=0 padded=6 rx_pkts=120245 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 20000 refl: io_lwip: connection error -13
 # tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -223,11 +1693,28 @@
 # tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 100000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 100000 drv: io_lwip: listening on :6044 for 1 peer(s)
-# tcp-xdp-copy 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:65462
-# tcp-xdp-copy 100000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=613844 frames_rx=599887 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 100000 drv: io_tcp_xdp_stack: tcp_xmit=613841 tcp_recv=599884 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=143520
-# tcp-xdp-copy 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=613844 kicks=611658 tx_stall=0 padded=13851 rx_pkts=599887 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:55902
+# tcp-xdp-copy 100000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=601238 frames_rx=599934 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 100000 drv: io_tcp_xdp_stack: tcp_xmit=601235 tcp_recv=599931 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=17160
+# tcp-xdp-copy 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=601238 kicks=601215 tx_stall=0 padded=1236 rx_pkts=599934 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 100000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 100000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 100000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 100000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 100000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 100000 refl: io_lwip: connected to 192.168.10.100:6044
+# tcp-xdp-copy 100000 refl: server on tcp-xdp
+# tcp-xdp-copy 100000 refl: reflected 100000
+# tcp-xdp-copy 100000 refl: reflected 200000
+# tcp-xdp-copy 100000 refl: reflected 300000
+# tcp-xdp-copy 100000 refl: reflected 400000
+# tcp-xdp-copy 100000 refl: reflected 500000
+# tcp-xdp-copy 100000 refl: reflected 600000
+# tcp-xdp-copy 100000 refl: reflected 600000 in total
+# tcp-xdp-copy 100000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=599934 frames_rx=601236 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 100000 refl: io_tcp_xdp_stack: tcp_xmit=599935 tcp_recv=601235 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=12480
+# tcp-xdp-copy 100000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=599934 kicks=599898 tx_stall=0 padded=212 rx_pkts=601236 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 100000 refl: io_lwip: connection error -13
 # tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -235,11 +1722,34 @@
 # tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 200000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 200000 drv: io_lwip: listening on :6045 for 1 peer(s)
-# tcp-xdp-copy 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:59296
-# tcp-xdp-copy 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1263134 frames_rx=1198882 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 200000 drv: io_tcp_xdp_stack: tcp_xmit=1263131 tcp_recv=1198879 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=26520
-# tcp-xdp-copy 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1263134 kicks=1253722 tx_stall=0 padded=63676 rx_pkts=1198882 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:59165
+# tcp-xdp-copy 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1284580 frames_rx=1199046 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 200000 drv: io_tcp_xdp_stack: tcp_xmit=1284578 tcp_recv=1199044 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=37440
+# tcp-xdp-copy 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1284580 kicks=1284346 tx_stall=0 padded=84833 rx_pkts=1199046 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 200000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 200000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 200000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 200000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 200000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 200000 refl: io_lwip: connected to 192.168.10.100:6045
+# tcp-xdp-copy 200000 refl: server on tcp-xdp
+# tcp-xdp-copy 200000 refl: reflected 100000
+# tcp-xdp-copy 200000 refl: reflected 200000
+# tcp-xdp-copy 200000 refl: reflected 300000
+# tcp-xdp-copy 200000 refl: reflected 400000
+# tcp-xdp-copy 200000 refl: reflected 500000
+# tcp-xdp-copy 200000 refl: reflected 600000
+# tcp-xdp-copy 200000 refl: reflected 700000
+# tcp-xdp-copy 200000 refl: reflected 800000
+# tcp-xdp-copy 200000 refl: reflected 900000
+# tcp-xdp-copy 200000 refl: reflected 1000000
+# tcp-xdp-copy 200000 refl: reflected 1100000
+# tcp-xdp-copy 200000 refl: reflected 1200000
+# tcp-xdp-copy 200000 refl: reflected 1200000 in total
+# tcp-xdp-copy 200000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1199053 frames_rx=1284580 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 200000 refl: io_tcp_xdp_stack: tcp_xmit=1199055 tcp_recv=1284578 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=34320
+# tcp-xdp-copy 200000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=1199053 kicks=1198906 tx_stall=0 padded=44236 rx_pkts=1284580 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 200000 refl: io_lwip: connection error -13
 # tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -247,11 +1757,46 @@
 # tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 400000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 400000 drv: io_lwip: listening on :6046 for 1 peer(s)
-# tcp-xdp-copy 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:58961
-# tcp-xdp-copy 400000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=2701939 frames_rx=2320003 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 400000 drv: io_tcp_xdp_stack: tcp_xmit=2701937 tcp_recv=2320001 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=79560
-# tcp-xdp-copy 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2701939 kicks=2655814 tx_stall=0 padded=351769 rx_pkts=2320003 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:62798
+# tcp-xdp-copy 400000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=2626217 frames_rx=2359502 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 400000 drv: io_tcp_xdp_stack: tcp_xmit=2626214 tcp_recv=2359499 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=74880
+# tcp-xdp-copy 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2626217 kicks=2621329 tx_stall=0 padded=239927 rx_pkts=2359502 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 400000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 400000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 400000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 400000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 400000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 400000 refl: io_lwip: connected to 192.168.10.100:6046
+# tcp-xdp-copy 400000 refl: server on tcp-xdp
+# tcp-xdp-copy 400000 refl: reflected 100000
+# tcp-xdp-copy 400000 refl: reflected 200001
+# tcp-xdp-copy 400000 refl: reflected 300001
+# tcp-xdp-copy 400000 refl: reflected 400000
+# tcp-xdp-copy 400000 refl: reflected 500000
+# tcp-xdp-copy 400000 refl: reflected 600000
+# tcp-xdp-copy 400000 refl: reflected 700000
+# tcp-xdp-copy 400000 refl: reflected 800001
+# tcp-xdp-copy 400000 refl: reflected 900000
+# tcp-xdp-copy 400000 refl: reflected 1000001
+# tcp-xdp-copy 400000 refl: reflected 1100000
+# tcp-xdp-copy 400000 refl: reflected 1200000
+# tcp-xdp-copy 400000 refl: reflected 1300000
+# tcp-xdp-copy 400000 refl: reflected 1400000
+# tcp-xdp-copy 400000 refl: reflected 1500000
+# tcp-xdp-copy 400000 refl: reflected 1600000
+# tcp-xdp-copy 400000 refl: reflected 1700000
+# tcp-xdp-copy 400000 refl: reflected 1800000
+# tcp-xdp-copy 400000 refl: reflected 1900000
+# tcp-xdp-copy 400000 refl: reflected 2000000
+# tcp-xdp-copy 400000 refl: reflected 2100000
+# tcp-xdp-copy 400000 refl: reflected 2200000
+# tcp-xdp-copy 400000 refl: reflected 2300001
+# tcp-xdp-copy 400000 refl: reflected 2400000
+# tcp-xdp-copy 400000 refl: reflected 2400000 in total
+# tcp-xdp-copy 400000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=2359567 frames_rx=2626215 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 400000 refl: io_tcp_xdp_stack: tcp_xmit=2359568 tcp_recv=2626214 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=49920
+# tcp-xdp-copy 400000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=2359567 kicks=2358376 tx_stall=0 padded=641311 rx_pkts=2626215 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 400000 refl: io_lwip: connection error -13
 # tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -259,11 +1804,70 @@
 # tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 800000 drv: io_lwip: listening on :6047 for 1 peer(s)
-# tcp-xdp-copy 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:63200
-# tcp-xdp-copy 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=3177248 frames_rx=2628720 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 800000 drv: io_tcp_xdp_stack: tcp_xmit=3177246 tcp_recv=2628718 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=157560
-# tcp-xdp-copy 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=3177248 kicks=3129979 tx_stall=0 padded=337953 rx_pkts=2628720 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:62004
+# tcp-xdp-copy 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=3086351 frames_rx=2658929 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 800000 drv: io_tcp_xdp_stack: tcp_xmit=3086349 tcp_recv=2658927 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=85800
+# tcp-xdp-copy 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=3086351 kicks=3081714 tx_stall=0 padded=182902 rx_pkts=2658929 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 800000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 800000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 800000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 800000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 800000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 800000 refl: io_lwip: connected to 192.168.10.100:6047
+# tcp-xdp-copy 800000 refl: server on tcp-xdp
+# tcp-xdp-copy 800000 refl: reflected 100000
+# tcp-xdp-copy 800000 refl: reflected 200001
+# tcp-xdp-copy 800000 refl: reflected 300001
+# tcp-xdp-copy 800000 refl: reflected 400000
+# tcp-xdp-copy 800000 refl: reflected 500000
+# tcp-xdp-copy 800000 refl: reflected 600001
+# tcp-xdp-copy 800000 refl: reflected 700002
+# tcp-xdp-copy 800000 refl: reflected 800001
+# tcp-xdp-copy 800000 refl: reflected 900001
+# tcp-xdp-copy 800000 refl: reflected 1000001
+# tcp-xdp-copy 800000 refl: reflected 1100000
+# tcp-xdp-copy 800000 refl: reflected 1200002
+# tcp-xdp-copy 800000 refl: reflected 1300000
+# tcp-xdp-copy 800000 refl: reflected 1400001
+# tcp-xdp-copy 800000 refl: reflected 1500000
+# tcp-xdp-copy 800000 refl: reflected 1600000
+# tcp-xdp-copy 800000 refl: reflected 1700002
+# tcp-xdp-copy 800000 refl: reflected 1800001
+# tcp-xdp-copy 800000 refl: reflected 1900000
+# tcp-xdp-copy 800000 refl: reflected 2000001
+# tcp-xdp-copy 800000 refl: reflected 2100001
+# tcp-xdp-copy 800000 refl: reflected 2200000
+# tcp-xdp-copy 800000 refl: reflected 2300000
+# tcp-xdp-copy 800000 refl: reflected 2400002
+# tcp-xdp-copy 800000 refl: reflected 2500000
+# tcp-xdp-copy 800000 refl: reflected 2600003
+# tcp-xdp-copy 800000 refl: reflected 2700003
+# tcp-xdp-copy 800000 refl: reflected 2800000
+# tcp-xdp-copy 800000 refl: reflected 2900000
+# tcp-xdp-copy 800000 refl: reflected 3000004
+# tcp-xdp-copy 800000 refl: reflected 3100001
+# tcp-xdp-copy 800000 refl: reflected 3200000
+# tcp-xdp-copy 800000 refl: reflected 3300001
+# tcp-xdp-copy 800000 refl: reflected 3400000
+# tcp-xdp-copy 800000 refl: reflected 3500000
+# tcp-xdp-copy 800000 refl: reflected 3600000
+# tcp-xdp-copy 800000 refl: reflected 3700000
+# tcp-xdp-copy 800000 refl: reflected 3800001
+# tcp-xdp-copy 800000 refl: reflected 3900005
+# tcp-xdp-copy 800000 refl: reflected 4000000
+# tcp-xdp-copy 800000 refl: reflected 4100001
+# tcp-xdp-copy 800000 refl: reflected 4200003
+# tcp-xdp-copy 800000 refl: reflected 4300001
+# tcp-xdp-copy 800000 refl: reflected 4400000
+# tcp-xdp-copy 800000 refl: reflected 4500003
+# tcp-xdp-copy 800000 refl: reflected 4600001
+# tcp-xdp-copy 800000 refl: reflected 4700004
+# tcp-xdp-copy 800000 refl: reflected 4800000
+# tcp-xdp-copy 800000 refl: reflected 4800000 in total
+# tcp-xdp-copy 800000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=2658935 frames_rx=3086351 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 800000 refl: io_tcp_xdp_stack: tcp_xmit=2658937 tcp_recv=3086349 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=34320
+# tcp-xdp-copy 800000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=2658935 kicks=2644851 tx_stall=0 padded=1009980 rx_pkts=3086351 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 800000 refl: io_lwip: connection error -13
 # tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
@@ -271,8 +1875,115 @@
 # tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp-copy 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
 # tcp-xdp-copy 1600000 drv: io_lwip: listening on :6048 for 1 peer(s)
-# tcp-xdp-copy 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:60022
-# tcp-xdp-copy 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=2787132 frames_rx=2347358 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
-# tcp-xdp-copy 1600000 drv: io_tcp_xdp_stack: tcp_xmit=2787129 tcp_recv=2347355 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=106080
-# tcp-xdp-copy 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2787132 kicks=2738570 tx_stall=0 padded=266848 rx_pkts=2347358 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:58204
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=2713986 frames_rx=2416575 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp_stack: tcp_xmit=2713984 tcp_recv=2416573 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=126360
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2713986 kicks=2709529 tx_stall=0 padded=171048 rx_pkts=2416575 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
 # tcp-xdp-copy 1600000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 1600000 refl: libxdp: No bpffs found at /sys/fs/bpf
+# tcp-xdp-copy 1600000 refl: libxdp: Can't use dispatcher without a working bpffs
+# tcp-xdp-copy 1600000 refl: libxdp: Falling back to loading single prog without dispatcher
+# tcp-xdp-copy 1600000 refl: io_tcp_xdp: enp3s0f1 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 1600000 refl: io_lwip: connected to 192.168.10.100:6048
+# tcp-xdp-copy 1600000 refl: server on tcp-xdp
+# tcp-xdp-copy 1600000 refl: reflected 100003
+# tcp-xdp-copy 1600000 refl: reflected 200002
+# tcp-xdp-copy 1600000 refl: reflected 300001
+# tcp-xdp-copy 1600000 refl: reflected 400001
+# tcp-xdp-copy 1600000 refl: reflected 500001
+# tcp-xdp-copy 1600000 refl: reflected 600001
+# tcp-xdp-copy 1600000 refl: reflected 700002
+# tcp-xdp-copy 1600000 refl: reflected 800002
+# tcp-xdp-copy 1600000 refl: reflected 900002
+# tcp-xdp-copy 1600000 refl: reflected 1000005
+# tcp-xdp-copy 1600000 refl: reflected 1100001
+# tcp-xdp-copy 1600000 refl: reflected 1200006
+# tcp-xdp-copy 1600000 refl: reflected 1300001
+# tcp-xdp-copy 1600000 refl: reflected 1400004
+# tcp-xdp-copy 1600000 refl: reflected 1500007
+# tcp-xdp-copy 1600000 refl: reflected 1600002
+# tcp-xdp-copy 1600000 refl: reflected 1700004
+# tcp-xdp-copy 1600000 refl: reflected 1800005
+# tcp-xdp-copy 1600000 refl: reflected 1900004
+# tcp-xdp-copy 1600000 refl: reflected 2000003
+# tcp-xdp-copy 1600000 refl: reflected 2100002
+# tcp-xdp-copy 1600000 refl: reflected 2200007
+# tcp-xdp-copy 1600000 refl: reflected 2300004
+# tcp-xdp-copy 1600000 refl: reflected 2400003
+# tcp-xdp-copy 1600000 refl: reflected 2500000
+# tcp-xdp-copy 1600000 refl: reflected 2600006
+# tcp-xdp-copy 1600000 refl: reflected 2700002
+# tcp-xdp-copy 1600000 refl: reflected 2800000
+# tcp-xdp-copy 1600000 refl: reflected 2900004
+# tcp-xdp-copy 1600000 refl: reflected 3000000
+# tcp-xdp-copy 1600000 refl: reflected 3100001
+# tcp-xdp-copy 1600000 refl: reflected 3200005
+# tcp-xdp-copy 1600000 refl: reflected 3300004
+# tcp-xdp-copy 1600000 refl: reflected 3400000
+# tcp-xdp-copy 1600000 refl: reflected 3500000
+# tcp-xdp-copy 1600000 refl: reflected 3600000
+# tcp-xdp-copy 1600000 refl: reflected 3700002
+# tcp-xdp-copy 1600000 refl: reflected 3800005
+# tcp-xdp-copy 1600000 refl: reflected 3900000
+# tcp-xdp-copy 1600000 refl: reflected 4000006
+# tcp-xdp-copy 1600000 refl: reflected 4100003
+# tcp-xdp-copy 1600000 refl: reflected 4200004
+# tcp-xdp-copy 1600000 refl: reflected 4300000
+# tcp-xdp-copy 1600000 refl: reflected 4400000
+# tcp-xdp-copy 1600000 refl: reflected 4500001
+# tcp-xdp-copy 1600000 refl: reflected 4600003
+# tcp-xdp-copy 1600000 refl: reflected 4700003
+# tcp-xdp-copy 1600000 refl: reflected 4800010
+# tcp-xdp-copy 1600000 refl: reflected 4900004
+# tcp-xdp-copy 1600000 refl: reflected 5000006
+# tcp-xdp-copy 1600000 refl: reflected 5100004
+# tcp-xdp-copy 1600000 refl: reflected 5200001
+# tcp-xdp-copy 1600000 refl: reflected 5300001
+# tcp-xdp-copy 1600000 refl: reflected 5400006
+# tcp-xdp-copy 1600000 refl: reflected 5500005
+# tcp-xdp-copy 1600000 refl: reflected 5600003
+# tcp-xdp-copy 1600000 refl: reflected 5700002
+# tcp-xdp-copy 1600000 refl: reflected 5800000
+# tcp-xdp-copy 1600000 refl: reflected 5900002
+# tcp-xdp-copy 1600000 refl: reflected 6000007
+# tcp-xdp-copy 1600000 refl: reflected 6100003
+# tcp-xdp-copy 1600000 refl: reflected 6200001
+# tcp-xdp-copy 1600000 refl: reflected 6300010
+# tcp-xdp-copy 1600000 refl: reflected 6400005
+# tcp-xdp-copy 1600000 refl: reflected 6500005
+# tcp-xdp-copy 1600000 refl: reflected 6600005
+# tcp-xdp-copy 1600000 refl: reflected 6700001
+# tcp-xdp-copy 1600000 refl: reflected 6800002
+# tcp-xdp-copy 1600000 refl: reflected 6900003
+# tcp-xdp-copy 1600000 refl: reflected 7000001
+# tcp-xdp-copy 1600000 refl: reflected 7100006
+# tcp-xdp-copy 1600000 refl: reflected 7200002
+# tcp-xdp-copy 1600000 refl: reflected 7300002
+# tcp-xdp-copy 1600000 refl: reflected 7400003
+# tcp-xdp-copy 1600000 refl: reflected 7500005
+# tcp-xdp-copy 1600000 refl: reflected 7600001
+# tcp-xdp-copy 1600000 refl: reflected 7700005
+# tcp-xdp-copy 1600000 refl: reflected 7800004
+# tcp-xdp-copy 1600000 refl: reflected 7900000
+# tcp-xdp-copy 1600000 refl: reflected 8000002
+# tcp-xdp-copy 1600000 refl: reflected 8100002
+# tcp-xdp-copy 1600000 refl: reflected 8200002
+# tcp-xdp-copy 1600000 refl: reflected 8300006
+# tcp-xdp-copy 1600000 refl: reflected 8400006
+# tcp-xdp-copy 1600000 refl: reflected 8500003
+# tcp-xdp-copy 1600000 refl: reflected 8600005
+# tcp-xdp-copy 1600000 refl: reflected 8700003
+# tcp-xdp-copy 1600000 refl: reflected 8800013
+# tcp-xdp-copy 1600000 refl: reflected 8900005
+# tcp-xdp-copy 1600000 refl: reflected 9000001
+# tcp-xdp-copy 1600000 refl: reflected 9100002
+# tcp-xdp-copy 1600000 refl: reflected 9200003
+# tcp-xdp-copy 1600000 refl: reflected 9300000
+# tcp-xdp-copy 1600000 refl: reflected 9400010
+# tcp-xdp-copy 1600000 refl: reflected 9500004
+# tcp-xdp-copy 1600000 refl: reflected 9600000
+# tcp-xdp-copy 1600000 refl: reflected 9600000 in total
+# tcp-xdp-copy 1600000 refl: io_tcp_xdp: role=client peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=2416588 frames_rx=2713986 tx_frame_drops=0 write_mem=0 closed=3 desyncs=0
+# tcp-xdp-copy 1600000 refl: io_tcp_xdp_stack: tcp_xmit=2416590 tcp_recv=2713984 tcp_drop=1 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=1 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=51480
+# tcp-xdp-copy 1600000 refl: io_tcp_xdp_nic: if=enp3s0f1 q=0 mode=native zerocopy=0 tx_pkts=2416588 kicks=2398623 tx_stall=0 padded=837482 rx_pkts=2713986 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 1600000 refl: io_lwip: connection error -13
