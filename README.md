@@ -44,10 +44,6 @@ consumer:
 | 800k msg/s | **4.20** | 5.14 | 10.48 | 15.92 | 12.56 | 27.22 |
 | 1.6M msg/s | **4.58** | 5.97 | 12.74 | 26.29 | 14.54 | 27.72 |
 
-(For round trips of all seven backends at 20k-1.6M msg/s on an AWS pair and
-on two cabled 10G ports, with the raw data, see
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md).)
-
 Two things fall out of that table which are hard to see any other way:
 
 **The cost of TCP is not a property of TCP.** The *same* lwIP stack costs
@@ -63,6 +59,54 @@ same `tcp-dpdk` path gives 40.0 us p50 instead of 4.98 and 78.8 us p99 instead
 of 9.8 — worse than kernel TCP. On a stream of hundred-byte messages every
 write is small by definition, so the algorithm holds back essentially
 everything. `Config::tcp_nodelay` defaults to true here for that reason.
+
+### Every backend, two stands
+
+That table came from the transport this library was extracted from. The
+numbers below were measured with this repository's own tools
+([docs/BENCHMARKS.md](docs/BENCHMARKS.md), raw data in
+[`bench/results/`](bench/results)): round trips of 100-byte messages, one
+per packet, an open-loop driver offering 20k to 1.6M msg/s, each side
+busy-polling on one isolated core. *82599* is one desktop whose two Intel
+82599 10G ports are cabled to each other; *AWS* is two c6in.4xlarge in a
+cluster placement group. "Holds up to" is the highest offered rate at which
+that rate and every lower one were delivered in full, with the p50 there.
+
+| backend | 82599: p50 at 20k msg/s | 82599: holds up to | AWS: p50 at 20k msg/s | AWS: holds up to |
+|---|---|---|---|---|
+| `dpdk` | **7.4 us** | 1.6M (7.9 us) | **17.4 us** | 200k (32.2 us) |
+| `tcp-dpdk` | 8.4 us | 1.6M (10.2 us) | 18.4 us | 1.6M (2.5 ms) |
+| `xdp`, zero-copy | 12.9 us | 1.6M (15.0 us) | — | — |
+| `xdp`, copy mode | 11.4 us | 1.6M (25.7 us) | 29.8 us | 200k (41.4 us) |
+| `tcp-xdp`, zero-copy | 14.1 us | 20k: breaks above ¹ | — | — |
+| `tcp-xdp`, copy mode | 13.1 us | 1.6M (19.1 us) | 31.7 us | 400k (89.9 us) ² |
+| `udp` | 17.3 us | 400k (37.4 us) | 21.0 us | 200k (37.4 us) |
+| `tcp` | 19.0 us | **1.6M (31.1 us)** | 21.4 us | **1.6M (52.8 us)** |
+| `uring` | 20.7 us | 400k (65.2 us) | 38.4 us | 200k (82.9 us) ³ |
+| `uring` + SQPOLL | not run ⁴ | — | 34.1 us | 200k (54.2 us) |
+
+What it says:
+
+* **On real hardware the bypass paths are flat.** DPDK moves 7.4 to 7.9 us
+  across an 80x range of load; kernel UDP starts at 17 us and falls over past
+  400k.
+* **On AWS no datagram path gets past about 380k round trips/s**, DPDK
+  included -- the same DPDK loop that does 1.6M on a 2012 desktop CPU. That
+  points at the ENA path (one queue, one flow) rather than the loop; no AWS
+  allowance counter moved.
+* **Streams carry the rate by packing** several messages into a segment.
+  Kernel TCP does it without queueing: on AWS it is the only path under 60 us
+  p50 at 1.6M, where lwIP keeps the rate but queues into milliseconds.
+* **io_uring is not a faster `udp`**: 3.4 us slower at low load on the 82599,
+  17 us on AWS (see [The backends](#the-backends)).
+* **Past its ceiling a bypass path queues, a kernel socket drops**: on AWS
+  DPDK and AF_XDP sit at 6-19 ms with under 0.3% lost, kernel UDP loses half.
+
+¹ lwIP runs out of pool pbufs on the reflector and aborts the connection; the
+same stack in copy mode is clean to 1.6M. An open bug, written up in the
+benchmarks. ² The main run's 800k case fell to 513k msg/s; two other runs held
+800k at about 1 ms. ³ 53.9 us in the repeat. ⁴ RHEL 9's 5.14 refuses
+`IORING_SETUP_SQ_AFF`.
 
 ## The backends
 
