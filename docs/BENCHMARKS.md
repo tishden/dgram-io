@@ -217,7 +217,7 @@ host on exit, about 20 minutes):
 
 ```
 scripts/get_lwip.sh && make all example
-sudo scripts/wire_bench.sh                     # IRQ_LAYOUT=sibling for the A/B
+sudo DRV_IF=enp3s0f0 PEER_IF=enp3s0f1 scripts/wire_bench.sh   # IRQ_LAYOUT=sibling for the A/B
 scripts/bench_report.py bench/results/<date>-ixgbe-irq-house
 ```
 

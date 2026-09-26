@@ -34,36 +34,7 @@ worth what it costs to operate*. You cannot answer that by reading; you have
 to run the same workload across the paths. That is hard if switching paths
 means rewriting the send loop, and easy if it means changing a string.
 
-Here is the same transport, same wire, same rates, 200k messages per case,
-36 cases, zero drops in every one — p50 microseconds, producer timestamp to
-consumer:
-
-| rate | dpdk | tcp-dpdk | xdp | tcp-xdp | udp | tcp |
-|---|---|---|---|---|---|---|
-| 200k msg/s | **4.19** | 4.98 | 7.17 | 13.32 | 9.75 | 20.08 |
-| 800k msg/s | **4.20** | 5.14 | 10.48 | 15.92 | 12.56 | 27.22 |
-| 1.6M msg/s | **4.58** | 5.97 | 12.74 | 26.29 | 14.54 | 27.72 |
-
-Two things fall out of that table which are hard to see any other way:
-
-**The cost of TCP is not a property of TCP.** The *same* lwIP stack costs
-+0.8 us over a DPDK PMD, +6.2 us over AF_XDP, and the kernel's own TCP costs
-+10.3 us over kernel UDP. Protocol cost and kernel cost are different
-quantities, and the second is an order of magnitude larger. A per-stage
-breakdown confirms it directly: `ring_wait`, `build` and `publish` agree
-across five of the six datapaths to within 0.1 us — the entire difference
-lives in the "stack + wire" segment.
-
-**Nagle costs more than the choice of stack.** With `TCP_NODELAY` off, the
-same `tcp-dpdk` path gives 40.0 us p50 instead of 4.98 and 78.8 us p99 instead
-of 9.8 — worse than kernel TCP. On a stream of hundred-byte messages every
-write is small by definition, so the algorithm holds back essentially
-everything. `Config::tcp_nodelay` defaults to true here for that reason.
-
-### Every backend, two stands
-
-That table came from the transport this library was extracted from. The
-numbers below were measured with this repository's own tools
+Here is every backend measured with this repository's own tools
 ([docs/BENCHMARKS.md](docs/BENCHMARKS.md), raw data in
 [`bench/results/`](bench/results)): round trips of 100-byte messages, one
 per packet, an open-loop driver offering 20k to 1.6M msg/s, each side
@@ -111,6 +82,31 @@ Running this found two bugs that are fixed here: AF_XDP zero-copy on the
 2048-byte UMEM chunk), and the benchmark script's own CPU confinement --
 both in [docs/BENCHMARKS.md](docs/BENCHMARKS.md#found-by-these-runs).
 
+### Where TCP's cost comes from
+
+The library was split out of a low-latency transport, and one measurement
+from there is worth keeping even though this repository cannot reproduce it
+as-is: the same transport, same wire, same rates, 200k messages per case,
+36 cases, zero drops in every one — p50 microseconds, producer timestamp to
+consumer:
+
+| rate | dpdk | tcp-dpdk | xdp | tcp-xdp | udp | tcp |
+|---|---|---|---|---|---|---|
+| 200k msg/s | **4.19** | 4.98 | 7.17 | 13.32 | 9.75 | 20.08 |
+| 800k msg/s | **4.20** | 5.14 | 10.48 | 15.92 | 12.56 | 27.22 |
+| 1.6M msg/s | **4.58** | 5.97 | 12.74 | 26.29 | 14.54 | 27.72 |
+
+**The cost of TCP is not a property of TCP.** The *same* lwIP stack costs
++0.8 us over a DPDK PMD, +6.2 us over AF_XDP, and the kernel's own TCP costs
++10.3 us over kernel UDP. Protocol cost and kernel cost are different
+quantities, and the second is an order of magnitude larger.
+
+**Nagle costs more than the choice of stack.** With `TCP_NODELAY` off, the
+same `tcp-dpdk` path gives 40.0 us p50 instead of 4.98 and 78.8 us p99 instead
+of 9.8 — worse than kernel TCP. On a stream of hundred-byte messages every
+write is small by definition, so the algorithm holds back essentially
+everything. `Config::tcp_nodelay` defaults to true here for that reason.
+
 ## The backends
 
 | `kind` | what it is | needs |
@@ -142,19 +138,26 @@ returns a clear error naming what is missing, instead of failing to build.
 
 * **`queue()` copies.** Your buffer is reusable the instant it returns.
   Datagrams accumulate up to an internal batch and leave on `flush()` or when
-  the batch fills. Deciding *when* to flush — the "ring drained, send now"
-  policy — belongs to the caller, not here, because only the caller knows
+  the batch fills. Deciding *when* to flush — "nothing more to send right
+  now" — belongs to the caller, not here, because only the caller knows
   whether more work is coming.
-* **`rx()` is non-blocking** and returns at most `max` datagrams. The returned
-  views stay valid until the next `rx()` call. On the stream backends that is
-  what forces the deframer to move its leftover tail only at the *start* of
-  the next round, after you are done with the previous batch.
+* **`queue()` returning false means nothing was sent.** Usually that is
+  back-pressure (the TX side is full): flush, service `rx()`, offer the same
+  datagram again. On a stream with several peers a record goes to all of them
+  or to none, so offering it again never duplicates it.
+* **`rx()` is non-blocking** and returns at most `max` datagrams, or -1 once
+  the datapath has failed (on a stream: every connection is gone). The
+  returned views stay valid until the next `rx()` call. On the stream
+  backends that is what forces the deframer to move its leftover tail only at
+  the *start* of the next round, after you are done with the previous batch.
 * **`Endpoint` carries a MAC**, because the L2 backends address whole frames.
-  The UDP backend leaves it zeroed and ignores it on transmit.
+  The socket backends leave it zeroed and ignore it on transmit.
 * **A backend that cannot carry the requested `max_datagram` fails at setup.**
   Loudly, on purpose: truncating on receive looks exactly like packet loss,
   gets repaired by whatever recovery layer sits above, and hides a
   misconfiguration behind a plausible number.
+* **One DPDK backend and one lwIP backend per process.** DPDK's EAL and lwIP
+  are process-wide; a second instance is refused at setup.
 
 ## Also in here
 
@@ -169,9 +172,10 @@ Pieces that were worth separating out of the backends:
 * **`stream.h`** — record framing for the TCP backends. A `[u16 len][record]`
   prefix and a deframer that reassembles across arbitrary chunk boundaries.
   Two bytes per datagram, 0.14% at the 1400-byte default.
-* **`xdp_socket.h`** — the AF_XDP/XSK setup that is otherwise a day of reading
-  kernel headers: UMEM, the four rings, the zero-copy attempt with a copy-mode
-  fallback, and frame lifetime managed so the `rx()` contract above holds.
+* **`src/xdp_socket.h`** (internal, not installed) — the AF_XDP/XSK setup
+  that is otherwise a day of reading kernel headers: UMEM, the four rings,
+  the zero-copy attempt with a copy-mode fallback, and frame lifetime managed
+  so the `rx()` contract above holds.
 * **`latbd.h` / `rtt.h`** — per-stage latency breakdown, and an RTT estimator
   that keeps a rolling *minimum*. Minimum rather than mean because sparse
   polling adds a one-sided error to every sample: the floor of the
@@ -189,15 +193,16 @@ sudo make install   # optional: /usr/local, or PREFIX=... / DESTDIR=...
 
 Installed, it is `pkg-config --cflags --libs dgram-io`. The library is
 static, so those flags carry every backend's dependencies that this build
-compiled in. The XDP filters go to `pkg-config --variable=bpfdir dgram-io`;
-point `Config::bpf_obj` there, since the default looks next to the running
-binary.
+compiled in; lwIP's symbols inside it are prefixed, so it links next to an
+lwIP of your own. The XDP filters go to `pkg-config --variable=bpfdir
+dgram-io`, where the XDP backends find them by themselves (a copy next to the
+running binary wins; `Config::bpf_obj` overrides both).
 
 The example is a ping-pong that runs over any backend:
 
 ```
 ./bin/echo --role server --io udp --port 5000
-./bin/echo --role client --io udp --port 5000 --dst 127.0.0.1 -n 10000
+./bin/echo --role client --io udp --port 5000 --dst 127.0.0.1 -n 5000
 ```
 
 ```
@@ -205,7 +210,7 @@ client on udp
 sent 5000, reflected 5000 (0.00% lost)
 rtt floor: 8147 ns
 client: latbd stage=rtt n=5000 p50_us=8.78 p99_us=12.38 p999_us=16.92 max_us=67.06
-io_udp: syscalls=5000 send_errs=0 rx_truncated=0
+io_udp: syscalls=5000 send_errs=0 rx_truncated=0 icmp_errs=0
 ```
 
 (that is loopback on a noisy desktop — it is a smoke test, not a measurement)
@@ -238,7 +243,7 @@ open-loop driver and the scripts that produced
 It is not a transport. There is no reliability, no ordering, no congestion
 control, no fan-out policy — `dgram_io` moves packets and tells you what
 happened. Loss recovery, if you want it, layers on top; the codec this was
-built alongside is at [rsfec](https://github.com/tishden/rs-fec).
+built alongside is at [rsfec](https://github.com/tishden/rsfec).
 
 It is Linux and x86-64. The kernel-socket backends would port anywhere; AF_XDP
 and DPDK would not.
