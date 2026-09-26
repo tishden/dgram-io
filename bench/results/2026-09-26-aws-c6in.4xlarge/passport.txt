@@ -2,7 +2,7 @@
 # /proc/cmdline, lscpu, ethtool, sysctl, pkg-config, check_env.sh); the
 # stand's fetch_logs.sh did not work at the time (fixed since).
 date: 2026-09-26, instances up 13:02-14:25 UTC
-dgram-io: b5056ad (loadgen, bench_matrix, uring SQPOLL fix)
+dgram-io: 444a630 (loadgen, bench_matrix, uring SQPOLL fix; recorded as b5056ad, the history was rewritten after the run, same tree)
 stand: aws-lowlat-stand 6c21fa7, region ap-northeast-1a (apne1-az4), cluster placement group, on-demand
 instances: 2 x c6in.4xlarge (virtualized), 16 vCPU = 8 cores x 2 threads, Intel Xeon Platinum 8375C @ 2.90GHz
 kernel: 7.0.0-1013-aws, Ubuntu 24.04
