@@ -8,16 +8,19 @@
 # in the default namespace.
 #
 #   make example
-#   sudo scripts/wire_peer.sh up      # namespace + servers
+#   sudo PEER_IF=enp3s0f1 scripts/wire_peer.sh up    # namespace + servers
 #   ./bin/echo --role client --io uring --dst 192.168.10.101 --port 5000
-#   sudo scripts/wire_peer.sh down    # everything back as it was
+#   sudo PEER_IF=enp3s0f1 scripts/wire_peer.sh down  # everything back
 #
-# Override with env: PEER_IF, PEER_ADDR, NS. Servers run as the invoking user,
-# not root; their output goes to bin/wire_peer.<kind>.log. WIRE_SERVERS=0
-# sets up the namespace only (scripts/wire_bench.sh starts its own).
+# Env: PEER_IF (required: the port that moves into the namespace), PEER_ADDR
+# (default 192.168.10.101/24), NS (default dgpeer). Servers run as the
+# invoking user, not root; their output goes to bin/wire_peer.<kind>.log.
+# WIRE_SERVERS=0 sets up the namespace only (scripts/wire_bench.sh starts its
+# own). `up` sets kernel.io_uring_disabled=0 for the uring servers; `down`
+# puts the old value back.
 set -euo pipefail
 
-PEER_IF=${PEER_IF:-enp3s0f1}
+PEER_IF=${PEER_IF:?set PEER_IF to the port to move into the namespace}
 PEER_ADDR=${PEER_ADDR:-192.168.10.101/24}
 NS=${NS:-dgpeer}
 STATE=/run/dgram-io-wire-peer.$NS
@@ -43,6 +46,8 @@ up() {
     echo "IO_URING_DISABLED=$(sysctl -n kernel.io_uring_disabled 2>/dev/null || echo 0)"
     echo "OLD_ADDRS='$(ip -4 -o addr show dev "$PEER_IF" | awk '{print $4}' | xargs)'"
   } > "$STATE"
+  # Half-way failures put back whatever was already changed.
+  trap 'echo "up failed; rolling back" >&2; down' ERR
 
   sysctl -qw kernel.io_uring_disabled=0
   ip netns add "$NS"
@@ -76,10 +81,13 @@ up() {
     read -r _ rest <<< "$s"; name=${rest##* }
     head -1 "$ROOT/bin/wire_peer.$name.log"
   done
+  trap - ERR
   echo "peer $PEER_ADDR on $PEER_IF in netns $NS, carrier=$(ip netns exec "$NS" cat /sys/class/net/"$PEER_IF"/carrier)"
 }
 
 down() {
+  trap - ERR
+  set +e  # restore as much as possible, whatever is already gone
   [ -e "$STATE" ] || { echo "not up (no $STATE)" >&2; exit 1; }
   # Parsed, not sourced: server names like uring-sqpoll are not shell names.
   IO_URING_DISABLED=$(sed -n 's/^IO_URING_DISABLED=//p' "$STATE")
@@ -88,7 +96,7 @@ down() {
     kill "$pid" 2>/dev/null || true
   done
   # Deleting the namespace hands the physical port back to the default one.
-  ip netns del "$NS"
+  ip netns del "$NS" 2>/dev/null
   for _ in $(seq 10); do ip link show "$PEER_IF" >/dev/null 2>&1 && break; sleep 0.5; done
   for a in $OLD_ADDRS; do ip addr add "$a" dev "$PEER_IF" 2>/dev/null || true; done
   ip link set "$PEER_IF" up

@@ -4,22 +4,30 @@
 # Round-trip latency matrix across backends and offered rates. One CSV line
 # per case on stdout.
 #
-#   SND=ubuntu@1.2.3.4 RCV=ubuntu@5.6.7.8 SSH_KEY=key.pem \
+#   SND=ubuntu@10.0.0.1 RCV=ubuntu@10.0.0.2 SSH_KEY=key.pem \
+#   S_FACTS="IF=ens6 IP=10.0.1.1 MAC=.. PCI= DP0=2 DP1=3" \
+#   R_FACTS="IF=ens6 IP=10.0.1.2 MAC=.. PCI= DP0=2 DP1=3" \
 #     scripts/bench_matrix.sh "udp uring uring-sqpoll tcp xdp tcp-xdp" \
 #                             "20000 200000 800000 1600000"
 #
 # SND and RCV are where each side runs: user@host (SSH), `local`, or
 # `netns:NAME` (this host, inside that network namespace -- two cabled ports
-# of one machine, see scripts/wire_bench.sh). Host facts come from the files
-# aws-lowlat-stand writes (/etc/stand-data.env, /etc/stand-cores.env,
-# /run/stand_dpdk.env once the data ENI is bound to vfio-pci), or from
-# S_FACTS / R_FACTS given as "IF=.. IP=.. MAC=.. PCI=.. DP0=.. DP1=..".
+# of one machine, see scripts/wire_bench.sh). S_FACTS / R_FACTS describe each
+# host's data path: IF interface, IP and MAC on it, PCI address (for the DPDK
+# kinds, once bound to vfio-pci), DP0 the core the process is pinned to, DP1
+# a second core for the SQPOLL thread. Without them the facts are read from
+# env files on the host (/etc/stand-data.env: DATA_IF DATA_IP DATA_MAC;
+# /etc/stand-cores.env: DP0 DP1; optional /run/stand_dpdk.env: LOCAL_PCI
+# LOCAL_MAC), which is how the AWS hosts in docs/BENCHMARKS.md were set up.
 #
 # The driver (bin/loadgen) runs on SND, the reflector (bin/echo --role server)
-# on RCV, each pinned to the host's first isolated dataplane core. The
-# kernel-netdev backends and the DPDK ones cannot share a run: DPDK needs the
-# data ENI bound to vfio-pci, which removes the netdev the others use. Bind
-# between the two halves (aws-lowlat-stand: make aws-dpdk-bind).
+# on RCV, each pinned to DP0. The kernel-netdev backends and the DPDK ones
+# cannot share a run: DPDK needs the data NIC bound to vfio-pci, which removes
+# the netdev the others use. Bind between the two halves.
+#
+# Meant for dedicated benchmark hosts: before every case it kills any
+# bin/echo server and bin/loadgen on both hosts and detaches whatever XDP
+# program is on the data interface.
 #
 # Env: SECS (5), WARMUP (0.5), SIZE (100), REMOTE_DIR (dgram-io; absolute
 #      for local targets),
@@ -106,6 +114,11 @@ clean() {
            fi; exit 0"
 }
 
+# The reflector's logs, in a directory only this run can know the name of
+# (the reflector may run as root, so a fixed /tmp name would be an invitation).
+RLOG=$(on "$RCV" 'mktemp -d /tmp/dgram-io-refl.XXXXXX')
+trap 'on "$RCV" "rm -rf $RLOG" >/dev/null 2>&1 || true' EXIT
+
 header=--header
 for kind in $KINDS; do
   for rate in $RATES; do
@@ -116,7 +129,7 @@ for kind in $KINDS; do
     clean "$RCV" "${R[IF]}"
     # Reflector: --dst matters only to the stream kinds, whose receiving side
     # is the TCP client and dials the driver.
-    refl="cd $DIR; $SUDO nohup setsid timeout $((SECS * 4 + 120)) taskset -c ${R[DP0]} ./bin/echo --role server $rargs --port $PORT --dst ${S[IP]} > /tmp/refl.$kind.$rate.log 2>&1 < /dev/null &"
+    refl="cd $DIR; $SUDO nohup setsid timeout $((SECS * 4 + 120)) taskset -c ${R[DP0]} ./bin/echo --role server $rargs --port $PORT --dst ${S[IP]} > $RLOG/refl.$kind.$rate.log 2>&1 < /dev/null &"
     drv="cd $DIR && $SUDO taskset -c ${S[DP0]} ./bin/loadgen $sargs --dst ${R[IP]} --port $PORT --rate $rate --secs $SECS --warmup $WARMUP --size $SIZE --label $kind $header"
     case $kind in
       tcp*)
@@ -139,7 +152,7 @@ for kind in $KINDS; do
     # SIGINT makes the reflector print its own counters on the way out, so
     # the log has both ends of every case.
     stop_reflector
-    on "$RCV" "cat /tmp/refl.$kind.$rate.log" 2>/dev/null |
+    on "$RCV" "cat $RLOG/refl.$kind.$rate.log" 2>/dev/null |
       grep -v "skipping unrecognized data section" |
       sed "s/^/# $kind $rate refl: /" >&2 || true
   done

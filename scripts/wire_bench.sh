@@ -8,7 +8,8 @@
 # the AWS run in docs/BENCHMARKS.md.
 #
 #   scripts/get_lwip.sh && make all example     # as yourself, first
-#   sudo scripts/wire_bench.sh [OUTDIR]         # ~30 min, restores everything
+#   sudo DRV_IF=enp3s0f0 PEER_IF=enp3s0f1 scripts/wire_bench.sh [OUTDIR]
+#                                                # ~30 min, restores everything
 #
 # What it changes for the run, and puts back on any exit (a trap, so ^C too):
 #  * both ports: one combined queue, interrupt moderation off (rx-usecs 0);
@@ -19,36 +20,43 @@
 #    CPUs: driver and reflector get one physical core each, their HT
 #    siblings run SQPOLL threads only; each port's IRQ goes where
 #    IRQ_LAYOUT says (below);
-#  * sysctls as aws-lowlat-stand sets them (busy_poll/busy_read 50, rmem/wmem
-#    max 64 MB) and io_uring enabled;
+#  * sysctls as the AWS hosts in docs/BENCHMARKS.md had them (busy_poll/
+#    busy_read 50, rmem/wmem max 64 MB) and io_uring enabled;
 #  * for the DPDK half both ports are bound to vfio-pci (no-IOMMU mode when
 #    the host has no IOMMU) and back to their driver afterwards.
 #
 # Results land in OUTDIR (default bench/results/<date>-<driver>-irq-<layout>):
 # the CSVs, the matrix logs and a passport of the machine as it was measured.
 #
-# Env (defaults fit a 4-core/8-thread host with an 82599 at enp3s0f0/f1):
-#   DRV_IF, PEER_IF      the two cabled ports (driver side, reflector side)
+# Env (CPU defaults fit a 4-core/8-thread host where CPU n and n+4 are
+# siblings; check `lscpu -e` and adjust):
+#   DRV_IF, PEER_IF      required: the two cabled ports (driver, reflector)
 #   PEER_ADDR, NS        the reflector's address and namespace
 #   DRV_CPU, DRV_SQ      driver core and its HT sibling (SQPOLL, IRQ)
 #   RFL_CPU, RFL_SQ      the same for the reflector
-#   HOUSE_CPUS, HOUSE_MASK   everything else, as a list and as a hex mask
+#   HOUSE_CPUS           everything else (a list, e.g. 0,1,4,5)
 #   IRQ_LAYOUT           house | sibling (see below)
 #   KINDS_KERNEL, KINDS_DPDK, RATES, REPEAT=0|1
+#
+# Meant for a machine you can dedicate for half an hour: it kills any
+# bin/echo server and bin/loadgen, and detaches whatever XDP program is on
+# the two ports.
 set -euo pipefail
 export LC_ALL=C   # the passport greps tool output in English
 
 [ "$(id -u)" = 0 ] || { echo "run as root: sudo $0 $*" >&2; exit 1; }
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-DRV_IF=${DRV_IF:-enp3s0f0}
-PEER_IF=${PEER_IF:-enp3s0f1}
+DRV_IF=${DRV_IF:?set DRV_IF and PEER_IF to the two cabled ports}
+PEER_IF=${PEER_IF:?set DRV_IF and PEER_IF to the two cabled ports}
 PEER_ADDR=${PEER_ADDR:-192.168.10.101/24}
 NS=${NS:-dgpeer}
 DRV_CPU=${DRV_CPU:-2} DRV_SQ=${DRV_SQ:-6}   # physical core 2 and its sibling
 RFL_CPU=${RFL_CPU:-3} RFL_SQ=${RFL_SQ:-7}   # physical core 3 and its sibling
 HOUSE_CPUS=${HOUSE_CPUS:-0,1,4,5}
-HOUSE_MASK=${HOUSE_MASK:-33}                # the same set as a hex cpumask
+# The same set as a hex cpumask, for the workqueue sysfs file.
+HOUSE_MASK=$(awk -v l="$HOUSE_CPUS" 'BEGIN { n = split(l, c, ","); m = 0;
+  for (i = 1; i <= n; i++) m += 2 ^ c[i]; printf "%x", m }')
 # Where each port's IRQ goes -- and with it the softirq, which is the whole
 # kernel stack for udp/tcp/uring and the XDP program for xdp.
 #  house   (default) one housekeeping CPU per port, as on the AWS stand: the
@@ -76,10 +84,12 @@ done
 # not what `make config` would detect now: a dependency fetched after the last
 # build is detected but not yet compiled in.
 cfg=$(cat "$ROOT/bin/.detected" 2>/dev/null || true)
-for b in uring xdp dpdk lwip; do
+need="uring xdp lwip"
+[ -n "$KINDS_DPDK" ] && need="$need dpdk"
+for b in $need; do
   grep -q "$b=1" <<<"$cfg" || { echo "bin/ was built without $b ($cfg): make all example" >&2; exit 1; }
 done
-[ -e "/run/dgram-io-wire-peer.$NS" ] && { echo "netns $NS is up already: sudo scripts/wire_peer.sh down" >&2; exit 1; }
+[ -e "/run/dgram-io-wire-peer.$NS" ] && { echo "netns $NS is up already: sudo PEER_IF=$PEER_IF NS=$NS scripts/wire_peer.sh down" >&2; exit 1; }
 
 mkdir -p "$OUT"
 log() { echo "wire_bench: $*" | tee -a "$OUT/run.log" >&2; }
@@ -108,6 +118,12 @@ OLD[drv_usecs]=$(usecs_of "$DRV_IF") OLD[peer_usecs]=$(usecs_of "$PEER_IF")
 OLD[irqbalance]=$(systemctl is-active irqbalance 2>/dev/null || true)
 OLD[wq]=$(cat /sys/devices/virtual/workqueue/cpumask)
 OLD[noiommu]=$(cat /sys/module/vfio/parameters/enable_unsafe_noiommu_mode 2>/dev/null || echo N)
+# Runtime AllowedCPUs drop-ins that exist already are someone else's: restore
+# must leave those alone and remove only the ones this run creates.
+SLICES="system.slice user.slice init.scope"
+for u in $SLICES; do
+  [ -e "/run/systemd/system.control/$u.d/50-AllowedCPUs.conf" ] && OLD[dropin_$u]=1
+done
 
 restore() {
   set +e
@@ -123,7 +139,7 @@ restore() {
   sleep 2
   ip link set "$DRV_IF" xdp off 2>/dev/null
   ip -n "$NS" link set "$PEER_IF" xdp off 2>/dev/null
-  "$ROOT/scripts/wire_peer.sh" down >/dev/null 2>&1
+  PEER_IF=$PEER_IF NS=$NS "$ROOT/scripts/wire_peer.sh" down >/dev/null 2>&1
   for a in $DRV_ADDRS; do ip addr add "$a" dev "$DRV_IF" 2>/dev/null; done
   ip link set "$DRV_IF" up; ip link set "$PEER_IF" up
   ethtool -L "$DRV_IF" combined "${OLD[drv_chan]}" 2>/dev/null
@@ -135,8 +151,9 @@ restore() {
   # housekeeping CPUs. Give every CPU back explicitly, then remove the
   # runtime drop-ins that set-property wrote, so nothing is left pinned.
   local all="0-$(($(nproc --all) - 1))" u
-  for u in system.slice user.slice init.scope; do
+  for u in $SLICES; do
     systemctl set-property --runtime "$u" AllowedCPUs="$all" 2>/dev/null
+    [ -n "${OLD[dropin_$u]:-}" ] && continue
     rm -f "/run/systemd/system.control/$u.d/50-AllowedCPUs.conf"
     rmdir "/run/systemd/system.control/$u.d" 2>/dev/null
   done
