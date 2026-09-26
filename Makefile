@@ -127,8 +127,11 @@ test: $(BIN)/test_pktbuild $(BIN)/test_stream $(BIN)/test_rtt
 $(BIN)/test_%: tests/test_%.cpp $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-example: $(BIN)/echo $(BIN)/loadgen
+example: $(BIN)/echo $(BIN)/loadgen $(BIN)/uring_probe
 	@echo "run two of these: ./$(BIN)/echo --io udp --role server / --role client"
+
+$(BIN)/uring_probe: examples/uring_probe.cpp $(FLAGS) | $(BIN)
+	$(CXX) $(CXXFLAGS) $(URING_CXXFLAGS) $< -o $@ $(URING_LDLIBS)
 
 $(BIN)/echo $(BIN)/loadgen: $(BIN)/%: examples/%.cpp $(BIN)/libdgram_io.a $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) \

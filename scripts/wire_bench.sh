@@ -16,8 +16,9 @@
 #  * CPUs: no reboot, so no isolcpus -- instead every systemd slice is
 #    confined to $HOUSE_CPUS at runtime and the kernel workqueues with it,
 #    irqbalance is stopped. The benchmark runs in its own slice with all
-#    CPUs: driver and reflector get one physical core each, and each port's
-#    IRQ goes to the HT sibling of its side's core (SQPOLL threads too);
+#    CPUs: driver and reflector get one physical core each, their HT
+#    siblings run SQPOLL threads only; each port's IRQ goes where
+#    IRQ_LAYOUT says (below);
 #  * sysctls as aws-lowlat-stand sets them (busy_poll/busy_read 50, rmem/wmem
 #    max 64 MB) and io_uring enabled;
 #  * for the DPDK half both ports are bound to vfio-pci (no-IOMMU mode when
@@ -39,16 +40,24 @@ DRV_CPU=${DRV_CPU:-2} DRV_SQ=${DRV_SQ:-6}   # physical core 2 and its sibling
 RFL_CPU=${RFL_CPU:-3} RFL_SQ=${RFL_SQ:-7}   # physical core 3 and its sibling
 HOUSE_CPUS=${HOUSE_CPUS:-0,1,4,5}
 HOUSE_MASK=${HOUSE_MASK:-33}                # the same set as a hex cpumask
-# Each port's IRQ (and so its softirq: the whole kernel stack for udp/tcp/
-# uring, the XDP program for xdp) on the idle HT sibling of the core its
-# process runs on -- off the housekeeping CPUs, where a desktop's load showed
-# up as 50% loss in a first run. SQPOLL threads share those siblings.
-DRV_IRQ_CPU=${DRV_IRQ_CPU:-$DRV_SQ} PEER_IRQ_CPU=${PEER_IRQ_CPU:-$RFL_SQ}
+# Where each port's IRQ goes -- and with it the softirq, which is the whole
+# kernel stack for udp/tcp/uring and the XDP program for xdp.
+#  house   (default) one housekeeping CPU per port, as on the AWS stand: the
+#          stack gets a core of its own, shared with whatever else the host
+#          runs there (on a desktop, the desktop);
+#  sibling the idle HT sibling of that side's core: away from the desktop,
+#          but sharing a core with the busy-polling process (SQPOLL too).
+IRQ_LAYOUT=${IRQ_LAYOUT:-house}
+if [ "$IRQ_LAYOUT" = sibling ]; then
+  DRV_IRQ_CPU=${DRV_IRQ_CPU:-$DRV_SQ} PEER_IRQ_CPU=${PEER_IRQ_CPU:-$RFL_SQ}
+else
+  DRV_IRQ_CPU=${DRV_IRQ_CPU:-0} PEER_IRQ_CPU=${PEER_IRQ_CPU:-1}
+fi
 KINDS_KERNEL=${KINDS_KERNEL:-"udp uring uring-sqpoll tcp xdp tcp-xdp xdp-copy tcp-xdp-copy"}
 KINDS_DPDK=${KINDS_DPDK:-"dpdk tcp-dpdk"}
 RATES=${RATES:-"20000 100000 200000 400000 800000 1600000"}
 REPEAT=${REPEAT:-1}
-OUT=${1:-$ROOT/bench/results/$(date +%F)-$(ethtool -i "$DRV_IF" | awk '/^driver:/{print $2}')}
+OUT=${1:-$ROOT/bench/results/$(date +%F)-$(ethtool -i "$DRV_IF" | awk '/^driver:/{print $2}')-irq-$IRQ_LAYOUT}
 RUN_AS=${SUDO_USER:-root}
 
 for f in bin/echo bin/loadgen bin/xdp_filter.bpf.o bin/xdp_tcp_filter.bpf.o; do
@@ -177,6 +186,8 @@ passport() {
     sysctl net.core.busy_poll net.core.busy_read net.core.rmem_max kernel.io_uring_disabled
     echo "built with: $cfg"
     pkg-config --modversion liburing libxdp libdpdk | paste -sd' ' | sed 's/^/liburing libxdp dpdk: /'
+    echo "io_uring setups this kernel accepts (bin/uring_probe $DRV_SQ):"
+    "$ROOT/bin/uring_probe" "$DRV_SQ" | sed 's/^/  /'
   } > "$OUT/passport.txt" 2>&1
 }
 passport
