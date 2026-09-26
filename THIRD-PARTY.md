@@ -21,6 +21,10 @@ Notes on how that interacts with this project's Apache-2.0 licence:
   the LGPL's relinking obligations apply to your distribution, not to this
   source tree.
 * **DPDK** is BSD-3 and Apache-2.0 compatible.
+* **liburing** is MIT OR LGPL-2.1, linked dynamically.
+* The two **XDP programs** in `src/*.bpf.c` are this project's own code, but
+  dual-licensed Apache-2.0 OR GPL-2.0-only: they run inside the kernel, which
+  loads a BPF program only when it declares a GPL-compatible licence.
 
 None of the four is required. `make config` prints what the current machine
 has; a build with none of them still gives you the `udp` and `tcp` backends,

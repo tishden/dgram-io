@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-only
 // Copyright 2026 Denis Tishkov
 
 // XDP program for the AF_XDP datagram backend (--io xdp):
@@ -61,4 +61,7 @@ int xdp_udp_filter(struct xdp_md* ctx) {
   return bpf_redirect_map(&xsks_map, ctx->rx_queue_index, XDP_PASS);
 }
 
+// The kernel reads this string to decide which helpers the program may call;
+// it has to name a GPL-compatible licence, which Apache-2.0 alone is not --
+// hence the dual licence in the SPDX line above.
 char _license[] SEC("license") = "GPL";
