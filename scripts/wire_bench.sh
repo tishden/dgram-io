@@ -15,10 +15,9 @@
 #    the peer port moves into netns $NS (scripts/wire_peer.sh);
 #  * CPUs: no reboot, so no isolcpus -- instead every systemd slice is
 #    confined to $HOUSE_CPUS at runtime and the kernel workqueues with it,
-#    irqbalance is stopped, and each port's IRQ is pinned to its own
-#    housekeeping CPU. The benchmark runs in its own slice with all CPUs;
-#    driver and reflector get one physical core each, their HT siblings are
-#    left idle except as SQPOLL threads;
+#    irqbalance is stopped. The benchmark runs in its own slice with all
+#    CPUs: driver and reflector get one physical core each, and each port's
+#    IRQ goes to the HT sibling of its side's core (SQPOLL threads too);
 #  * sysctls as aws-lowlat-stand sets them (busy_poll/busy_read 50, rmem/wmem
 #    max 64 MB) and io_uring enabled;
 #  * for the DPDK half both ports are bound to vfio-pci (no-IOMMU mode when
@@ -40,8 +39,12 @@ DRV_CPU=${DRV_CPU:-2} DRV_SQ=${DRV_SQ:-6}   # physical core 2 and its sibling
 RFL_CPU=${RFL_CPU:-3} RFL_SQ=${RFL_SQ:-7}   # physical core 3 and its sibling
 HOUSE_CPUS=${HOUSE_CPUS:-0,1,4,5}
 HOUSE_MASK=${HOUSE_MASK:-33}                # the same set as a hex cpumask
-DRV_IRQ_CPU=${DRV_IRQ_CPU:-0} PEER_IRQ_CPU=${PEER_IRQ_CPU:-1}
-KINDS_KERNEL=${KINDS_KERNEL:-"udp uring uring-sqpoll tcp xdp tcp-xdp"}
+# Each port's IRQ (and so its softirq: the whole kernel stack for udp/tcp/
+# uring, the XDP program for xdp) on the idle HT sibling of the core its
+# process runs on -- off the housekeeping CPUs, where a desktop's load showed
+# up as 50% loss in a first run. SQPOLL threads share those siblings.
+DRV_IRQ_CPU=${DRV_IRQ_CPU:-$DRV_SQ} PEER_IRQ_CPU=${PEER_IRQ_CPU:-$RFL_SQ}
+KINDS_KERNEL=${KINDS_KERNEL:-"udp uring uring-sqpoll tcp xdp tcp-xdp xdp-copy tcp-xdp-copy"}
 KINDS_DPDK=${KINDS_DPDK:-"dpdk tcp-dpdk"}
 RATES=${RATES:-"20000 100000 200000 400000 800000 1600000"}
 REPEAT=${REPEAT:-1}
@@ -92,6 +95,7 @@ restore() {
   set +e
   trap - EXIT INT TERM
   log "restoring the host"
+  [ -n "${PINNER:-}" ] && kill "$PINNER" 2>/dev/null
   pkill -KILL -f '[b]in/echo --role server|[b]in/loadgen --io'
   # Ports back to their kernel driver if the DPDK half left them bound.
   for p in "$DRV_PCI" "$PEER_PCI"; do
@@ -137,11 +141,17 @@ done
 WIRE_SERVERS=0 PEER_IF=$PEER_IF PEER_ADDR=$PEER_ADDR NS=$NS "$ROOT/scripts/wire_peer.sh" up >>"$OUT/run.log" 2>&1
 
 systemctl stop irqbalance 2>/dev/null || true
-pin_irqs() {
-  for q in $(irqs_of "$DRV_IF"); do echo "$DRV_IRQ_CPU" > "/proc/irq/$q/smp_affinity_list"; done
-  for q in $(irqs_of "$PEER_IF"); do echo "$PEER_IRQ_CPU" > "/proc/irq/$q/smp_affinity_list"; done
+pin_one() {  # $1 = interface, $2 = CPU; writes only what differs
+  for q in $(irqs_of "$1"); do
+    [ "$(cat "/proc/irq/$q/smp_affinity_list" 2>/dev/null)" = "$2" ] ||
+      echo "$2" > "/proc/irq/$q/smp_affinity_list" 2>/dev/null || true
+  done
 }
-pin_irqs
+# ixgbe re-requests its interrupt vectors whenever XDP is attached or
+# detached, and again when the port comes back from DPDK: the pinning above
+# silently resets mid-run. Keep re-applying it, well inside the 1 s warm-up.
+( while :; do pin_one "$DRV_IF" "$DRV_IRQ_CPU"; pin_one "$PEER_IF" "$PEER_IRQ_CPU"; sleep 0.2; done ) &
+PINNER=$!
 systemctl set-property --runtime system.slice AllowedCPUs="$HOUSE_CPUS"
 systemctl set-property --runtime user.slice AllowedCPUs="$HOUSE_CPUS"
 systemctl set-property --runtime init.scope AllowedCPUs="$HOUSE_CPUS"

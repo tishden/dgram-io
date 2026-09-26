@@ -77,6 +77,10 @@ args_for() {
     uring-sqpoll) echo "--io uring --sqpoll --sqpoll-cpu ${me[DP1]}" ;;
     xdp) echo "--io xdp --ifname ${me[IF]} --dst-mac ${them[MAC]}" ;;
     tcp-xdp) echo "--io tcp-xdp --ifname ${me[IF]}" ;;
+    # The same two with the zero-copy attempt skipped: where the NIC does
+    # zero-copy (ixgbe, not ena) this is the copy-mode arm of the comparison.
+    xdp-copy) echo "--io xdp --xdp-copy --ifname ${me[IF]} --dst-mac ${them[MAC]}" ;;
+    tcp-xdp-copy) echo "--io tcp-xdp --xdp-copy --ifname ${me[IF]}" ;;
     dpdk) echo "--io dpdk --dpdk-pci ${me[PCI]} --dpdk-ip ${me[IP]} --dst-mac ${them[MAC]}" ;;
     tcp-dpdk) echo "--io tcp-dpdk --dpdk-pci ${me[PCI]} --dpdk-ip ${me[IP]}" ;;
     *) echo "unknown kind $kind" >&2; return 1 ;;

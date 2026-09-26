@@ -13,6 +13,7 @@
 // For the L2 backends both ends additionally need --ifname/--dst-mac (xdp) or
 // --dpdk-pci/--dpdk-ip (dpdk); run `--help` for the whole list.
 #include <cinttypes>
+#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -24,6 +25,11 @@
 #include "dgram_io/rtt.h"
 
 namespace {
+
+// A reflector runs until it is told to stop; on SIGINT/SIGTERM it leaves the
+// loop and prints its backend's counters, so a benchmark log holds both ends.
+volatile std::sig_atomic_t g_stop = 0;
+void on_stop(int) { g_stop = 1; }
 
 uint64_t now_ns() {
   timespec ts;
@@ -95,7 +101,9 @@ int main(int argc, char** argv) {
     // endpoint straight off the received packet, which is what lets one
     // server answer many clients without tracking any of them.
     uint64_t seen = 0;
-    for (;;) {
+    std::signal(SIGINT, on_stop);
+    std::signal(SIGTERM, on_stop);
+    while (!g_stop) {
       const int n = net->rx(rx.data(), static_cast<int>(rx.size()));
       for (int i = 0; i < n; ++i) {
         net->queue_to(rx[i].data, rx[i].len, rx[i].from);
@@ -108,6 +116,9 @@ int main(int argc, char** argv) {
       if (seen / 100000 != (seen - n) / 100000)
         printf("reflected %" PRIu64 "\n", seen);
     }
+    printf("reflected %" PRIu64 " in total\n", seen);
+    net->log_stats(stdout);
+    return 0;
   }
 
   // Client: one datagram in flight at a time, so the measurement is a clean

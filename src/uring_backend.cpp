@@ -108,11 +108,12 @@ class UringBackend final : public Backend {
     fprintf(f,
             "io_uring: submits=%llu send_errs=%llu tx_stalls=%llu "
             "rx_truncated=%llu rx_rearms=%llu rx_nobufs=%llu rx_errs=%llu "
-            "sqpoll=%d fixed_file=%d\n",
+            "sqpoll=%d sq_pin=%s fixed_file=%d\n",
             (unsigned long long)submits_, (unsigned long long)send_errs_,
             (unsigned long long)tx_stalls_, (unsigned long long)truncated_,
             (unsigned long long)rearms_, (unsigned long long)nobufs_,
-            (unsigned long long)rx_errs_, sqpoll_ ? 1 : 0, fixed_ ? 1 : 0);
+            (unsigned long long)rx_errs_, sqpoll_ ? 1 : 0,
+            sq_pin_ ? sq_pin_ : "none", fixed_ ? 1 : 0);
   }
 
  private:
@@ -288,6 +289,8 @@ class UringBackend final : public Backend {
   bool ring_up_ = false;
   bool sqpoll_ = false;
   bool fixed_ = false;  // fd registered: slot 0, skips an fget per request
+  const char* sq_pin_ = nullptr;  // how the SQ thread got its CPU: sq_aff |
+                                  // inherited (see create) | none
   int fd_ = -1;
   bool connected_ = false;
   sockaddr_in dst_{};
@@ -356,18 +359,23 @@ std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
   const io_uring_params asked = p;  // the kernel writes back into p
   int r = io_uring_queue_init_params(kSqEntries, &b->ring_, &p);
   if (r == -EINVAL && (asked.flags & IORING_SETUP_SQ_AFF)) {
-    // RHEL 9's 5.14 answered EINVAL here for a caller pinned to CPU 2 asking
-    // for its SQ thread on CPU 6 (7.0-aws accepted the same call). Retry with
-    // our own mask widened by that CPU for the setup call alone: SQ_AFF pins
-    // the thread either way, and we go straight back to our own CPUs.
-    cpu_set_t mine, wide;
+    // RHEL 9's 5.14 answered EINVAL to SQ_AFF for a caller on CPU 2 asking
+    // for its SQ thread on CPU 6 -- also with CPU 6 added to the caller's own
+    // mask -- while 7.0-aws accepted the same call. The SQ thread inherits
+    // its creator's CPU mask, so create the ring without SQ_AFF while this
+    // thread sits on that one CPU, then move back: the same pinning, reached
+    // without the flag.
+    cpu_set_t mine, only;
     if (sched_getaffinity(0, sizeof(mine), &mine) == 0) {
-      wide = mine;
-      CPU_SET(cfg.uring_sqpoll_cpu, &wide);
-      if (sched_setaffinity(0, sizeof(wide), &wide) == 0) {
+      CPU_ZERO(&only);
+      CPU_SET(cfg.uring_sqpoll_cpu, &only);
+      if (sched_setaffinity(0, sizeof(only), &only) == 0) {
         p = asked;
+        p.flags &= ~IORING_SETUP_SQ_AFF;
+        p.sq_thread_cpu = 0;
         r = io_uring_queue_init_params(kSqEntries, &b->ring_, &p);
         sched_setaffinity(0, sizeof(mine), &mine);
+        if (r == 0) b->sq_pin_ = "inherited";
       }
     }
   }
@@ -376,13 +384,12 @@ std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
     if (r == -EPERM)
       *err += " (io_uring is switched off: check sysctl "
               "kernel.io_uring_disabled, RHEL 9 defaults it to 2)";
-    else if (r == -EINVAL && (asked.flags & IORING_SETUP_SQ_AFF))
-      *err += " (this kernel refused to pin the SQPOLL thread to CPU " +
-              std::to_string(cfg.uring_sqpoll_cpu) +
-              "; try another uring_sqpoll_cpu, or -1 with the caller on "
-              "several CPUs)";
+    else if (r == -EINVAL && (asked.flags & IORING_SETUP_SQPOLL))
+      *err += " (this kernel refused SQPOLL, with SQ_AFF and without)";
     return nullptr;
   }
+  if (b->sq_pin_ == nullptr)
+    b->sq_pin_ = (asked.flags & IORING_SETUP_SQ_AFF) ? "sq_aff" : "none";
   b->ring_up_ = true;
   b->sqpoll_ = cfg.uring_sqpoll;
   b->fixed_ = io_uring_register_files(&b->ring_, &b->fd_, 1) == 0;
