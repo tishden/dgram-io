@@ -36,7 +36,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y libxdp-dev libbpf-dev dpdk-dev clang
+      - run: sudo apt-get update && sudo apt-get install -y liburing-dev libxdp-dev libbpf-dev dpdk-dev clang
       - run: scripts/get_lwip.sh
       - run: make config
       - run: make
+      # io_uring needs no NIC, so unlike the other optional backends this one
+      # gets a real round trip over loopback, not just a link check.
+      - name: echo smoke over io_uring
+        run: |
+          make example
+          ./bin/echo --role server --io uring --port 5098 &
+          sleep 1
+          ./bin/echo --role client --io uring --port 5098 --dst 127.0.0.1 -n 200 | tee out.txt
+          grep -q "reflected 200" out.txt

@@ -5,7 +5,6 @@
 // byte-for-byte. Sender role: connected socket (or unconnected + explicit
 // address for multicast), TX batched into sendmmsg groups of 16. Receiver
 // role: bound socket, optional group join, recvmmsg batches of 32.
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -17,8 +16,8 @@
 #include <vector>
 
 #include "dgram_io/backend.h"
-#include "dgram_io/pkt.h"
 #include "dgram_io/limits.h"
+#include "udp_socket.h"
 
 namespace dgram_io {
 
@@ -150,86 +149,16 @@ std::unique_ptr<Backend> UdpBackend::create(const Config& cfg,
   b->dgram_ = cfg.max_datagram;
   b->pool_.resize(static_cast<size_t>(kBatch) * b->dgram_);
   b->rbufs_.resize(static_cast<size_t>(kRxBatch) * b->dgram_);
-  b->fd_ = socket(AF_INET, SOCK_DGRAM, 0);
-  if (b->fd_ < 0) {
-    *err = std::string("socket: ") + strerror(errno);
-    return nullptr;
-  }
+  UdpSocket sock;
+  if (!open_udp_socket(cfg, &sock, err)) return nullptr;
+  b->fd_ = sock.fd;
+  b->connected_ = sock.connected;
+  b->dst_ = sock.dst;
   for (int i = 0; i < kRxBatch; ++i) {
     b->riov_[i] = {b->rxbuf(i), b->dgram_};
     std::memset(&b->rmm_[i], 0, sizeof(b->rmm_[i]));
     b->rmm_[i].msg_hdr.msg_iov = &b->riov_[i];
     b->rmm_[i].msg_hdr.msg_iovlen = 1;
-  }
-
-  if (cfg.listener) {
-    int rcvbuf = 1 << 24;
-    setsockopt(b->fd_, SOL_SOCKET, SO_RCVBUF, &rcvbuf, sizeof(rcvbuf));
-    const int one = 1;
-    setsockopt(b->fd_, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-    sockaddr_in addr{};
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(cfg.port);
-    if (bind(b->fd_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
-      *err = std::string("bind: ") + strerror(errno);
-      return nullptr;
-    }
-    if (!cfg.group.empty()) {  // multicast fan-out: join the group
-      ip_mreq mr{};
-      if (inet_pton(AF_INET, cfg.group.c_str(), &mr.imr_multiaddr) != 1) {
-        *err = "bad group " + cfg.group;
-        return nullptr;
-      }
-      mr.imr_interface.s_addr = htonl(INADDR_ANY);
-      if (!cfg.mcast_if.empty() &&
-          inet_pton(AF_INET, cfg.mcast_if.c_str(), &mr.imr_interface) != 1) {
-        *err = "bad mcast-if " + cfg.mcast_if;
-        return nullptr;
-      }
-      if (setsockopt(b->fd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mr, sizeof(mr)) !=
-          0) {
-        *err = std::string("IP_ADD_MEMBERSHIP: ") + strerror(errno);
-        return nullptr;
-      }
-    }
-    return b;
-  }
-
-  // Sender role.
-  int sndbuf = 1 << 22;
-  setsockopt(b->fd_, SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(sndbuf));
-  b->dst_.sin_family = AF_INET;
-  b->dst_.sin_port = htons(cfg.port);
-  if (inet_pton(AF_INET, cfg.dst_ip.c_str(), &b->dst_.sin_addr) != 1) {
-    *err = "bad dst " + cfg.dst_ip;
-    return nullptr;
-  }
-  const bool mcast = pkt::is_mcast(b->dst_.sin_addr.s_addr);
-  if (mcast) {
-    in_addr ifaddr{};
-    ifaddr.s_addr = htonl(INADDR_ANY);
-    if (!cfg.mcast_if.empty() &&
-        inet_pton(AF_INET, cfg.mcast_if.c_str(), &ifaddr) != 1) {
-      *err = "bad mcast-if " + cfg.mcast_if;
-      return nullptr;
-    }
-    setsockopt(b->fd_, IPPROTO_IP, IP_MULTICAST_IF, &ifaddr, sizeof(ifaddr));
-    const uint8_t ttl = 1, loop = 1;
-    setsockopt(b->fd_, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
-    setsockopt(b->fd_, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    // Unconnected: NACKs come back from receivers' own unicast addresses.
-  } else if (cfg.multi_peer) {
-    // Unicast replication fan-out: same reason as multicast above -- a
-    // connect()ed socket would make the kernel silently discard NACKs from
-    // every receiver except the primary.
-  } else {
-    if (connect(b->fd_, reinterpret_cast<sockaddr*>(&b->dst_),
-                sizeof(b->dst_)) != 0) {
-      *err = std::string("connect: ") + strerror(errno);
-      return nullptr;
-    }
-    b->connected_ = true;
   }
   return b;
 }

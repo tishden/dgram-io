@@ -3,8 +3,8 @@
 
 // Ping-pong over any backend, to show what the interface actually buys: the
 // two loops below never learn whether their datagrams are riding kernel UDP
-// sockets, an AF_XDP ring, a DPDK poll-mode driver, or a TCP stream with lwIP
-// underneath it. Only the --io flag changes.
+// sockets (plain or through io_uring), an AF_XDP ring, a DPDK poll-mode
+// driver, or a TCP stream with lwIP underneath it. Only the --io flag changes.
 //
 //   server:  ./echo --role server --io udp --port 5000
 //   client:  ./echo --role client --io udp --port 5000 --dst 127.0.0.1 -n 10000
@@ -34,7 +34,7 @@ uint64_t now_ns() {
 void usage() {
   fprintf(stderr,
           "usage: echo --role server|client [options]\n"
-          "  --io KIND        udp|xdp|dpdk|tcp|tcp-dpdk|tcp-xdp (default udp)\n"
+          "  --io KIND        udp|uring|xdp|dpdk|tcp|tcp-dpdk|tcp-xdp (default udp)\n"
           "  --port N         UDP/TCP port (default 5000)\n"
           "  --dst IP         client: where to send\n"
           "  -n N             client: datagrams to send (default 10000)\n"
@@ -44,7 +44,9 @@ void usage() {
           "  --dst-mac MAC    xdp/dpdk: peer MAC\n"
           "  --xdp-copy       xdp: skip the zero-copy attempt\n"
           "  --dpdk-pci ADDR  dpdk: PCI address to take over\n"
-          "  --dpdk-ip IP     dpdk: our IPv4\n");
+          "  --dpdk-ip IP     dpdk: our IPv4\n"
+          "  --sqpoll         uring: kernel thread polls the submission queue\n"
+          "  --sqpoll-cpu N   uring: pin that thread to CPU N\n");
 }
 
 }  // namespace
@@ -71,10 +73,15 @@ int main(int argc, char** argv) {
     else if (a == "--xdp-copy") cfg.force_copy = true;
     else if (a == "--dpdk-pci") cfg.dpdk_pci = next();
     else if (a == "--dpdk-ip") cfg.dpdk_ip = next();
+    else if (a == "--sqpoll") cfg.uring_sqpoll = true;
+    else if (a == "--sqpoll-cpu") cfg.uring_sqpoll_cpu = atoi(next().c_str());
     else { usage(); return 2; }
   }
   if (role != "server" && role != "client") { usage(); return 2; }
   cfg.listener = (role == "server");
+
+  // Line-buffered even into a file, so a server's log is readable while it runs.
+  setvbuf(stdout, nullptr, _IOLBF, 0);
 
   std::string err;
   auto net = dgram_io::make_backend(cfg, &err);

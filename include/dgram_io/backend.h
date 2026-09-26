@@ -6,6 +6,8 @@
 //
 // Backends:
 //   udp  - kernel UDP sockets, sendmmsg/recvmmsg (the default)
+//   uring - the same kernel UDP socket, driven through io_uring: one submit
+//          per flushed batch, and an idle rx() poll costs no syscall at all
 //   xdp  - AF_XDP socket on a NIC queue, kernel stack bypassed (needs root)
 //   dpdk - ixgbe/ena PMD behind vfio-pci, the NIC entirely in user space
 //   tcp  - kernel TCP sockets, sender = server / receiver = client
@@ -47,7 +49,7 @@ struct RxPacket {
 };
 
 struct Config {
-  std::string kind = "udp";  // udp | xdp | dpdk | tcp | tcp-dpdk | tcp-xdp
+  std::string kind = "udp";  // udp | uring | xdp | dpdk | tcp | tcp-dpdk | tcp-xdp
   // Largest datagram this backend must carry, both ways. Buffers are sized
   // from it rather than from the compile-time cap, so asking for jumbo costs
   // memory only in the runs that asked. A backend that cannot carry the size
@@ -83,6 +85,10 @@ struct Config {
   std::string dpdk_pci;      // PCI address to take over (-a allow-list)
   std::string dpdk_vdev;     // virtual device (smoke: net_af_packet,iface=..)
   std::string dpdk_ip;       // our IPv4 for the headers we build
+  // uring only
+  bool uring_sqpoll = false; // a kernel thread polls the submission queue:
+                             // flush() stops being a syscall, at a core's cost
+  int uring_sqpoll_cpu = -1; // pin that thread (-1 = let the scheduler place it)
 };
 
 class Backend {

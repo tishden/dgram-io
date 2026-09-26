@@ -7,6 +7,7 @@ records what a build actually pulls in.
 | Component | Used by | Licence | How it gets here |
 |---|---|---|---|
 | [lwIP](https://github.com/lwip-tcpip/lwip) 2.2.1 | `tcp-dpdk`, `tcp-xdp` | BSD 3-clause | `scripts/get_lwip.sh` clones the pinned tag into `third_party/lwip` |
+| [liburing](https://github.com/axboe/liburing) | `uring` | MIT OR LGPL-2.1 | distro package, linked dynamically |
 | [libxdp / libbpf](https://github.com/xdp-project/xdp-tools) | `xdp`, `tcp-xdp` | LGPL-2.1 / BSD-2-Clause (libbpf: LGPL-2.1 OR BSD-2-Clause) | distro package, linked dynamically |
 | [DPDK](https://www.dpdk.org/) | `dpdk`, `tcp-dpdk` | BSD 3-clause | distro package, linked dynamically |
 
@@ -21,6 +22,6 @@ Notes on how that interacts with this project's Apache-2.0 licence:
   source tree.
 * **DPDK** is BSD-3 and Apache-2.0 compatible.
 
-None of the three is required. `make config` prints what the current machine
+None of the four is required. `make config` prints what the current machine
 has; a build with none of them still gives you the `udp` and `tcp` backends,
 which need nothing but the kernel.

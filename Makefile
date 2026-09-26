@@ -5,6 +5,7 @@
 # naming the missing dependency rather than failing to build.
 #
 #   udp, tcp        always (kernel sockets)
+#   uring           needs liburing         (pkg-config liburing)
 #   xdp, tcp-xdp    need libxdp + libbpf   (pkg-config libxdp)
 #   dpdk, tcp-dpdk  need DPDK              (pkg-config libdpdk)
 #   tcp-*           additionally need lwIP (scripts/get_lwip.sh)
@@ -15,6 +16,12 @@ CXXFLAGS ?= -std=c++17 -O2 -Wall -Wextra -Iinclude
 LDLIBS   ?= -lrt -lpthread
 CLANG    ?= clang
 BIN      := bin
+
+HAVE_URING := $(shell pkg-config --exists liburing 2>/dev/null && echo 1)
+ifeq ($(HAVE_URING),1)
+URING_CXXFLAGS := -DHAVE_URING $(shell pkg-config --cflags liburing)
+URING_LDLIBS   := $(shell pkg-config --libs liburing)
+endif
 
 HAVE_XDP := $(shell pkg-config --exists libxdp 2>/dev/null && echo 1)
 ifeq ($(HAVE_XDP),1)
@@ -44,7 +51,8 @@ LWIP_CFLAGS := -std=gnu99 -O2 -w $(LWIP_CPPFLAGS)
 endif
 
 HDRS := $(wildcard include/dgram_io/*.h)
-OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/xdp_backend.o \
+OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/uring_backend.o \
+        $(BIN)/xdp_backend.o \
         $(BIN)/dpdk_backend.o $(BIN)/tcp_backend.o $(BIN)/tcp_dpdk_backend.o \
         $(BIN)/tcp_xdp_backend.o $(LWIP_OBJS)
 
@@ -53,9 +61,10 @@ OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/xdp_backend.o \
 all: lib $(if $(HAVE_XDP),$(BIN)/xdp_filter.bpf.o $(BIN)/xdp_tcp_filter.bpf.o)
 
 config:
-	@echo "xdp:  $(if $(HAVE_XDP),yes,no  (pkg-config libxdp))"
-	@echo "dpdk: $(if $(HAVE_DPDK),yes,no  (pkg-config libdpdk))"
-	@echo "lwip: $(if $(HAVE_LWIP),yes,no  (run scripts/get_lwip.sh))"
+	@echo "uring: $(if $(HAVE_URING),yes,no  (pkg-config liburing))"
+	@echo "xdp:   $(if $(HAVE_XDP),yes,no  (pkg-config libxdp))"
+	@echo "dpdk:  $(if $(HAVE_DPDK),yes,no  (pkg-config libdpdk))"
+	@echo "lwip:  $(if $(HAVE_LWIP),yes,no  (run scripts/get_lwip.sh))"
 
 lib: $(BIN)/libdgram_io.a
 
@@ -67,8 +76,10 @@ $(BIN):
 
 $(BIN)/factory.o: src/factory.cpp $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-$(BIN)/udp_backend.o: src/udp_backend.cpp $(HDRS) | $(BIN)
+$(BIN)/udp_backend.o: src/udp_backend.cpp src/udp_socket.h $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(BIN)/uring_backend.o: src/uring_backend.cpp src/udp_socket.h $(HDRS) | $(BIN)
+	$(CXX) $(CXXFLAGS) $(URING_CXXFLAGS) -c $< -o $@
 $(BIN)/tcp_backend.o: src/tcp_backend.cpp $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 $(BIN)/xdp_backend.o: src/xdp_backend.cpp $(HDRS) | $(BIN)
@@ -110,7 +121,8 @@ example: $(BIN)/echo
 
 $(BIN)/echo: examples/echo.cpp $(BIN)/libdgram_io.a $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) \
-	  $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(XDP_LDLIBS) $(DPDK_LDLIBS)
+	  $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(URING_LDLIBS) $(XDP_LDLIBS) \
+	  $(DPDK_LDLIBS)
 
 clean:
 	rm -rf $(BIN)

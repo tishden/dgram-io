@@ -1,14 +1,15 @@
 # dgram-io
 
-One datagram interface, six datapaths. Write the packet loop once; choose at
-runtime whether it rides kernel UDP sockets, an AF_XDP ring, a DPDK poll-mode
-driver, kernel TCP, or a userspace TCP stack over either of the bypass paths.
+One datagram interface, seven datapaths. Write the packet loop once; choose at
+runtime whether it rides kernel UDP sockets (through plain syscalls or
+io_uring), an AF_XDP ring, a DPDK poll-mode driver, kernel TCP, or a userspace
+TCP stack over either of the bypass paths.
 
 ```cpp
 #include <dgram_io/backend.h>
 
 dgram_io::Config cfg;
-cfg.kind = "dpdk";           // or udp | xdp | tcp | tcp-dpdk | tcp-xdp
+cfg.kind = "dpdk";           // or udp | uring | xdp | tcp | tcp-dpdk | tcp-xdp
 cfg.dst_ip = "10.0.0.2";
 cfg.port = 5000;
 
@@ -64,11 +65,25 @@ everything. `Config::tcp_nodelay` defaults to true here for that reason.
 | `kind` | what it is | needs |
 |---|---|---|
 | `udp` | kernel UDP sockets, `sendmmsg`/`recvmmsg`, unicast + multicast | nothing |
+| `uring` | the same UDP socket through io_uring: multishot recv into a provided-buffer ring, so an idle `rx()` is no syscall; optional `SQPOLL` | liburing, kernel 6.0+ (or backport), `kernel.io_uring_disabled=0` |
 | `xdp` | AF_XDP socket on one NIC queue, kernel stack bypassed | libxdp, root |
 | `dpdk` | the NIC entirely in user space behind `vfio-pci` | DPDK, root, hugepages |
 | `tcp` | kernel TCP; sender is the server, receiver the client | nothing |
 | `tcp-dpdk` | lwIP in-process, frames over the DPDK PMD | DPDK + lwIP |
 | `tcp-xdp` | lwIP in-process, frames over an AF_XDP socket | libxdp + lwIP |
+
+`uring` is not a faster `udp` by default. On an 82599 (ixgbe, two ports on
+one host joined by an AOC cable, `scripts/wire_peer.sh`), a 64-byte ping-pong
+with one datagram in flight gives p50 RTT 28.7 us for `udp` against 31.9 us
+for `uring` and 30.3 us with `SQPOLL`: a single receive goes through poll
+wakeup and task_work before its completion is visible, one hop more than a
+`recvmmsg` that finds the datagram already queued. What it does buy is an idle
+`rx()` that costs no syscall and a `flush()` that costs one per batch (or none
+under `SQPOLL`). Whether that wins is a question for your traffic, which is
+the point of having both behind one string. One trap, refused at setup: with
+`SQPOLL` and a caller pinned to a single CPU, the kernel's SQ thread inherits
+that CPU and starves behind the busy-polling caller, so set
+`uring_sqpoll_cpu` to another core.
 
 Everything is optional and detected at build time. `make config` prints what
 this machine has; a build with none of the optional dependencies still gives
