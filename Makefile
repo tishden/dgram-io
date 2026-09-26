@@ -116,10 +116,10 @@ test: $(BIN)/test_pktbuild $(BIN)/test_stream $(BIN)/test_rtt
 $(BIN)/test_%: tests/test_%.cpp $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-example: $(BIN)/echo
+example: $(BIN)/echo $(BIN)/loadgen
 	@echo "run two of these: ./$(BIN)/echo --io udp --role server / --role client"
 
-$(BIN)/echo: examples/echo.cpp $(BIN)/libdgram_io.a $(HDRS) | $(BIN)
+$(BIN)/echo $(BIN)/loadgen: $(BIN)/%: examples/%.cpp $(BIN)/libdgram_io.a $(HDRS) | $(BIN)
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) \
 	  $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(URING_LDLIBS) $(XDP_LDLIBS) \
 	  $(DPDK_LDLIBS)

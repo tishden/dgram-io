@@ -13,7 +13,8 @@
 #   sudo scripts/wire_peer.sh down    # everything back as it was
 #
 # Override with env: PEER_IF, PEER_ADDR, NS. Servers run as the invoking user,
-# not root; their output goes to bin/wire_peer.<kind>.log.
+# not root; their output goes to bin/wire_peer.<kind>.log. WIRE_SERVERS=0
+# sets up the namespace only (scripts/wire_bench.sh starts its own).
 set -euo pipefail
 
 PEER_IF=${PEER_IF:-enp3s0f1}
@@ -51,6 +52,7 @@ up() {
   ip -n "$NS" link set lo up
   ip -n "$NS" link set "$PEER_IF" up
 
+  [ "${WIRE_SERVERS:-1}" = 0 ] && SERVERS=()
   for s in "${SERVERS[@]}"; do
     read -r port rest <<< "$s"
     name=${rest##* }

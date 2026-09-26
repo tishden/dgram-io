@@ -144,10 +144,14 @@ class UringBackend final : public Backend {
   }
 
   io_uring_sqe* sqe() {
-    io_uring_sqe* e = io_uring_get_sqe(&ring_);
-    if (!e) {  // SQ full: push what is there, then there is room
+    io_uring_sqe* e;
+    // SQ full: push what is there. Without SQPOLL the submit consumes the
+    // entries and there is room at once; with it the submit only publishes
+    // the tail, and room appears when the kernel thread has taken them --
+    // measured at 800k msg/s, a second get_sqe() right after came back NULL.
+    while (!(e = io_uring_get_sqe(&ring_))) {
       submit();
-      e = io_uring_get_sqe(&ring_);
+      if (sqpoll_) io_uring_sqring_wait(&ring_);
     }
     return e;
   }

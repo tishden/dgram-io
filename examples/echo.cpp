@@ -101,8 +101,12 @@ int main(int argc, char** argv) {
         net->queue_to(rx[i].data, rx[i].len, rx[i].from);
         ++seen;
       }
-      if (n > 0) net->flush();
-      if (seen && seen % 100000 == 0) printf("reflected %" PRIu64 "\n", seen);
+      if (n <= 0) continue;
+      net->flush();
+      // Only on crossing a multiple: an idle loop parked on one must not
+      // print (and, line-buffered, write()) on every empty poll.
+      if (seen / 100000 != (seen - n) / 100000)
+        printf("reflected %" PRIu64 "\n", seen);
     }
   }
 
