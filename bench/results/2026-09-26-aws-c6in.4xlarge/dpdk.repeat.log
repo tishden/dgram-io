@@ -1,0 +1,59 @@
+# sender   PCI "0000:00:06.0" MAC "06:ff:e2:58:6c:a9" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
+# receiver PCI "0000:00:06.0" MAC "06:ff:ca:16:c3:f3" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
+# dpdk 20000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# dpdk 20000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# dpdk 20000 drv: io_dpdk: link up, 0 Mbps full-duplex
+# dpdk 20000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 20000 drv: io_dpdk: port=0 tx_pkts=110000 tx_drop=0 rx_pkts=110000 rx_filtered=0 hw_ipackets=110000 hw_opackets=110006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# dpdk 20000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# dpdk 20000 drv: ena_tx_queue_release(): Tx queue 0:0 released
+# dpdk 200000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# dpdk 200000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# dpdk 200000 drv: io_dpdk: link up, 0 Mbps full-duplex
+# dpdk 200000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 200000 drv: io_dpdk: port=0 tx_pkts=1100000 tx_drop=0 rx_pkts=1100000 rx_filtered=0 hw_ipackets=1100000 hw_opackets=1100006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# dpdk 200000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# dpdk 200000 drv: ena_tx_queue_release(): Tx queue 0:0 released
+# dpdk 800000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# dpdk 800000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# dpdk 800000 drv: io_dpdk: link up, 0 Mbps full-duplex
+# dpdk 800000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 800000 drv: io_dpdk: port=0 tx_pkts=4400000 tx_drop=0 rx_pkts=4400000 rx_filtered=0 hw_ipackets=4400000 hw_opackets=4400006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# dpdk 800000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# dpdk 800000 drv: ena_tx_queue_release(): Tx queue 0:0 released
+# tcp-dpdk 20000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# tcp-dpdk 20000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# tcp-dpdk 20000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
+# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 20000 drv: io_lwip: listening on :9704 for 1 peer(s)
+# tcp-dpdk 20000 drv: io_lwip: peer 1 connected from 10.88.2.11:64087
+# tcp-dpdk 20000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=110000 rx_records=110000 tx_refused=0 rx_backpressure=0 frames_tx=110223 frames_rx=110003 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 20000 drv: io_tcp_dpdk_stack: tcp_xmit=110221 tcp_recv=110002 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3120
+# tcp-dpdk 20000 drv: io_tcp_dpdk_nic: port=0 frames_in=110003 frames_out=110223 tx_drop=0 alloc_fail=0 padded=222 tx_refused=0 hw_ipackets=110003 hw_opackets=110229 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 20000 drv: io_lwip: connection error -13
+# tcp-dpdk 20000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# tcp-dpdk 20000 drv: ena_tx_queue_release(): Tx queue 0:0 released
+# tcp-dpdk 200000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# tcp-dpdk 200000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# tcp-dpdk 200000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
+# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 200000 drv: io_lwip: listening on :9705 for 1 peer(s)
+# tcp-dpdk 200000 drv: io_lwip: peer 1 connected from 10.88.2.11:57457
+# tcp-dpdk 200000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=1100000 rx_records=1100000 tx_refused=0 rx_backpressure=0 frames_tx=1287615 frames_rx=1047757 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 200000 drv: io_tcp_dpdk_stack: tcp_xmit=1287612 tcp_recv=1047755 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=32760
+# tcp-dpdk 200000 drv: io_tcp_dpdk_nic: port=0 frames_in=1047757 frames_out=1287615 tx_drop=0 alloc_fail=0 padded=187974 tx_refused=0 hw_ipackets=1047757 hw_opackets=1287621 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 200000 drv: io_lwip: connection error -13
+# tcp-dpdk 200000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# tcp-dpdk 200000 drv: ena_tx_queue_release(): Tx queue 0:0 released
+# tcp-dpdk 800000 drv: EAL: No free 1048576 kB hugepages reported on node 0
+# tcp-dpdk 800000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
+# tcp-dpdk 800000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
+# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 800000 drv: io_lwip: listening on :9706 for 1 peer(s)
+# tcp-dpdk 800000 drv: io_lwip: peer 1 connected from 10.88.2.11:60296
+# tcp-dpdk 800000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=4400000 rx_records=4400000 tx_refused=0 rx_backpressure=0 frames_tx=2357169 frames_rx=1460804 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 800000 drv: io_tcp_dpdk_stack: tcp_xmit=2357167 tcp_recv=1460803 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=1519440
+# tcp-dpdk 800000 drv: io_tcp_dpdk_nic: port=0 frames_in=1460804 frames_out=2357169 tx_drop=0 alloc_fail=0 padded=187299 tx_refused=0 hw_ipackets=1460805 hw_opackets=2357175 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 800000 drv: io_lwip: connection error -13
+# tcp-dpdk 800000 drv: ena_rx_queue_release(): Rx queue 0:0 released
+# tcp-dpdk 800000 drv: ena_tx_queue_release(): Tx queue 0:0 released

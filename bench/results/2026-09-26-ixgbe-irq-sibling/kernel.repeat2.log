@@ -1,0 +1,32 @@
+# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 800000 drv: io_lwip: listening on :6201 for 1 peer(s)
+# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:59671
+# tcp-xdp 800000 drv: io_lwip: connection error -14
+# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10474 rx_records=7 tx_refused=3895943220 rx_backpressure=0 frames_tx=11161 frames_rx=10786 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
+# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=11158 tcp_recv=10783 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3441448
+# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=11161 kicks=2395 tx_stall=0 padded=3 rx_pkts=10786 alloc_fail=0 tx_refused=194797 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=3 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 1600000 drv: io_lwip: listening on :6202 for 1 peer(s)
+# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:64077
+# tcp-xdp 1600000 drv: io_lwip: connection error -14
+# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10281 rx_records=1 tx_refused=3891478362 rx_backpressure=0 frames_tx=35 frames_rx=23 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
+# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=32 tcp_recv=20 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=1135768
+# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=35 kicks=30 tx_stall=0 padded=3 rx_pkts=23 alloc_fail=0 tx_refused=194573 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp 800000 drv: io_tcp: listening on :6203 for 1 peer(s)
+# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:53840
+# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1181408 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 drv: io_tcp: listening on :6204 for 1 peer(s)
+# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:50526
+# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=847768 send_errs=0 recv_errs=0 desyncs=0 closed=0

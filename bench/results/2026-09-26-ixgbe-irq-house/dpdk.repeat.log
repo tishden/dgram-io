@@ -1,0 +1,41 @@
+# sender   PCI "0000:03:00.0" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "0000:03:00.1" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# dpdk 20000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# dpdk 20000 drv: io_dpdk: link up, 10000 Mbps full-duplex
+# dpdk 20000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 20000 drv: io_dpdk: port=0 tx_pkts=120000 tx_drop=0 rx_pkts=120000 rx_filtered=0 hw_ipackets=120000 hw_opackets=120000 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# dpdk 200000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# dpdk 200000 drv: io_dpdk: link up, 10000 Mbps full-duplex
+# dpdk 200000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 200000 drv: io_dpdk: port=0 tx_pkts=1200000 tx_drop=0 rx_pkts=1199997 rx_filtered=0 hw_ipackets=1199997 hw_opackets=1200000 hw_imissed=0 hw_ierrors=3 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# dpdk 800000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# dpdk 800000 drv: io_dpdk: link up, 10000 Mbps full-duplex
+# dpdk 800000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 800000 drv: io_dpdk: port=0 tx_pkts=4800000 tx_drop=0 rx_pkts=4799988 rx_filtered=0 hw_ipackets=4799988 hw_opackets=4800000 hw_imissed=0 hw_ierrors=14 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
+# tcp-dpdk 20000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# tcp-dpdk 20000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
+# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 20000 drv: io_lwip: listening on :6404 for 1 peer(s)
+# tcp-dpdk 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:60995
+# tcp-dpdk 20000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120006 frames_rx=120219 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 20000 drv: io_tcp_dpdk_stack: tcp_xmit=120004 tcp_recv=120217 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3120
+# tcp-dpdk 20000 drv: io_tcp_dpdk_nic: port=0 frames_in=120219 frames_out=120006 tx_drop=0 alloc_fail=0 padded=2 tx_refused=0 hw_ipackets=120219 hw_opackets=120006 hw_imissed=0 hw_ierrors=1 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 20000 drv: io_lwip: connection error -13
+# tcp-dpdk 200000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# tcp-dpdk 200000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
+# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 200000 drv: io_lwip: listening on :6405 for 1 peer(s)
+# tcp-dpdk 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:63170
+# tcp-dpdk 200000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1207090 frames_rx=1200087 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 200000 drv: io_tcp_dpdk_stack: tcp_xmit=1207088 tcp_recv=1200085 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=99840
+# tcp-dpdk 200000 drv: io_tcp_dpdk_nic: port=0 frames_in=1200087 frames_out=1207090 tx_drop=0 alloc_fail=0 padded=7049 tx_refused=0 hw_ipackets=1200087 hw_opackets=1207090 hw_imissed=0 hw_ierrors=28 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 200000 drv: io_lwip: connection error -13
+# tcp-dpdk 800000 drv: EAL: No free 2048 kB hugepages reported on node 0
+# tcp-dpdk 800000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
+# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 800000 drv: io_lwip: listening on :6406 for 1 peer(s)
+# tcp-dpdk 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:50267
+# tcp-dpdk 800000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=4803732 frames_rx=4744076 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-dpdk 800000 drv: io_tcp_dpdk_stack: tcp_xmit=4803730 tcp_recv=4744074 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=49920
+# tcp-dpdk 800000 drv: io_tcp_dpdk_nic: port=0 frames_in=4744076 frames_out=4803732 tx_drop=0 alloc_fail=0 padded=39981 tx_refused=0 hw_ipackets=4744077 hw_opackets=4803732 hw_imissed=0 hw_ierrors=7 hw_oerrors=0 hw_rx_nombuf=0
+# tcp-dpdk 800000 drv: io_lwip: connection error -13

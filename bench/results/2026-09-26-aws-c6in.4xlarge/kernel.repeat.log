@@ -1,0 +1,83 @@
+# sender   PCI "" MAC "06:ff:e2:58:6c:a9" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
+# receiver PCI "" MAC "06:ff:ca:16:c3:f3" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
+# udp 20000 drv: io_udp: syscalls=110000 send_errs=0 rx_truncated=0
+# udp 200000 drv: io_udp: syscalls=1098882 send_errs=0 rx_truncated=0
+# uring 20000 drv: io_uring: submits=110001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 fixed_file=1
+# uring 200000 drv: io_uring: submits=1074304 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 fixed_file=1
+# uring-sqpoll 20000 drv: io_uring: submits=110001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 fixed_file=1
+# uring-sqpoll 200000 drv: ssh: connect to host <sender> port 22: Connection refused
+# uring-sqpoll 200000 drv: io_uring: submits=1099517 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=1 fixed_file=1
+# tcp 20000 drv: io_tcp: listening on :9807 for 1 peer(s)
+# tcp 20000 drv: io_tcp: peer 1 connected from 10.88.2.11:37728
+# tcp 20000 drv: io_tcp: role=server conns=1 live=1 tx_records=110000 tx_bytes=11220000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=110000 rx_bytes=11220000 syscalls=220000 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 200000 drv: io_tcp: listening on :9808 for 1 peer(s)
+# tcp 200000 drv: io_tcp: peer 1 connected from 10.88.2.11:57388
+# tcp 200000 drv: io_tcp: role=server conns=1 live=1 tx_records=1100000 tx_bytes=112200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=1100000 rx_bytes=112200000 syscalls=1685842 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 20000 drv: io_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_filter.bpf.o
+# xdp 20000 drv: io_xdp: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=110000 kicks=110000 tx_stall=0 padded=0 rx_pkts=110000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# xdp 200000 drv: io_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_filter.bpf.o
+# xdp 200000 drv: io_xdp: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=1100000 kicks=1099409 tx_stall=0 padded=0 rx_pkts=1100000 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 20000 drv: io_tcp_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 20000 drv: io_lwip: listening on :9811 for 1 peer(s)
+# tcp-xdp 20000 drv: io_lwip: peer 1 connected from 10.88.2.11:62515
+# tcp-xdp 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=110000 rx_records=110000 tx_refused=0 rx_backpressure=0 frames_tx=110248 frames_rx=110004 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 20000 drv: io_tcp_xdp_stack: tcp_xmit=110245 tcp_recv=110002 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3120
+# tcp-xdp 20000 drv: io_tcp_xdp_nic: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=110248 kicks=110248 tx_stall=0 padded=247 rx_pkts=110004 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp 20000 drv: io_lwip: connection error -13
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 200000 drv: io_tcp_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 200000 drv: io_lwip: listening on :9812 for 1 peer(s)
+# tcp-xdp 200000 drv: io_lwip: peer 1 connected from 10.88.2.11:64530
+# tcp-xdp 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1100000 rx_records=1100000 tx_refused=0 rx_backpressure=0 frames_tx=1238350 frames_rx=949685 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 200000 drv: io_tcp_xdp_stack: tcp_xmit=1238348 tcp_recv=949684 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=163800
+# tcp-xdp 200000 drv: io_tcp_xdp_nic: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=1238350 kicks=1236784 tx_stall=0 padded=139951 rx_pkts=949685 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp 200000 drv: io_lwip: connection error -13
+# sender   PCI "" MAC "06:ff:e2:58:6c:a9" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
+# receiver PCI "" MAC "06:ff:ca:16:c3:f3" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 800000 drv: io_tcp_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 800000 drv: io_lwip: listening on :9901 for 1 peer(s)
+# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 10.88.2.11:57272
+# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4400000 rx_records=4400000 tx_refused=0 rx_backpressure=0 frames_tx=2379867 frames_rx=1449923 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=2379865 tcp_recv=1449922 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=801840
+# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=2379867 kicks=2315803 tx_stall=0 padded=182717 rx_pkts=1449923 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp 800000 drv: io_lwip: connection error -13
+# tcp-xdp 1600000 drv: ssh: connect to host <sender> port 22: Connection refused
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+# tcp-xdp 1600000 drv: io_tcp_xdp: ens6 q=0 native copy filter=/home/ubuntu/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 1600000 drv: io_lwip: listening on :9902 for 1 peer(s)
+# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 10.88.2.11:60231
+# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=8800000 rx_records=8800000 tx_refused=0 rx_backpressure=0 frames_tx=2227767 frames_rx=1615820 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=2227765 tcp_recv=1615819 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=741000
+# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=ens6 q=0 mode=native zerocopy=0 tx_pkts=2227767 kicks=1867864 tx_stall=0 padded=328586 rx_pkts=1615820 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: io_lwip: connection error -13
+# tcp 800000 drv: io_tcp: listening on :9903 for 1 peer(s)
+# tcp 800000 drv: io_tcp: peer 1 connected from 10.88.2.11:36518
+# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4400000 tx_bytes=448800000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4400000 rx_bytes=448800000 syscalls=3114903 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 drv: io_tcp: listening on :9904 for 1 peer(s)
+# tcp 1600000 drv: io_tcp: peer 1 connected from 10.88.2.11:34796
+# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=8800000 tx_bytes=897600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=8800000 rx_bytes=897600000 syscalls=3085419 send_errs=0 recv_errs=0 desyncs=0 closed=0
+Connection reset by <receiver> port 22
+ssh: connect to host <receiver> port 22: Connection refused
+ssh: connect to host <receiver> port 22: Connection refused

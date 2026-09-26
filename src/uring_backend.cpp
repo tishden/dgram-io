@@ -369,7 +369,13 @@ std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
     if (sched_getaffinity(0, sizeof(mine), &mine) == 0) {
       CPU_ZERO(&only);
       CPU_SET(cfg.uring_sqpoll_cpu, &only);
-      if (sched_setaffinity(0, sizeof(only), &only) == 0) {
+      if (sched_setaffinity(0, sizeof(only), &only) != 0) {
+        *err = "io_uring_queue_init: SQ_AFF refused (EINVAL), and this "
+               "process may not run on CPU " +
+               std::to_string(cfg.uring_sqpoll_cpu) + " itself (" +
+               strerror(errno) + "): is it outside the cgroup's cpuset?";
+        return nullptr;
+      } else {
         p = asked;
         p.flags &= ~IORING_SETUP_SQ_AFF;
         p.sq_thread_cpu = 0;
@@ -385,7 +391,8 @@ std::unique_ptr<Backend> UringBackend::create(const Config& cfg,
       *err += " (io_uring is switched off: check sysctl "
               "kernel.io_uring_disabled, RHEL 9 defaults it to 2)";
     else if (r == -EINVAL && (asked.flags & IORING_SETUP_SQPOLL))
-      *err += " (this kernel refused SQPOLL, with SQ_AFF and without)";
+      *err += " (SQPOLL refused both with SQ_AFF and with the thread "
+              "inheriting CPU " + std::to_string(cfg.uring_sqpoll_cpu) + ")";
     return nullptr;
   }
   if (b->sq_pin_ == nullptr)

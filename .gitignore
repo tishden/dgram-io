@@ -5,3 +5,4 @@ third_party/
 *.a
 compile_commands.json
 .cache/
+__pycache__/

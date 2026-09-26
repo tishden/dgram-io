@@ -44,6 +44,10 @@ consumer:
 | 800k msg/s | **4.20** | 5.14 | 10.48 | 15.92 | 12.56 | 27.22 |
 | 1.6M msg/s | **4.58** | 5.97 | 12.74 | 26.29 | 14.54 | 27.72 |
 
+(For round trips of all seven backends at 20k-1.6M msg/s on an AWS pair and
+on two cabled 10G ports, with the raw data, see
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md).)
+
 Two things fall out of that table which are hard to see any other way:
 
 **The cost of TCP is not a property of TCP.** The *same* lwIP stack costs
@@ -72,18 +76,15 @@ everything. `Config::tcp_nodelay` defaults to true here for that reason.
 | `tcp-dpdk` | lwIP in-process, frames over the DPDK PMD | DPDK + lwIP |
 | `tcp-xdp` | lwIP in-process, frames over an AF_XDP socket | libxdp + lwIP |
 
-`uring` is not a faster `udp` by default. On an 82599 (ixgbe, two ports on
-one host joined by an AOC cable, `scripts/wire_peer.sh`), a 64-byte ping-pong
-with one datagram in flight gives p50 RTT 28.7 us for `udp` against 31.9 us
-for `uring` and 30.3 us with `SQPOLL`: a single receive goes through poll
-wakeup and task_work before its completion is visible, one hop more than a
-`recvmmsg` that finds the datagram already queued. What it does buy is an idle
-`rx()` that costs no syscall and a `flush()` that costs one per batch (or none
-under `SQPOLL`). Whether that wins is a question for your traffic, which is
-the point of having both behind one string. One trap, refused at setup: with
-`SQPOLL` and a caller pinned to a single CPU, the kernel's SQ thread inherits
-that CPU and starves behind the busy-polling caller, so set
-`uring_sqpoll_cpu` to another core.
+`uring` is not a faster `udp`. Measured under load it trails plain
+`sendmmsg`/`recvmmsg` by 3.4 us p50 on an 82599 and by 17 us on AWS
+([docs/BENCHMARKS.md](docs/BENCHMARKS.md)): a receive goes through the
+interrupt, softirq and task_work before its completion is visible, and does
+not get the socket's busy polling. What it does buy is an idle `rx()` that
+costs no syscall and a `flush()` that costs one per batch (or none under
+`SQPOLL`). One trap, refused at setup: with `SQPOLL` and a caller pinned to a
+single CPU, the kernel's SQ thread inherits that CPU and starves behind the
+busy-polling caller, so set `uring_sqpoll_cpu` to another core.
 
 Everything is optional and detected at build time. `make config` prints what
 this machine has; a build with none of the optional dependencies still gives
@@ -160,6 +161,23 @@ For `tcp-dpdk` / `tcp-xdp`, fetch the TCP stack first:
 ```
 scripts/get_lwip.sh && make
 ```
+
+## Measuring
+
+`bin/echo` is one datagram in flight. For latency *under load* there is an
+open-loop driver and the scripts that produced
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md):
+
+* **`bin/loadgen`** offers datagrams at a fixed rate to an `echo --role
+  server` and prints one CSV line: achieved rate, loss, reordering, p50 to
+  max round trip.
+* **`scripts/bench_matrix.sh`** runs backends x rates between two hosts over
+  SSH, or on one host with the reflector in a network namespace.
+* **`scripts/wire_bench.sh`** does the whole matrix, as root, on one machine
+  whose two NIC ports are cabled together: namespace, NIC tuning, runtime CPU
+  isolation, the DPDK bind, and everything put back on exit.
+* **`scripts/bench_report.py`** turns a results directory into the tables.
+* **`bin/uring_probe`** says which io_uring setups the running kernel accepts.
 
 ## What this is not
 

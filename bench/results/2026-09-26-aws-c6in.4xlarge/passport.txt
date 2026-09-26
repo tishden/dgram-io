@@ -1,0 +1,18 @@
+# Written from what was read off the hosts during the session (uname,
+# /proc/cmdline, lscpu, ethtool, sysctl, pkg-config, check_env.sh); the
+# stand's fetch_logs.sh did not work at the time (fixed since).
+date: 2026-09-26, instances up 13:02-14:25 UTC
+dgram-io: b5056ad (loadgen, bench_matrix, uring SQPOLL fix)
+stand: aws-lowlat-stand 6c21fa7, region ap-northeast-1a (apne1-az4), cluster placement group, on-demand
+instances: 2 x c6in.4xlarge (virtualized), 16 vCPU = 8 cores x 2 threads, Intel Xeon Platinum 8375C @ 2.90GHz
+kernel: 7.0.0-1013-aws, Ubuntu 24.04
+cmdline: isolcpus=2,3,4,5,10,11,12,13 nohz_full=2,3,4,5,10,11,12,13 rcu_nocbs=2,3,4,5,10,11,12,13
+layout: driver and reflector on CPU 2 of their host, SQPOLL thread on CPU 3; OS and IRQ on CPU 0
+data NIC: second ENI, ena 7.0.0-1013-aws, MTU 1500, 1 combined queue, rx-usecs 0, tx-usecs 0, adaptive-rx off, irqbalance off
+sysctl: net.core.busy_poll=50 net.core.busy_read=50 rmem_max=wmem_max=67108864 vm.nr_hugepages=1024 (2 MB) kernel.io_uring_disabled=0
+xdp: native, copy mode (ena gave no zero-copy)
+dpdk: 23.11.4, ena PMD, vfio-pci no-IOMMU mode, vfio-pci rebuilt with a write-combining BAR mapping (stand kernel/)
+libraries: liburing 2.5, libxdp 1.4.2, lwIP 2.2.1
+clock: no PHC on c6in; not needed, every figure is a round trip on the driver host's clock
+allowances: bw_in/bw_out/pps_allowance_exceeded 0 on both hosts for the whole session
+repeat run: kernel.repeat.csv mixes two invocations (20k/200k for all, then 800k/1.6M for tcp-xdp and tcp)

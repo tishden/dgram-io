@@ -186,8 +186,13 @@ passport() {
     sysctl net.core.busy_poll net.core.busy_read net.core.rmem_max kernel.io_uring_disabled
     echo "built with: $cfg"
     pkg-config --modversion liburing libxdp libdpdk | paste -sd' ' | sed 's/^/liburing libxdp dpdk: /'
-    echo "io_uring setups this kernel accepts (bin/uring_probe $DRV_SQ):"
-    "$ROOT/bin/uring_probe" "$DRV_SQ" | sed 's/^/  /'
+    # In the same kind of scope the matrix runs in: SQ_AFF is checked against
+    # the caller's cpuset, so asking from the confined user.slice would
+    # answer a different question.
+    echo "io_uring setups this kernel accepts (bin/uring_probe $DRV_SQ, bench scope):"
+    systemd-run --quiet --scope --slice=dgbench.slice -p AllowedCPUs=0-$(($(nproc) - 1)) -- \
+      bash -c 'echo "  cpuset: $(cat /sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)/cpuset.cpus.effective 2>/dev/null)";
+               "$0" "$1" | sed "s/^/  /"' "$ROOT/bin/uring_probe" "$DRV_SQ"
   } > "$OUT/passport.txt" 2>&1
 }
 passport

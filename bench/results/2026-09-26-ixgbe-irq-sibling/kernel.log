@@ -1,0 +1,278 @@
+# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# udp 20000 drv: io_udp: syscalls=119995 send_errs=0 rx_truncated=0
+# udp 100000 drv: io_udp: syscalls=598197 send_errs=0 rx_truncated=0
+# udp 200000 drv: io_udp: syscalls=483406 send_errs=0 rx_truncated=0
+# udp 400000 drv: io_udp: syscalls=150006 send_errs=0 rx_truncated=0
+# udp 800000 drv: io_udp: syscalls=300002 send_errs=0 rx_truncated=0
+# udp 1600000 drv: io_udp: syscalls=600002 send_errs=0 rx_truncated=0
+# uring 20000 drv: io_uring: submits=120001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 100000 drv: io_uring: submits=595073 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 200000 drv: io_uring: submits=271851 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 400000 drv: io_uring: submits=184211 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=34207 rx_nobufs=34207 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 800000 drv: io_uring: submits=368882 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=68879 rx_nobufs=68879 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring 1600000 drv: io_uring: submits=710024 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=110021 rx_nobufs=110021 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
+# uring-sqpoll 20000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 20000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 100000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 100000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 200000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 200000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 400000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 400000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 800000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 800000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 1600000 drv: backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# uring-sqpoll 1600000: no result; reflector log:
+#   backend: io_uring_queue_init: Invalid argument (this kernel refused SQPOLL, with SQ_AFF and without)
+# tcp 20000 drv: io_tcp: listening on :6019 for 1 peer(s)
+# tcp 20000 drv: io_tcp: peer 1 connected from 192.168.10.101:36840
+# tcp 20000 drv: io_tcp: role=server conns=1 live=1 tx_records=120000 tx_bytes=12240000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=120000 rx_bytes=12240000 syscalls=239987 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 100000 drv: io_tcp: listening on :6020 for 1 peer(s)
+# tcp 100000 drv: io_tcp: peer 1 connected from 192.168.10.101:55624
+# tcp 100000 drv: io_tcp: role=server conns=1 live=1 tx_records=600000 tx_bytes=61200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=600000 rx_bytes=61200000 syscalls=1107816 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 200000 drv: io_tcp: listening on :6021 for 1 peer(s)
+# tcp 200000 drv: io_tcp: peer 1 connected from 192.168.10.101:56518
+# tcp 200000 drv: io_tcp: role=server conns=1 live=1 tx_records=1200000 tx_bytes=122400000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=1200000 rx_bytes=122400000 syscalls=1254900 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 400000 drv: io_tcp: listening on :6022 for 1 peer(s)
+# tcp 400000 drv: io_tcp: peer 1 connected from 192.168.10.101:56940
+# tcp 400000 drv: io_tcp: role=server conns=1 live=1 tx_records=2400000 tx_bytes=244800000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=2400000 rx_bytes=244800000 syscalls=1229383 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 800000 drv: io_tcp: listening on :6023 for 1 peer(s)
+# tcp 800000 drv: io_tcp: peer 1 connected from 192.168.10.101:60528
+# tcp 800000 drv: io_tcp: role=server conns=1 live=1 tx_records=4800000 tx_bytes=489600000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=4800000 rx_bytes=489600000 syscalls=1155712 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# tcp 1600000 drv: io_tcp: listening on :6024 for 1 peer(s)
+# tcp 1600000 drv: io_tcp: peer 1 connected from 192.168.10.101:51468
+# tcp 1600000 drv: io_tcp: role=server conns=1 live=1 tx_records=9600000 tx_bytes=979200000 tx_refused=0 tx_stalls=0 tx_partial=0 rx_records=9600000 rx_bytes=979200000 syscalls=840848 send_errs=0 recv_errs=0 desyncs=0 closed=0
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 20000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120000 kicks=120000 tx_stall=0 padded=0 rx_pkts=117738 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 100000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=600000 kicks=597317 tx_stall=1375 padded=0 rx_pkts=597226 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 200000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1200000 kicks=1149421 tx_stall=1642 padded=0 rx_pkts=1197186 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
+# xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 400000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=2400000 kicks=2269535 tx_stall=1389 padded=0 rx_pkts=2397669 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 800000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=4800000 kicks=4455858 tx_stall=1406 padded=0 rx_pkts=4797823 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp 1600000 drv: io_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=9600000 kicks=4766252 tx_stall=1872 padded=0 rx_pkts=9597423 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 20000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 20000 drv: io_lwip: listening on :6031 for 1 peer(s)
+# tcp-xdp 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:57154
+# tcp-xdp 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120244 frames_rx=120007 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 20000 drv: io_tcp_xdp_stack: tcp_xmit=120242 tcp_recv=120005 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=1560
+# tcp-xdp 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=120244 kicks=120243 tx_stall=0 padded=242 rx_pkts=120007 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 20000 drv: io_lwip: connection error -13
+# tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 100000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 100000 drv: io_lwip: listening on :6032 for 1 peer(s)
+# tcp-xdp 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:63842
+# tcp-xdp 100000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=600000 rx_records=191924 tx_refused=0 rx_backpressure=0 frames_tx=642692 frames_rx=397183 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 100000 drv: io_tcp_xdp_stack: tcp_xmit=642690 tcp_recv=397181 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=1 mem_err=0 mem_max=70200
+# tcp-xdp 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=642692 kicks=642319 tx_stall=0 padded=40414 rx_pkts=397184 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=1 xsk_rx_invalid=0
+# tcp-xdp 100000 drv: io_lwip: connection error -13
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 200000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 200000 drv: io_lwip: listening on :6033 for 1 peer(s)
+# tcp-xdp 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:55193
+# tcp-xdp 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1247570 frames_rx=1197260 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp 200000 drv: io_tcp_xdp_stack: tcp_xmit=1247568 tcp_recv=1197258 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=17160
+# tcp-xdp 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=1247570 kicks=1247550 tx_stall=0 padded=49948 rx_pkts=1197260 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 200000 drv: io_lwip: connection error -13
+# tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 400000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 400000 drv: io_lwip: listening on :6034 for 1 peer(s)
+# tcp-xdp 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:59096
+# tcp-xdp 400000 drv: io_lwip: connection error -13
+# tcp-xdp 400000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=74864 rx_records=65693 tx_refused=2114154578 rx_backpressure=0 frames_tx=108892 frames_rx=99611 tx_frame_drops=0 write_mem=2114154578 closed=1 desyncs=0
+# tcp-xdp 400000 drv: io_tcp_xdp_stack: tcp_xmit=108890 tcp_recv=99609 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=2114154578 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=4480432
+# tcp-xdp 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=108892 kicks=70951 tx_stall=0 padded=1505 rx_pkts=99611 alloc_fail=0 tx_refused=105707 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 800000 drv: io_lwip: listening on :6035 for 1 peer(s)
+# tcp-xdp 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:61670
+# tcp-xdp 800000 drv: io_lwip: connection error -14
+# tcp-xdp 800000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10491 rx_records=8 tx_refused=3978331568 rx_backpressure=0 frames_tx=2370 frames_rx=2242 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
+# tcp-xdp 800000 drv: io_tcp_xdp_stack: tcp_xmit=2367 tcp_recv=2239 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=3480448
+# tcp-xdp 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=2370 kicks=2332 tx_stall=0 padded=3 rx_pkts=2242 alloc_fail=0 tx_refused=198916 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native zerocopy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp 1600000 drv: io_lwip: listening on :6036 for 1 peer(s)
+# tcp-xdp 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:55074
+# tcp-xdp 1600000 drv: io_lwip: connection error -14
+# tcp-xdp 1600000 drv: io_tcp_xdp: role=server peers=1 live=0 tx_records=10281 rx_records=1 tx_refused=3982953679 rx_backpressure=0 frames_tx=21 frames_rx=15 tx_frame_drops=0 write_mem=0 closed=1 desyncs=0
+# tcp-xdp 1600000 drv: io_tcp_xdp_stack: tcp_xmit=18 tcp_recv=12 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=1126408
+# tcp-xdp 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=1 tx_pkts=21 kicks=18 tx_stall=0 padded=3 rx_pkts=15 alloc_fail=0 tx_refused=199147 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=2 xsk_rx_invalid=0
+# xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 20000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 20000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120000 kicks=120000 tx_stall=0 padded=0 rx_pkts=108232 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 100000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 100000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=600000 kicks=599983 tx_stall=0 padded=0 rx_pkts=554546 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 200000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 200000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1200000 kicks=1199679 tx_stall=0 padded=0 rx_pkts=1121093 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 400000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 400000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=2400000 kicks=2393233 tx_stall=0 padded=0 rx_pkts=2226770 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 800000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 800000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=4800000 kicks=2621857 tx_stall=0 padded=0 rx_pkts=4376541 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# xdp-copy 1600000 drv: io_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_filter.bpf.o
+# xdp-copy 1600000 drv: io_xdp: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=9600000 kicks=600058 tx_stall=1 padded=0 rx_pkts=7726038 rx_filtered=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 20000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 20000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 20000 drv: io_lwip: listening on :6043 for 1 peer(s)
+# tcp-xdp-copy 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:58616
+# tcp-xdp-copy 20000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120245 frames_rx=120008 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 20000 drv: io_tcp_xdp_stack: tcp_xmit=120242 tcp_recv=120005 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=1560
+# tcp-xdp-copy 20000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=120245 kicks=120244 tx_stall=0 padded=243 rx_pkts=120008 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 20000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 100000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 100000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 100000 drv: io_lwip: listening on :6044 for 1 peer(s)
+# tcp-xdp-copy 100000 drv: io_lwip: peer 1 connected from 192.168.10.101:64886
+# tcp-xdp-copy 100000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=600000 rx_records=600000 tx_refused=0 rx_backpressure=0 frames_tx=618858 frames_rx=599934 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 100000 drv: io_tcp_xdp_stack: tcp_xmit=618856 tcp_recv=599932 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=17160
+# tcp-xdp-copy 100000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=618858 kicks=618853 tx_stall=0 padded=18859 rx_pkts=599934 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 100000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 200000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 200000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 200000 drv: io_lwip: listening on :6045 for 1 peer(s)
+# tcp-xdp-copy 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:52120
+# tcp-xdp-copy 200000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1284261 frames_rx=1172395 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 200000 drv: io_tcp_xdp_stack: tcp_xmit=1284258 tcp_recv=1172392 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=40560
+# tcp-xdp-copy 200000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1284261 kicks=1284182 tx_stall=0 padded=85863 rx_pkts=1172395 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 200000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 400000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 400000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 400000 drv: io_lwip: listening on :6046 for 1 peer(s)
+# tcp-xdp-copy 400000 drv: io_lwip: peer 1 connected from 192.168.10.101:62368
+# tcp-xdp-copy 400000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=2400000 rx_records=2400000 tx_refused=0 rx_backpressure=0 frames_tx=1789653 frames_rx=1570427 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 400000 drv: io_tcp_xdp_stack: tcp_xmit=1789651 tcp_recv=1570425 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=54600
+# tcp-xdp-copy 400000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1789653 kicks=1789288 tx_stall=0 padded=95882 rx_pkts=1570427 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 400000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 800000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 800000 drv: io_lwip: listening on :6047 for 1 peer(s)
+# tcp-xdp-copy 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:62531
+# tcp-xdp-copy 800000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=1619192 frames_rx=1426916 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 800000 drv: io_tcp_xdp_stack: tcp_xmit=1619189 tcp_recv=1426913 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=53040
+# tcp-xdp-copy 800000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1619192 kicks=1618560 tx_stall=0 padded=97037 rx_pkts=1426916 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 800000 drv: io_lwip: connection error -13
+# tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 1600000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp: enp3s0f0 q=0 native copy filter=/home/denis/sources/oss/dgram-io/bin/xdp_tcp_filter.bpf.o
+# tcp-xdp-copy 1600000 drv: io_lwip: listening on :6048 for 1 peer(s)
+# tcp-xdp-copy 1600000 drv: io_lwip: peer 1 connected from 192.168.10.101:50714
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp: role=server peers=1 live=1 tx_records=9600000 rx_records=9600000 tx_refused=0 rx_backpressure=0 frames_tx=1423463 frames_rx=1311262 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp_stack: tcp_xmit=1423461 tcp_recv=1311260 tcp_drop=0 tcp_chkerr=0 tcp_lenerr=0 tcp_memerr=0 tcp_proterr=0 tcp_rterr=0 ip_drop=0 ip_chkerr=0 link_drop=0 pbuf_err=0 mem_err=0 mem_max=39000
+# tcp-xdp-copy 1600000 drv: io_tcp_xdp_nic: if=enp3s0f0 q=0 mode=native zerocopy=0 tx_pkts=1423463 kicks=1390242 tx_stall=0 padded=168693 rx_pkts=1311262 alloc_fail=0 tx_refused=0 xsk_rx_dropped=0 xsk_rx_ring_full=0 xsk_fill_empty=0 xsk_rx_invalid=0
+# tcp-xdp-copy 1600000 drv: io_lwip: connection error -13

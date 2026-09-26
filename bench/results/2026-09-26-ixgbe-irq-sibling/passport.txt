@@ -1,0 +1,27 @@
+date: 2026-09-26T16:09:12Z
+dgram-io: 7c6524f
+kernel: 5.14.0-611.49.2.el9_7.x86_64
+cmdline: BOOT_IMAGE=(hd0,gpt2)/vmlinuz-5.14.0-611.49.2.el9_7.x86_64 root=/dev/mapper/almalinux-root ro resume=/dev/mapper/almalinux-swap rd.lvm.lv=almalinux/root rd.lvm.lv=almalinux/swap rhgb quiet default_hugepagesz=1G hugepagesz=1G hugepages=4 iomem=relaxed crashkernel=1G-2G:192M,2G-64G:256M,64G-:512M nouveau.modeset=0 rd.driver.blacklist=nouveau plymouth.ignore-udev
+CPU(s):                                  8
+Model name:                              Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz
+BIOS Model name:                         Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz
+Thread(s) per core:                      2
+CPU(s) scaling MHz:                      98%
+CPU max MHz:                             3800.0000
+CPU min MHz:                             1200.0000
+governor: performance
+layout: driver cpu 2 (sqpoll 6), reflector cpu 3 (sqpoll 7), housekeeping 0,1,4,5
+irqs: enp3s0f0 -> cpu 6, enp3s0f1 -> cpu 7, irqbalance stopped
+driver port: enp3s0f0 0000:03:00.0 90:e2:ba:ed:3d:34 192.168.10.100
+peer port:   enp3s0f1 0000:03:00.1 90:e2:ba:ed:3d:35 192.168.10.101 (netns dgpeer)
+driver: ixgbe
+version: 5.14.0-611.49.2.el9_7.x86_64
+firmware-version: 0x000118b3, 1.1876.0
+03:00.0 Ethernet controller: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connection (rev 01)
+channels: 1, rx-usecs: 0
+net.core.busy_poll = 50
+net.core.busy_read = 50
+net.core.rmem_max = 67108864
+kernel.io_uring_disabled = 0
+built with: uring=1 xdp=1 dpdk=1 lwip=1
+liburing libxdp dpdk: 2.5 1.6.2 25.11.0

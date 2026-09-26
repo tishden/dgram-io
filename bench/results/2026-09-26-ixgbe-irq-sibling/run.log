@@ -1,0 +1,42 @@
+wire_bench: output: /home/denis/sources/oss/dgram-io/bench/results/2026-09-26-ixgbe
+peer 192.168.10.101/24 on enp3s0f1 in netns dgpeer, carrier=1
+wire_bench: kernel half: udp uring uring-sqpoll tcp xdp tcp-xdp x 20000 100000 200000 400000 800000 1600000
+wire_bench: kernel: 24 cases
+wire_bench: kernel.repeat: 8 cases
+wire_bench: kernel.repeat2: 2 cases
+wire_bench: binding 0000:03:00.0 and 0000:03:00.1 to vfio-pci
+wire_bench: no IOMMU: vfio no-IOMMU mode
+wire_bench: dpdk half: dpdk tcp-dpdk x 20000 100000 200000 400000 800000 1600000
+wire_bench: dpdk: 6 cases
+wire_bench: dpdk.repeat: 3 cases
+wire_bench: done
+wire_bench: restoring the host
+wire_bench: restored: enp3s0f0 192.168.10.100/24, enp3s0f1 back in the default namespace, CPUs/IRQs/sysctls as before
+wire_bench: output: /home/denis/sources/oss/dgram-io/bench/results/2026-09-26-ixgbe
+peer 192.168.10.101/24 on enp3s0f1 in netns dgpeer, carrier=1
+wire_bench: kernel half: udp uring uring-sqpoll tcp xdp tcp-xdp x 20000 100000 200000 400000 800000 1600000
+wire_bench: kernel: 30 cases
+wire_bench: kernel.repeat: 10 cases
+wire_bench: kernel.repeat2: 4 cases
+wire_bench: binding 0000:03:00.0 and 0000:03:00.1 to vfio-pci
+wire_bench: no IOMMU: vfio no-IOMMU mode
+wire_bench: dpdk half: dpdk tcp-dpdk x 20000 100000 200000 400000 800000 1600000
+wire_bench: dpdk: 12 cases
+wire_bench: dpdk.repeat: 6 cases
+wire_bench: done
+wire_bench: restoring the host
+wire_bench: restored: enp3s0f0 192.168.10.100/24, enp3s0f1 back in the default namespace, CPUs/IRQs/sysctls as before
+wire_bench: output: /home/denis/sources/oss/dgram-io/bench/results/2026-09-26-ixgbe
+peer 192.168.10.101/24 on enp3s0f1 in netns dgpeer, carrier=1
+wire_bench: kernel half: udp uring uring-sqpoll tcp xdp tcp-xdp xdp-copy tcp-xdp-copy x 20000 100000 200000 400000 800000 1600000
+wire_bench: kernel: 42 cases
+wire_bench: kernel.repeat: 14 cases
+wire_bench: kernel.repeat2: 4 cases
+wire_bench: binding 0000:03:00.0 and 0000:03:00.1 to vfio-pci
+wire_bench: no IOMMU: vfio no-IOMMU mode
+wire_bench: dpdk half: dpdk tcp-dpdk x 20000 100000 200000 400000 800000 1600000
+wire_bench: dpdk: 12 cases
+wire_bench: dpdk.repeat: 6 cases
+wire_bench: done
+wire_bench: restoring the host
+wire_bench: restored: enp3s0f0 192.168.10.100/24, enp3s0f1 back in the default namespace, CPUs/IRQs/sysctls as before
