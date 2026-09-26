@@ -13,12 +13,14 @@
 // order) comes from the stack's own API.
 #include <time.h>
 
+#include <cstdlib>
 #include <cstring>
 
 #include "lwip/etharp.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
 #include "lwip/pbuf.h"
+#include "lwip/priv/tcp_priv.h"
 #include "lwip/stats.h"
 #include "lwip/tcp.h"
 #include "lwip/timeouts.h"
@@ -95,7 +97,10 @@ err_t LwipTcp::on_linkoutput(netif* nif, pbuf* p) {
 void LwipTcp::deliver_frame(void* ctx, const uint8_t* data, uint32_t len) {
   LwipTcp* self = static_cast<LwipTcp*>(ctx);
   pbuf* p = pbuf_alloc(PBUF_RAW, static_cast<u16_t>(len), PBUF_POOL);
-  if (!p) return;  // pool exhausted: counted by lwIP's own pbuf stats
+  if (!p) {  // pool exhausted: counted by lwIP's own pbuf stats too
+    if (self->pool_dry_++ == 0 && self->trace_) self->trace("pool-dry");
+    return;
+  }
   pbuf_take(p, data, static_cast<u16_t>(len));
   ++self->frames_rx_;
   if (self->netif_->input(p, self->netif_) != ERR_OK) pbuf_free(p);
@@ -176,6 +181,9 @@ err_t LwipTcp::on_recv(void* arg, tcp_pcb* pcb, pbuf* p, err_t err) {
 
 void LwipTcp::on_err(void* arg, err_t err) {
   Peer* peer = static_cast<Peer*>(arg);
+  if (g_only && g_only->trace_)
+    fprintf(stderr, "io_lwip_trace: on_err err=%d (pcb already freed)\n",
+            static_cast<int>(err));
   const bool was_up = peer->up;
   peer->up = false;
   peer->pcb = nullptr;  // lwIP already freed it
@@ -195,6 +203,8 @@ bool LwipTcp::init(const LwipParams& p, LwipFrameIo* io, std::string* err) {
   }
   params_ = p;
   io_ = io;
+  const char* tr = getenv("DGRAM_IO_LWIP_TRACE");
+  trace_ = tr && *tr && *tr != '0';
   scratch_.resize(2048);
   peers_.reserve(p.server ? (p.peers < 1 ? 1 : p.peers) : 1);
 
@@ -372,6 +382,10 @@ void LwipTcp::flush() {
 void LwipTcp::poll() {
   io_->rx_frames(kRxBurst, &LwipTcp::deliver_frame, this);
   sys_check_timeouts();
+  if (trace_ && now_ms() >= trace_next_ms_) {
+    trace_next_ms_ = now_ms() + 1000;
+    trace("tick");
+  }
   // Input generates output: ACKs, window updates, ARP replies and any
   // retransmit the timers decided on are all sitting in the frame transport's
   // staging area now. The receiver never calls flush() -- it has nothing to
@@ -402,6 +416,54 @@ int LwipTcp::take(RxPacket* out, int max) {
     }
   }
   return emitted;
+}
+
+namespace {
+int seg_count(const tcp_seg* s, int* pbufs) {
+  int n = 0;
+  for (; s; s = s->next) {
+    ++n;
+    if (pbufs) *pbufs += pbuf_clen(s->p);
+  }
+  return n;
+}
+}  // namespace
+
+void LwipTcp::trace(const char* why) {
+  const stats_mem* pool = lwip_stats.memp[MEMP_PBUF_POOL];
+  const stats_mem* seg = lwip_stats.memp[MEMP_TCP_SEG];
+  fprintf(stderr,
+          "io_lwip_trace: %s t=%llu %s pool=%u/%u max=%u err=%u seg=%u max=%u "
+          "err=%u heap=%u err=%u frames_rx=%llu frames_tx=%llu pool_dry=%llu\n",
+          why, (unsigned long long)now_ms(), params_.server ? "server" : "client",
+          (unsigned)pool->used, (unsigned)PBUF_POOL_SIZE, (unsigned)pool->max,
+          (unsigned)pool->err, (unsigned)seg->used, (unsigned)seg->max,
+          (unsigned)seg->err, (unsigned)lwip_stats.mem.used,
+          (unsigned)lwip_stats.mem.err, (unsigned long long)frames_rx_,
+          (unsigned long long)frames_tx_, (unsigned long long)pool_dry_);
+  for (const Peer& p : peers_) {
+    const tcp_pcb* c = p.pcb;
+    if (!c) {
+      fprintf(stderr, "io_lwip_trace:   peer up=%d pcb=gone\n", p.up ? 1 : 0);
+      continue;
+    }
+    int ooseq_pbufs = 0;
+#if TCP_QUEUE_OOSEQ
+    const int ooseq = seg_count(c->ooseq, &ooseq_pbufs);
+#else
+    const int ooseq = 0;
+#endif
+    fprintf(stderr,
+            "io_lwip_trace:   peer up=%d state=%d snd_queuelen=%u unsent=%d "
+            "unacked=%d ooseq=%d/%dpbufs refused=%d nrtx=%u rto=%d rcv_wnd=%u "
+            "snd_wnd=%u snd_buf=%u rx_records=%llu tx_records=%llu\n",
+            p.up ? 1 : 0, static_cast<int>(c->state),
+            (unsigned)c->snd_queuelen, seg_count(c->unsent, nullptr),
+            seg_count(c->unacked, nullptr), ooseq, ooseq_pbufs,
+            c->refused_data ? 1 : 0, (unsigned)c->nrtx, (int)c->rto,
+            (unsigned)c->rcv_wnd, (unsigned)c->snd_wnd, (unsigned)c->snd_buf,
+            (unsigned long long)p.rx_records, (unsigned long long)p.tx_records);
+  }
 }
 
 int LwipTcp::live_peers() const {

@@ -158,15 +158,15 @@ class XdpBackend final : public Backend {
 std::unique_ptr<Backend> XdpBackend::create(const Config& cfg,
                                             std::string* err) {
   auto b = std::unique_ptr<XdpBackend>(new XdpBackend());
-  // Checked before anything else: headers plus payload must live inside one
-  // UMEM frame (there is no multi-buffer path here), and 2048-byte frames
-  // leave room for a standard MTU and nothing like jumbo. Diagnosing this
-  // after an unrelated ARP or BPF failure would be needlessly confusing.
+  // Checked before anything else: headers plus payload must fit one RX
+  // buffer (there is no multi-buffer path here), which leaves room for a
+  // standard MTU and nothing like jumbo (see xsk::kMaxRxFrame). Diagnosing
+  // this after an unrelated ARP or BPF failure would be needlessly confusing.
   const uint32_t hdr_room = static_cast<uint32_t>(pkt::kHdrLen);
-  if (cfg.max_datagram + hdr_room > xsk::kFrameSize) {
-    *err = "--io xdp cannot carry a " + std::to_string(cfg.max_datagram) +
-           "-byte datagram: the UMEM frame is " +
-           std::to_string(xsk::kFrameSize) + " bytes (headers take " +
+  if (cfg.max_datagram + hdr_room > xsk::kMaxRxFrame) {
+    *err = "xdp cannot carry a " + std::to_string(cfg.max_datagram) +
+           "-byte datagram: an RX buffer holds " +
+           std::to_string(xsk::kMaxRxFrame) + " bytes (headers take " +
            std::to_string(hdr_room) + ")";
     return nullptr;
   }

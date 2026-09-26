@@ -84,6 +84,11 @@ class LwipTcp {
 
   void log_stats(FILE* f, const char* tag) const;
   int live_peers() const;
+  // With DGRAM_IO_LWIP_TRACE=1 in the environment, one line a second to
+  // stderr (and one the moment the RX pbuf pool first runs dry): pool and
+  // segment occupancy, and per connection its state, queues and timers --
+  // enough to tell a leak from a stall from a retransmission storm.
+  void trace(const char* why);
 
  private:
   struct Peer {
@@ -116,6 +121,9 @@ class LwipTcp {
   bool connect_done_ = false;
   uint64_t frames_tx_ = 0, frames_rx_ = 0, tx_frame_drops_ = 0;
   uint64_t write_mem_ = 0, closed_ = 0, desyncs_ = 0;
+  bool trace_ = false;
+  uint64_t trace_next_ms_ = 0;
+  uint64_t pool_dry_ = 0;  // RX frames dropped for want of a pool pbuf
 };
 
 }  // namespace dgram_io

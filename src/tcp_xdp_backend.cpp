@@ -133,14 +133,13 @@ std::unique_ptr<Backend> TcpXdpBackend::create(const Config& cfg,
     *err = "max_datagram out of range";
     return nullptr;
   }
-  // A record has to fit a segment, which has to fit a UMEM frame. lwIP will
-  // happily split a large record across segments, but our deframer needs the
-  // whole thing before it can deliver, so keeping this check identical to the
-  // datagram XDP backend keeps the failure mode obvious.
-  if (cfg.max_datagram + 60 > xsk::kFrameSize) {
-    *err = "--io tcp-xdp cannot carry a " + std::to_string(cfg.max_datagram) +
-           "-byte datagram in a " + std::to_string(xsk::kFrameSize) +
-           "-byte UMEM frame";
+  // Frames here are bounded by the MSS, not by the record size, but the check
+  // stays identical to the datagram XDP backend's so the two fail alike: a
+  // record that could not travel as one datagram is refused here too.
+  if (cfg.max_datagram + 60 > xsk::kMaxRxFrame) {
+    *err = "tcp-xdp cannot carry a " + std::to_string(cfg.max_datagram) +
+           "-byte datagram: an RX buffer holds " +
+           std::to_string(xsk::kMaxRxFrame) + " bytes";
     return nullptr;
   }
   auto b = std::unique_ptr<TcpXdpBackend>(new TcpXdpBackend());

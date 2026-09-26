@@ -134,9 +134,13 @@ for kind in $KINDS; do
       echo "$out"
       header=
     else
-      echo "# $kind $rate: no result; reflector log:" >&2
-      on "$RCV" "tail -5 /tmp/refl.$kind.$rate.log" | sed 's/^/#   /' >&2 || true
+      echo "# $kind $rate: no result" >&2
     fi
+    # SIGINT makes the reflector print its own counters on the way out, so
+    # the log has both ends of every case.
     stop_reflector
+    on "$RCV" "cat /tmp/refl.$kind.$rate.log" 2>/dev/null |
+      grep -v "skipping unrecognized data section" |
+      sed "s/^/# $kind $rate refl: /" >&2 || true
   done
 done

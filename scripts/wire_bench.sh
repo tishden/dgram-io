@@ -63,7 +63,7 @@ else
   DRV_IRQ_CPU=${DRV_IRQ_CPU:-0} PEER_IRQ_CPU=${PEER_IRQ_CPU:-1}
 fi
 KINDS_KERNEL=${KINDS_KERNEL:-"udp uring uring-sqpoll tcp xdp tcp-xdp xdp-copy tcp-xdp-copy"}
-KINDS_DPDK=${KINDS_DPDK:-"dpdk tcp-dpdk"}
+KINDS_DPDK=${KINDS_DPDK-"dpdk tcp-dpdk"}  # set it empty to skip the DPDK half
 RATES=${RATES:-"20000 100000 200000 400000 800000 1600000"}
 REPEAT=${REPEAT:-1}
 OUT=${1:-$ROOT/bench/results/$(date +%F)-$(ethtool -i "$DRV_IF" | awk '/^driver:/{print $2}')-irq-$IRQ_LAYOUT}
@@ -130,9 +130,20 @@ restore() {
   ethtool -L "$PEER_IF" combined "${OLD[peer_chan]}" 2>/dev/null
   ethtool -C "$DRV_IF" rx-usecs "${OLD[drv_usecs]}" 2>/dev/null
   ethtool -C "$PEER_IF" rx-usecs "${OLD[peer_usecs]}" 2>/dev/null
-  systemctl set-property --runtime system.slice AllowedCPUs= 2>/dev/null
-  systemctl set-property --runtime user.slice AllowedCPUs= 2>/dev/null
-  systemctl set-property --runtime init.scope AllowedCPUs= 2>/dev/null
+  # An empty AllowedCPUs= only drops systemd's property: the cgroup keeps the
+  # last cpuset it was given, and the whole machine stays confined to the
+  # housekeeping CPUs. Give every CPU back explicitly, then remove the
+  # runtime drop-ins that set-property wrote, so nothing is left pinned.
+  local all="0-$(($(nproc --all) - 1))" u
+  for u in system.slice user.slice init.scope; do
+    systemctl set-property --runtime "$u" AllowedCPUs="$all" 2>/dev/null
+    rm -f "/run/systemd/system.control/$u.d/50-AllowedCPUs.conf"
+    rmdir "/run/systemd/system.control/$u.d" 2>/dev/null
+  done
+  systemctl daemon-reload
+  if [ "$(awk '/Cpus_allowed_list/{print $2}' /proc/1/status)" != "$all" ]; then
+    log "WARNING: PID 1 still runs on $(awk '/Cpus_allowed_list/{print $2}' /proc/1/status), not $all"
+  fi
   echo "${OLD[wq]}" > /sys/devices/virtual/workqueue/cpumask
   [ "${OLD[irqbalance]}" = active ] && systemctl start irqbalance
   for k in net.core.busy_poll net.core.busy_read net.core.rmem_max net.core.wmem_max; do
@@ -199,7 +210,7 @@ passport() {
     # the caller's cpuset, so asking from the confined user.slice would
     # answer a different question.
     echo "io_uring setups this kernel accepts (bin/uring_probe $DRV_SQ, bench scope):"
-    systemd-run --quiet --scope --slice=dgbench.slice -p AllowedCPUs=0-$(($(nproc) - 1)) -- \
+    systemd-run --quiet --scope --slice=dgbench.slice -p AllowedCPUs=0-$(($(nproc --all) - 1)) -- \
       bash -c 'echo "  cpuset: $(cat /sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)/cpuset.cpus.effective 2>/dev/null)";
                "$0" "$1" | sed "s/^/  /"' "$ROOT/bin/uring_probe" "$DRV_SQ"
   } > "$OUT/passport.txt" 2>&1
@@ -207,7 +218,7 @@ passport() {
 passport
 
 matrix() {  # $1 = file stem, $2 = kinds, $3 = rates, $4 = port base
-  systemd-run --quiet --scope --slice=dgbench.slice -p AllowedCPUs=0-$(($(nproc) - 1)) -- \
+  systemd-run --quiet --scope --slice=dgbench.slice -p AllowedCPUs=0-$(($(nproc --all) - 1)) -- \
     env SUDO= SND=local RCV="netns:$NS" REMOTE_DIR="$ROOT" WARMUP=1 PORT_BASE="$4" \
       S_FACTS="IF=$DRV_IF IP=$DRV_IP MAC=$DRV_MAC PCI=$S_PCI DP0=$DRV_CPU DP1=$DRV_SQ" \
       R_FACTS="IF=$PEER_IF IP=$PEER_IP MAC=$PEER_MAC PCI=$R_PCI DP0=$RFL_CPU DP1=$RFL_SQ" \
@@ -225,6 +236,10 @@ if [ "$REPEAT" = 1 ]; then
 fi
 
 # ------------------------------------------------------------ DPDK half
+if [ -z "$KINDS_DPDK" ]; then
+  log "no DPDK kinds: done"
+  exit 0
+fi
 log "binding $DRV_PCI and $PEER_PCI to vfio-pci"
 modprobe vfio-pci
 if [ -z "$(ls -A /sys/kernel/iommu_groups 2>/dev/null)" ]; then

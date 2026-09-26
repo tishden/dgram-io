@@ -46,10 +46,27 @@ namespace xsk {
 // 64 MB SO_RCVBUF (~240 ms of stream), an XSK drops on the NIC once the fill
 // ring drains. 8192 frames ~ 30 ms at 265k pkt/s -- enough to ride out the
 // scheduler stalls this host shows on non-isolated cores.
-inline constexpr uint32_t kFrameSize = 2048;
+//
+// Frame size: 4096, not the 2048 most AF_XDP code uses. In zero-copy mode the
+// NIC receives straight into a UMEM chunk minus the kernel's 256-byte
+// headroom, and the 82599 (ixgbe) programs that as its RX buffer size in
+// whole kilobytes, rounding down: a 2048-byte chunk gives 1792, which becomes
+// a 1024-byte buffer. A frame longer than that needs a second descriptor,
+// which ixgbe's zero-copy path does not do, so it is dropped -- silently, in
+// no counter we can read. Datagrams of 100 bytes never notice; a full-size
+// 1514-byte frame is lost every time, retransmissions included, which is how
+// it was found (tcp-xdp stalling for good as soon as lwIP coalesced records
+// into full segments). 4096 leaves 3840, rounded to 3072 -- a whole standard
+// frame on every NIC that rounds this way.
+inline constexpr uint32_t kFrameSize = 4096;
+inline constexpr uint32_t kXdpHeadroom = 256;  // XDP_PACKET_HEADROOM
+// The largest frame that fits one RX buffer however the driver rounds the
+// chunk: what the backends check max_datagram against, so an unreceivable
+// size fails at setup instead of vanishing on the wire.
+inline constexpr uint32_t kMaxRxFrame = (kFrameSize - kXdpHeadroom) / 1024 * 1024;
 inline constexpr uint32_t kRxFrames = 8192;                    // fill/RX rings
 inline constexpr uint32_t kTxFrames = 2048;                    // TX/completion
-inline constexpr uint32_t kNumFrames = kRxFrames + kTxFrames;  // 20 MB UMEM
+inline constexpr uint32_t kNumFrames = kRxFrames + kTxFrames;  // 40 MB UMEM
 inline constexpr int kRxBatch = 256;  // drain hard: RX-ring-full inside the ZC
                                       // driver is a silent drop (no counter)
 // Minimum Ethernet frame without FCS. The kernel pads runts on transmit; the
