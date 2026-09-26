@@ -62,7 +62,7 @@ OBJS := $(BIN)/factory.o $(BIN)/udp_backend.o $(BIN)/uring_backend.o \
         $(BIN)/dpdk_backend.o $(BIN)/tcp_backend.o $(BIN)/tcp_dpdk_backend.o \
         $(BIN)/tcp_xdp_backend.o $(LWIP_OBJS)
 
-.PHONY: all lib test example clean config FORCE
+.PHONY: all lib test example clean config install uninstall FORCE
 
 all: lib $(if $(HAVE_XDP),$(BIN)/xdp_filter.bpf.o $(BIN)/xdp_tcp_filter.bpf.o)
 
@@ -137,6 +137,38 @@ $(BIN)/echo $(BIN)/loadgen: $(BIN)/%: examples/%.cpp $(BIN)/libdgram_io.a $(HDRS
 	$(CXX) $(CXXFLAGS) $(XDP_CXXFLAGS) $(DPDK_CXXFLAGS) $(LWIP_CPPFLAGS) \
 	  $< $(BIN)/libdgram_io.a -o $@ $(LDLIBS) $(URING_LDLIBS) $(XDP_LDLIBS) \
 	  $(DPDK_LDLIBS)
+
+# Installs the static library, the headers, the XDP filter objects and a
+# pkg-config file. The library is static, so the .pc lists the libraries of
+# every backend this build compiled in; `pkg-config --variable=bpfdir
+# dgram-io` is where the filters went (Config::bpf_obj, since the default
+# looks next to the running binary).
+PREFIX  ?= /usr/local
+LIBDIR  ?= $(PREFIX)/lib
+INCDIR  ?= $(PREFIX)/include
+BPFDIR  ?= $(LIBDIR)/dgram_io
+PCDIR   ?= $(LIBDIR)/pkgconfig
+VERSION := 0.1.0
+
+$(BIN)/dgram-io.pc: $(FLAGS) | $(BIN)
+	@printf '%s\n' \
+	  'prefix=$(PREFIX)' 'libdir=$(LIBDIR)' 'includedir=$(INCDIR)' 'bpfdir=$(BPFDIR)' '' \
+	  'Name: dgram-io' \
+	  'Description: one datagram interface over kernel UDP, io_uring, AF_XDP, DPDK and TCP' \
+	  'Version: $(VERSION)' \
+	  'Cflags: -I$${includedir}' \
+	  'Libs: -L$${libdir} -ldgram_io $(strip $(LDLIBS) $(URING_LDLIBS) $(XDP_LDLIBS) $(DPDK_LDLIBS))' > $@
+
+install: all $(BIN)/dgram-io.pc
+	install -d $(DESTDIR)$(LIBDIR) $(DESTDIR)$(INCDIR)/dgram_io $(DESTDIR)$(PCDIR)
+	install -m 644 $(BIN)/libdgram_io.a $(DESTDIR)$(LIBDIR)/
+	install -m 644 $(HDRS) $(DESTDIR)$(INCDIR)/dgram_io/
+	install -m 644 $(BIN)/dgram-io.pc $(DESTDIR)$(PCDIR)/
+	$(if $(HAVE_XDP),install -d $(DESTDIR)$(BPFDIR) && install -m 644 $(BIN)/*.bpf.o $(DESTDIR)$(BPFDIR)/)
+
+uninstall:
+	rm -f $(DESTDIR)$(LIBDIR)/libdgram_io.a $(DESTDIR)$(PCDIR)/dgram-io.pc
+	rm -rf $(DESTDIR)$(INCDIR)/dgram_io $(DESTDIR)$(BPFDIR)
 
 clean:
 	rm -rf $(BIN)

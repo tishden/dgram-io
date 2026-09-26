@@ -24,8 +24,17 @@
 #  * for the DPDK half both ports are bound to vfio-pci (no-IOMMU mode when
 #    the host has no IOMMU) and back to their driver afterwards.
 #
-# Results land in OUTDIR (default bench/results/<date>-<nic>): the CSVs, the
-# matrix logs and a passport of the machine as it was measured.
+# Results land in OUTDIR (default bench/results/<date>-<driver>-irq-<layout>):
+# the CSVs, the matrix logs and a passport of the machine as it was measured.
+#
+# Env (defaults fit a 4-core/8-thread host with an 82599 at enp3s0f0/f1):
+#   DRV_IF, PEER_IF      the two cabled ports (driver side, reflector side)
+#   PEER_ADDR, NS        the reflector's address and namespace
+#   DRV_CPU, DRV_SQ      driver core and its HT sibling (SQPOLL, IRQ)
+#   RFL_CPU, RFL_SQ      the same for the reflector
+#   HOUSE_CPUS, HOUSE_MASK   everything else, as a list and as a hex mask
+#   IRQ_LAYOUT           house | sibling (see below)
+#   KINDS_KERNEL, KINDS_DPDK, RATES, REPEAT=0|1
 set -euo pipefail
 export LC_ALL=C   # the passport greps tool output in English
 

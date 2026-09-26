@@ -1,51 +1,51 @@
-# sender   PCI "0000:00:06.0" MAC "06:ff:e2:58:6c:a9" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
-# receiver PCI "0000:00:06.0" MAC "06:ff:ca:16:c3:f3" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
+# sender   PCI "0000:00:06.0" MAC "<sender-eni-mac>" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
+# receiver PCI "0000:00:06.0" MAC "<receiver-eni-mac>" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
 # dpdk 20000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 20000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 20000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 20000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 20000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 20000 drv: io_dpdk: port=0 tx_pkts=110000 tx_drop=0 rx_pkts=110000 rx_filtered=0 hw_ipackets=110000 hw_opackets=110006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 20000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 20000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # dpdk 100000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 100000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 100000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 100000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 100000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 100000 drv: io_dpdk: port=0 tx_pkts=550000 tx_drop=0 rx_pkts=550000 rx_filtered=0 hw_ipackets=550001 hw_opackets=550007 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=1 hw_rx_nombuf=0
 # dpdk 100000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 100000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # dpdk 200000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 200000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 200000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 200000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 200000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 200000 drv: io_dpdk: port=0 tx_pkts=1100000 tx_drop=0 rx_pkts=1100000 rx_filtered=0 hw_ipackets=1100000 hw_opackets=1100006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 200000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 200000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # dpdk 400000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 400000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 400000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 400000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 400000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 400000 drv: io_dpdk: port=0 tx_pkts=2200000 tx_drop=0 rx_pkts=2200000 rx_filtered=0 hw_ipackets=2200001 hw_opackets=2200007 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=1 hw_rx_nombuf=0
 # dpdk 400000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 400000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # dpdk 800000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 800000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 800000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 800000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 800000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 800000 drv: io_dpdk: port=0 tx_pkts=4400000 tx_drop=0 rx_pkts=4397928 rx_filtered=0 hw_ipackets=4397928 hw_opackets=4400006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 800000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 800000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # dpdk 1600000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # dpdk 1600000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # dpdk 1600000 drv: io_dpdk: link up, 0 Mbps full-duplex
-# dpdk 1600000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# dpdk 1600000 drv: io_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # dpdk 1600000 drv: io_dpdk: port=0 tx_pkts=8800000 tx_drop=0 rx_pkts=8798630 rx_filtered=0 hw_ipackets=8798630 hw_opackets=8800006 hw_imissed=0 hw_ierrors=0 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 1600000 drv: ena_rx_queue_release(): Rx queue 0:0 released
 # dpdk 1600000 drv: ena_tx_queue_release(): Tx queue 0:0 released
 # tcp-dpdk 20000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 20000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 20000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 20000 drv: io_lwip: listening on :9607 for 1 peer(s)
 # tcp-dpdk 20000 drv: io_lwip: peer 1 connected from 10.88.2.11:52639
 # tcp-dpdk 20000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=110000 rx_records=110000 tx_refused=0 rx_backpressure=0 frames_tx=110224 frames_rx=110003 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -57,7 +57,7 @@
 # tcp-dpdk 100000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 100000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 100000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 100000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 100000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 100000 drv: io_lwip: listening on :9608 for 1 peer(s)
 # tcp-dpdk 100000 drv: io_lwip: peer 1 connected from 10.88.2.11:50765
 # tcp-dpdk 100000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=550000 rx_records=550000 tx_refused=0 rx_backpressure=0 frames_tx=634329 frames_rx=549976 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -69,7 +69,7 @@
 # tcp-dpdk 200000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 200000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 200000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 200000 drv: io_lwip: listening on :9609 for 1 peer(s)
 # tcp-dpdk 200000 drv: io_lwip: peer 1 connected from 10.88.2.11:51074
 # tcp-dpdk 200000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=1100000 rx_records=1100000 tx_refused=0 rx_backpressure=0 frames_tx=1302197 frames_rx=1067760 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -81,7 +81,7 @@
 # tcp-dpdk 400000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 400000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 400000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 400000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 400000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 400000 drv: io_lwip: listening on :9610 for 1 peer(s)
 # tcp-dpdk 400000 drv: io_lwip: peer 1 connected from 10.88.2.11:61792
 # tcp-dpdk 400000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=2200000 rx_records=2200000 tx_refused=0 rx_backpressure=0 frames_tx=2255853 frames_rx=1322025 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -93,7 +93,7 @@
 # tcp-dpdk 800000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 800000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 800000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 800000 drv: io_lwip: listening on :9611 for 1 peer(s)
 # tcp-dpdk 800000 drv: io_lwip: peer 1 connected from 10.88.2.11:61616
 # tcp-dpdk 800000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=4400000 rx_records=4400000 tx_refused=0 rx_backpressure=0 frames_tx=2420674 frames_rx=1493781 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -105,7 +105,7 @@
 # tcp-dpdk 1600000 drv: EAL: No free 1048576 kB hugepages reported on node 0
 # tcp-dpdk 1600000 drv: ena_get_metrics_entries(): 0x6 customer metrics are supported
 # tcp-dpdk 1600000 drv: io_tcp_dpdk: link up, 0 Mbps full-duplex
-# tcp-dpdk 1600000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=06:ff:e2:58:6c:a9
+# tcp-dpdk 1600000 drv: io_tcp_dpdk: port=0 dev=0000:00:06.0 core=2 mac=<sender-eni-mac>
 # tcp-dpdk 1600000 drv: io_lwip: listening on :9612 for 1 peer(s)
 # tcp-dpdk 1600000 drv: io_lwip: peer 1 connected from 10.88.2.11:54493
 # tcp-dpdk 1600000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=8800000 rx_records=8800000 tx_refused=0 rx_backpressure=0 frames_tx=2237813 frames_rx=1625553 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0

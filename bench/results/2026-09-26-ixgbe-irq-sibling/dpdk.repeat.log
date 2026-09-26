@@ -1,20 +1,20 @@
-# sender   PCI "0000:03:00.0" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
-# receiver PCI "0000:03:00.1" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# sender   PCI "0000:03:00.0" MAC "<driver-port-mac>" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "0000:03:00.1" MAC "<reflector-port-mac>" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
 # dpdk 20000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # dpdk 20000 drv: io_dpdk: link up, 10000 Mbps full-duplex
-# dpdk 20000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 20000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # dpdk 20000 drv: io_dpdk: port=0 tx_pkts=120000 tx_drop=0 rx_pkts=119998 rx_filtered=0 hw_ipackets=119998 hw_opackets=120000 hw_imissed=0 hw_ierrors=2 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 200000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # dpdk 200000 drv: io_dpdk: link up, 10000 Mbps full-duplex
-# dpdk 200000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 200000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # dpdk 200000 drv: io_dpdk: port=0 tx_pkts=1200000 tx_drop=0 rx_pkts=1199998 rx_filtered=0 hw_ipackets=1199998 hw_opackets=1200000 hw_imissed=0 hw_ierrors=1 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # dpdk 800000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # dpdk 800000 drv: io_dpdk: link up, 10000 Mbps full-duplex
-# dpdk 800000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# dpdk 800000 drv: io_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # dpdk 800000 drv: io_dpdk: port=0 tx_pkts=4800000 tx_drop=0 rx_pkts=4799992 rx_filtered=0 hw_ipackets=4799992 hw_opackets=4800000 hw_imissed=0 hw_ierrors=9 hw_oerrors=0 arp_replies=0 hw_rx_nombuf=0
 # tcp-dpdk 20000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # tcp-dpdk 20000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
-# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 20000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # tcp-dpdk 20000 drv: io_lwip: listening on :6404 for 1 peer(s)
 # tcp-dpdk 20000 drv: io_lwip: peer 1 connected from 192.168.10.101:51501
 # tcp-dpdk 20000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=120000 rx_records=120000 tx_refused=0 rx_backpressure=0 frames_tx=120237 frames_rx=120000 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -23,7 +23,7 @@
 # tcp-dpdk 20000 drv: io_lwip: connection error -13
 # tcp-dpdk 200000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # tcp-dpdk 200000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
-# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 200000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # tcp-dpdk 200000 drv: io_lwip: listening on :6405 for 1 peer(s)
 # tcp-dpdk 200000 drv: io_lwip: peer 1 connected from 192.168.10.101:50562
 # tcp-dpdk 200000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=1200000 rx_records=1200000 tx_refused=0 rx_backpressure=0 frames_tx=1203034 frames_rx=1199461 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0
@@ -32,7 +32,7 @@
 # tcp-dpdk 200000 drv: io_lwip: connection error -13
 # tcp-dpdk 800000 drv: EAL: No free 2048 kB hugepages reported on node 0
 # tcp-dpdk 800000 drv: io_tcp_dpdk: link up, 10000 Mbps full-duplex
-# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=90:e2:ba:ed:3d:34
+# tcp-dpdk 800000 drv: io_tcp_dpdk: port=0 dev=0000:03:00.0 core=2 mac=<driver-port-mac>
 # tcp-dpdk 800000 drv: io_lwip: listening on :6406 for 1 peer(s)
 # tcp-dpdk 800000 drv: io_lwip: peer 1 connected from 192.168.10.101:58674
 # tcp-dpdk 800000 drv: io_tcp_dpdk: role=server peers=1 live=1 tx_records=4800000 rx_records=4800000 tx_refused=0 rx_backpressure=0 frames_tx=4823450 frames_rx=4674334 tx_frame_drops=0 write_mem=0 closed=0 desyncs=0

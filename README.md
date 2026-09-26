@@ -181,7 +181,14 @@ make config     # what this machine can build
 make            # the library plus any XDP filter objects
 make test       # unit tests: framing, deframing, RTT. No NIC, no root.
 make example
+sudo make install   # optional: /usr/local, or PREFIX=... / DESTDIR=...
 ```
+
+Installed, it is `pkg-config --cflags --libs dgram-io`. The library is
+static, so those flags carry every backend's dependencies that this build
+compiled in. The XDP filters go to `pkg-config --variable=bpfdir dgram-io`;
+point `Config::bpf_obj` there, since the default looks next to the running
+binary.
 
 The example is a ping-pong that runs over any backend:
 
@@ -235,9 +242,12 @@ and DPDK would not.
 
 ## License and contributing
 
-Apache-2.0, Copyright 2026 Denis Tishkov. Contributions are accepted under the
-Developer Certificate of Origin — no CLA, just a `Signed-off-by` line. See
-[CONTRIBUTING.md](CONTRIBUTING.md).
+Apache-2.0, Copyright 2026 Denis Tishkov. The two XDP programs
+(`src/*.bpf.c`) are dual-licensed Apache-2.0 OR GPL-2.0-only, because the
+kernel loads a BPF program only when it declares a GPL-compatible licence.
+Contributions are accepted under the Developer Certificate of Origin — no
+CLA, just a `Signed-off-by` line. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 Written with Claude (Anthropic). The design decisions, the measurements and
 the hardware runs are mine; the code was written in collaboration with it.

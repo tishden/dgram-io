@@ -1,5 +1,5 @@
-# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
-# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# sender   PCI "" MAC "<driver-port-mac>" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "<reflector-port-mac>" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata
 # tcp-xdp 800000 drv: libbpf: elf: skipping unrecognized data section(5) xdp_metadata

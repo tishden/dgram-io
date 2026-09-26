@@ -20,6 +20,11 @@ jobs:
       - run: make config
       - run: make test CXX=${{ matrix.compiler }}
       - run: make lib CXX=${{ matrix.compiler }}
+      - name: install into a staging dir
+        run: |
+          make install CXX=${{ matrix.compiler }} DESTDIR=$PWD/stage
+          test -f stage/usr/local/lib/libdgram_io.a
+          test -f stage/usr/local/lib/pkgconfig/dgram-io.pc
       # A loopback round trip over kernel UDP: proves the interface, the
       # batching and the example still work end to end.
       - name: echo smoke over loopback

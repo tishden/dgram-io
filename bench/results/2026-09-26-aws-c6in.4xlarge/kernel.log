@@ -1,5 +1,5 @@
-# sender   PCI "" MAC "06:ff:e2:58:6c:a9" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
-# receiver PCI "" MAC "06:ff:ca:16:c3:f3" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
+# sender   PCI "" MAC "<sender-eni-mac>" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.10" 
+# receiver PCI "" MAC "<receiver-eni-mac>" DP1 "3" DP0 "2" IF "ens6" IP "10.88.2.11" 
 # udp 20000 drv: io_udp: syscalls=110000 send_errs=0 rx_truncated=0
 # udp 100000 drv: io_udp: syscalls=549996 send_errs=0 rx_truncated=0
 # udp 200000 drv: io_udp: syscalls=1098912 send_errs=0 rx_truncated=0

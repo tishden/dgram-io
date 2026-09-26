@@ -1,5 +1,5 @@
-# sender   PCI "" MAC "90:e2:ba:ed:3d:34" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
-# receiver PCI "" MAC "90:e2:ba:ed:3d:35" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
+# sender   PCI "" MAC "<driver-port-mac>" DP1 "6" DP0 "2" IF "enp3s0f0" IP "192.168.10.100" 
+# receiver PCI "" MAC "<reflector-port-mac>" DP1 "7" DP0 "3" IF "enp3s0f1" IP "192.168.10.101" 
 # udp 20000 drv: io_udp: syscalls=119978 send_errs=0 rx_truncated=0
 # udp 200000 drv: io_udp: syscalls=578364 send_errs=0 rx_truncated=0
 # uring 20000 drv: io_uring: submits=120001 send_errs=0 tx_stalls=0 rx_truncated=0 rx_rearms=0 rx_nobufs=0 rx_errs=0 sqpoll=0 sq_pin=none fixed_file=1
