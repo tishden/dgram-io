@@ -5,7 +5,7 @@
 # NIC ports are cabled to each other: the driver on the first port, the
 # reflector on the second inside its own network namespace, so every
 # datagram really crosses the cable. Same backends, rates and repeat subset as
-# the AWS run in docs/BENCHMARKS.md.
+# the AWS run in BENCHMARKS.md.
 #
 #   scripts/get_lwip.sh && make all example     # as yourself, first
 #   sudo DRV_IF=enp3s0f0 PEER_IF=enp3s0f1 scripts/wire_bench.sh [OUTDIR]
@@ -20,7 +20,7 @@
 #    CPUs: driver and reflector get one physical core each, their HT
 #    siblings run SQPOLL threads only; each port's IRQ goes where
 #    IRQ_LAYOUT says (below);
-#  * sysctls as the AWS hosts in docs/BENCHMARKS.md had them (busy_poll/
+#  * sysctls as the AWS hosts in BENCHMARKS.md had them (busy_poll/
 #    busy_read 50, rmem/wmem max 64 MB) and io_uring enabled;
 #  * for the DPDK half both ports are bound to vfio-pci (no-IOMMU mode when
 #    the host has no IOMMU) and back to their driver afterwards.

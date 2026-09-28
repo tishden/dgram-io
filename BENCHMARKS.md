@@ -3,7 +3,7 @@
 Round-trip latency under load for every backend, on two very different
 stands: a pair of AWS instances, and one desktop whose two 10G ports are
 cabled to each other. Measured 2026-09-26. Raw CSVs, logs and a passport of
-each machine are in [`bench/results/`](../bench/results).
+each machine are in [`bench/results/`](bench/results).
 
 The short version:
 
@@ -148,7 +148,7 @@ SENDMSGs are retried from poll wake-ups without an order between them.
 
 **Where the IRQ goes matters as much as a backend choice.** The same local
 matrix with each port's IRQ on the idle hyperthread of its process's core
-([`2026-09-26-ixgbe-irq-sibling`](../bench/results/2026-09-26-ixgbe-irq-sibling),
+([`2026-09-26-ixgbe-irq-sibling`](bench/results/2026-09-26-ixgbe-irq-sibling),
 an earlier build: its `tcp-xdp` row shows the zero-copy bug described
 below, and it has no `uring-sqpoll`) instead of a housekeeping CPU:
 
@@ -225,7 +225,7 @@ On AWS, with [aws-lowlat-stand](https://github.com/tishden/aws-lowlat-stand)
 (`instance_type = "c6in.4xlarge"`, `receiver_count = 1`, `use_spot = false`):
 
 ```
-make aws-up KEY=<key> ANSIBLE_VARS='-e workload_src=<dgram-io> -e workload_dst=dgram-io -e "workload_build=scripts/get_lwip.sh && make -j16 all example"'
+make aws-up KEY=<key> SSH_CIDR=<your-ip>/32 TFVARS='-var instance_type=c6in.4xlarge -var receiver_count=1 -var use_spot=false' ANSIBLE_VARS='-e workload_src=<dgram-io> -e workload_dst=dgram-io -e "workload_build=scripts/get_lwip.sh && make -j16 all example"'
 export SND=ubuntu@<sender> RCV=ubuntu@<receiver> SSH_KEY=<key.pem>
 scripts/bench_matrix.sh "udp uring uring-sqpoll tcp xdp tcp-xdp" "20000 100000 200000 400000 800000 1600000" > kernel.csv
 make aws-dpdk-bind

@@ -18,7 +18,7 @@
 # a second core for the SQPOLL thread. Without them the facts are read from
 # env files on the host (/etc/stand-data.env: DATA_IF DATA_IP DATA_MAC;
 # /etc/stand-cores.env: DP0 DP1; optional /run/stand_dpdk.env: LOCAL_PCI
-# LOCAL_MAC), which is how the AWS hosts in docs/BENCHMARKS.md were set up.
+# LOCAL_MAC), which is how the AWS hosts in BENCHMARKS.md were set up.
 #
 # The driver (bin/loadgen) runs on SND, the reflector (bin/echo --role server)
 # on RCV, each pinned to DP0. The kernel-netdev backends and the DPDK ones

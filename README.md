@@ -35,7 +35,7 @@ to run the same workload across the paths. That is hard if switching paths
 means rewriting the send loop, and easy if it means changing a string.
 
 Here is every backend measured with this repository's own tools
-([docs/BENCHMARKS.md](docs/BENCHMARKS.md), raw data in
+([BENCHMARKS.md](BENCHMARKS.md), raw data in
 [`bench/results/`](bench/results)): round trips of 100-byte messages, one
 per packet, an open-loop driver offering 20k to 1.6M msg/s, each side
 busy-polling on one isolated core. *82599* is one desktop whose two Intel
@@ -80,7 +80,7 @@ about 1 ms. ² 53.9 us in the repeat.
 Running this found two bugs that are fixed here: AF_XDP zero-copy on the
 82599 dropped every frame over 1 KB (the RX buffer it derives from a
 2048-byte UMEM chunk), and the benchmark script's own CPU confinement --
-both in [docs/BENCHMARKS.md](docs/BENCHMARKS.md#found-by-these-runs).
+both in [BENCHMARKS.md](BENCHMARKS.md#found-by-these-runs).
 
 ### Where TCP's cost comes from
 
@@ -121,7 +121,7 @@ everything. `Config::tcp_nodelay` defaults to true here for that reason.
 
 `uring` is not a faster `udp`. Measured under load it trails plain
 `sendmmsg`/`recvmmsg` by 2.9 us p50 on an 82599 and by 17 us on AWS
-([docs/BENCHMARKS.md](docs/BENCHMARKS.md)): a receive goes through the
+([BENCHMARKS.md](BENCHMARKS.md)): a receive goes through the
 interrupt, softirq and task_work before its completion is visible, and does
 not get the socket's busy polling. What it does buy is an idle `rx()` that
 costs no syscall and a `flush()` that costs one per batch (or none under
@@ -225,7 +225,7 @@ scripts/get_lwip.sh && make
 
 `bin/echo` is one datagram in flight. For latency *under load* there is an
 open-loop driver and the scripts that produced
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md):
+[BENCHMARKS.md](BENCHMARKS.md):
 
 * **`bin/loadgen`** offers datagrams at a fixed rate to an `echo --role
   server` and prints one CSV line: achieved rate, loss, reordering, p50 to

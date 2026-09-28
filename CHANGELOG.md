@@ -18,7 +18,7 @@ First public version.
   (backends x rates over SSH or across a network namespace), `wire_bench.sh`
   (the whole matrix on two cabled ports of one host), `bench_report.py`,
   `uring_probe`. Results for an AWS c6in pair and a back-to-back 82599 are
-  in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+  in [BENCHMARKS.md](BENCHMARKS.md).
 * **Build:** `make install` with a pkg-config file (`dgram-io`). The XDP
   backends find their filter objects where `make install` put them. lwIP's
   symbols in the static library are prefixed, so it links next to an lwIP of
